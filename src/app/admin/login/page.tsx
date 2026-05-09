@@ -54,7 +54,7 @@ export default function LoginPage() {
               </div>
             </div>
             <h1 className="text-2xl font-bold text-[#0f1f6b] dark:text-white tracking-tight">Sign In</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">CDI — Admin &amp; Teacher Portal</p>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">CDA — Admin &amp; Teacher Portal</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
