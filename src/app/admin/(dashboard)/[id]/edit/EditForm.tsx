@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-      <h2 className="font-semibold text-blue-900 text-base mb-4 pb-2 border-b border-slate-100">{title}</h2>
+    <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+      <h2 className="font-semibold text-blue-900 dark:text-white text-base mb-4 pb-2 border-b border-slate-100 dark:border-white/10">{title}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
     </div>
   );
@@ -25,7 +25,7 @@ function Field({ label, required, full, error, children }: {
 }) {
   return (
     <div className={full ? "sm:col-span-2" : ""}>
-      <Label className="text-slate-700 font-medium mb-1 block">
+      <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">
         {label}{required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       {children}
@@ -116,7 +116,7 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
           <Input type="date" {...register("child_date_of_birth")} />
         </Field>
         <Field label="Gender" required error={errors.child_gender?.message}>
-          <select {...register("child_gender")} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <select {...register("child_gender")} className="w-full border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="">Select</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
@@ -201,33 +201,33 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
       </Section>
 
       {/* Pickup persons */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-        <h2 className="font-semibold text-blue-900 text-base mb-4 pb-2 border-b border-slate-100">Authorized to Pick Up Child</h2>
+      <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+        <h2 className="font-semibold text-blue-900 dark:text-white text-base mb-4 pb-2 border-b border-slate-100 dark:border-white/10">Authorized to Pick Up Child</h2>
         <div className="space-y-4">
           {pickupFields.map((field, index) => (
-            <div key={field.id} className="border border-slate-100 rounded-lg p-4 bg-slate-50 relative">
-              <p className="text-sm font-medium text-slate-500 mb-3">Person {index + 1}</p>
+            <div key={field.id} className="border border-slate-100 dark:border-white/10 rounded-lg p-4 bg-slate-50 dark:bg-white/3 relative">
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-3">Person {index + 1}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-slate-700 font-medium mb-1 block">Full Name <span className="text-red-500">*</span></Label>
+                  <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">Full Name <span className="text-red-500">*</span></Label>
                   <Input {...register(`pickup_persons.${index}.name`)} />
                   {errors.pickup_persons?.[index]?.name && <p className="text-red-500 text-xs mt-1">{errors.pickup_persons[index].name.message}</p>}
                 </div>
                 <div>
-                  <Label className="text-slate-700 font-medium mb-1 block">Relationship <span className="text-red-500">*</span></Label>
+                  <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">Relationship <span className="text-red-500">*</span></Label>
                   <Input {...register(`pickup_persons.${index}.relationship`)} />
                 </div>
                 <div>
-                  <Label className="text-slate-700 font-medium mb-1 block">Phone <span className="text-red-500">*</span></Label>
+                  <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">Phone <span className="text-red-500">*</span></Label>
                   <Input {...register(`pickup_persons.${index}.phone`)} />
                 </div>
                 <div>
-                  <Label className="text-slate-700 font-medium mb-1 block">Email</Label>
+                  <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">Email</Label>
                   <Input type="email" {...register(`pickup_persons.${index}.email`)} />
                 </div>
               </div>
               {index > 0 && (
-                <button type="button" onClick={() => removePickup(index)} className="absolute top-3 right-3 text-slate-400 hover:text-red-500">
+                <button type="button" onClick={() => removePickup(index)} className="absolute top-3 right-3 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -236,7 +236,7 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
             </div>
           ))}
         </div>
-        <button type="button" onClick={() => addPickup({ name: "", relationship: "", phone: "", email: "" })} className="mt-3 text-sm text-blue-700 hover:text-blue-900 font-medium flex items-center gap-1">
+        <button type="button" onClick={() => addPickup({ name: "", relationship: "", phone: "", email: "" })} className="mt-3 text-sm text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-300 font-medium flex items-center gap-1">
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
@@ -245,17 +245,17 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
       </div>
 
       {/* Photo Consent */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-        <h2 className="font-semibold text-blue-900 text-base mb-4 pb-2 border-b border-slate-100">Photo Consent</h2>
+      <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+        <h2 className="font-semibold text-blue-900 dark:text-white text-base mb-4 pb-2 border-b border-slate-100 dark:border-white/10">Photo Consent</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Social Media" required error={errors.consent_social_media?.message}>
-            <select {...register("consent_social_media")} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select {...register("consent_social_media")} className="w-full border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="given">Consent given</option>
               <option value="not_given">Consent not given</option>
             </select>
           </Field>
           <Field label="Posters & Advertisements" required error={errors.consent_marketing?.message}>
-            <select {...register("consent_marketing")} className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select {...register("consent_marketing")} className="w-full border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 text-slate-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option value="given">Consent given</option>
               <option value="not_given">Consent not given</option>
             </select>
@@ -264,8 +264,8 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
       </div>
 
       {/* Visit */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-        <h2 className="font-semibold text-blue-900 text-base mb-4 pb-2 border-b border-slate-100">School Visit</h2>
+      <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+        <h2 className="font-semibold text-blue-900 dark:text-white text-base mb-4 pb-2 border-b border-slate-100 dark:border-white/10">School Visit</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Preferred Visit Date">
             <Input type="date" {...register("visit_date")} />
@@ -277,14 +277,14 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
       </div>
 
       {serverError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 mb-4 text-sm">{serverError}</div>
+        <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-700 dark:text-red-300 rounded-lg px-4 py-3 mb-4 text-sm">{serverError}</div>
       )}
 
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={isSubmitting} className="bg-blue-800 hover:bg-blue-900 text-white px-8">
           {isSubmitting ? "Saving…" : "Save Changes"}
         </Button>
-        <button type="button" onClick={() => router.back()} className="px-4 py-2 text-sm text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100 transition-colors">
+        <button type="button" onClick={() => router.back()} className="px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors">
           Cancel
         </button>
       </div>

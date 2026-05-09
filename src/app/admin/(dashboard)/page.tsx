@@ -215,7 +215,7 @@ export default async function AdminPage({
                       <p className="text-xs text-slate-400 dark:text-slate-500">{e.parent1_full_name} · {e.parent1_phone}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-blue-800">{e.visit_date}</p>
+                      <p className="text-sm font-semibold text-blue-800 dark:text-blue-300">{e.visit_date}</p>
                       <p className="text-xs text-slate-400 dark:text-slate-500">{e.visit_time ?? "—"}</p>
                     </div>
                   </div>
@@ -286,8 +286,8 @@ export default async function AdminPage({
         <div className="glass-card overflow-hidden">
           {visitRequests.length === 0 ? (
             <div className="p-16 text-center">
-              <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg className="w-6 h-6 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>

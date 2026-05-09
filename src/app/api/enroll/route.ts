@@ -3,8 +3,22 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { enrollmentSchema } from "@/lib/enrollment-schema";
 import { Resend } from "resend";
 
+const ALLOWED_UPLOAD_TYPES = new Set([
+  "image/jpeg", "image/png", "image/webp",
+  "application/pdf",
+]);
+const MAX_UPLOAD_SIZE = 8 * 1024 * 1024; // 8 MB
+const EXT_BY_TYPE: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "application/pdf": "pdf",
+};
+
 async function uploadFile(supabase: ReturnType<typeof createAdminClient>, file: File, prefix: string) {
-  const ext = file.name.split(".").pop() ?? "bin";
+  if (file.size > MAX_UPLOAD_SIZE) return null;
+  if (!ALLOWED_UPLOAD_TYPES.has(file.type)) return null;
+  const ext = EXT_BY_TYPE[file.type] ?? "bin";
   const path = `${prefix}-${Date.now()}.${ext}`;
   const bytes = await file.arrayBuffer();
   const { error } = await supabase.storage.from("enrollment-docs").upload(path, bytes, { contentType: file.type });
@@ -90,7 +104,7 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       console.error("Supabase insert error:", error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: "Could not save your application. Please try again." }, { status: 500 });
     }
 
     // Send confirmation to parent
@@ -115,9 +129,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("Enrollment error:", msg);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    console.error("Enrollment error:", err);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }
 

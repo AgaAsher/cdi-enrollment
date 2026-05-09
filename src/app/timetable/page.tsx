@@ -4,18 +4,18 @@ import Link from "next/link";
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 const BG: Record<string, string> = {
-  blue:   "bg-blue-100",   indigo: "bg-indigo-100",
-  amber:  "bg-amber-100",  green:  "bg-emerald-100",
-  purple: "bg-purple-100", orange: "bg-orange-100",
-  pink:   "bg-pink-100",   violet: "bg-violet-100",
-  slate:  "bg-slate-100",
+  blue:   "bg-blue-100 dark:bg-blue-500/15",   indigo: "bg-indigo-100 dark:bg-indigo-500/15",
+  amber:  "bg-amber-100 dark:bg-amber-500/15",  green:  "bg-emerald-100 dark:bg-emerald-500/15",
+  purple: "bg-purple-100 dark:bg-purple-500/15", orange: "bg-orange-100 dark:bg-orange-500/15",
+  pink:   "bg-pink-100 dark:bg-pink-500/15",   violet: "bg-violet-100 dark:bg-violet-500/15",
+  slate:  "bg-slate-100 dark:bg-white/5",
 };
 const TX: Record<string, string> = {
-  blue:   "text-blue-800",   indigo: "text-indigo-800",
-  amber:  "text-amber-800",  green:  "text-emerald-800",
-  purple: "text-purple-800", orange: "text-orange-800",
-  pink:   "text-pink-800",   violet: "text-violet-800",
-  slate:  "text-slate-500",
+  blue:   "text-blue-800 dark:text-blue-300",   indigo: "text-indigo-800 dark:text-indigo-300",
+  amber:  "text-amber-800 dark:text-amber-300",  green:  "text-emerald-800 dark:text-emerald-300",
+  purple: "text-purple-800 dark:text-purple-300", orange: "text-orange-800 dark:text-orange-300",
+  pink:   "text-pink-800 dark:text-pink-300",   violet: "text-violet-800 dark:text-violet-300",
+  slate:  "text-slate-500 dark:text-slate-300",
 };
 
 type SlotCell = { subject: string; teacher: string; room: string; group: string; groupLabel: string; isFixed: boolean };
@@ -41,15 +41,15 @@ export default async function TimetablePage({
 
   if (!data) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-8">
+      <div className="min-h-screen bg-slate-50 dark:bg-[#0d1117] flex items-center justify-center p-8">
         <div className="text-center max-w-sm">
-          <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-16 h-16 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <h2 className="text-lg font-bold text-slate-700 mb-2">No Timetable Published</h2>
-          <p className="text-sm text-slate-400">The school has not published a timetable yet. Please check back later.</p>
+          <h2 className="text-lg font-bold text-slate-700 dark:text-white mb-2">No Timetable Published</h2>
+          <p className="text-sm text-slate-400 dark:text-slate-500">The school has not published a timetable yet. Please check back later.</p>
         </div>
       </div>
     );
@@ -83,9 +83,9 @@ export default async function TimetablePage({
   });
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0d1117]">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 sticky top-0 z-10">
+      <div className="bg-white dark:bg-[#1a2035] border-b border-slate-200 dark:border-white/10 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-[#0f1f6b] rounded-xl flex items-center justify-center shrink-0">
@@ -95,8 +95,8 @@ export default async function TimetablePage({
               </svg>
             </div>
             <div>
-              <p className="text-sm font-bold text-[#0f1f6b] leading-none">CDI International School</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">{data.academic_year} · Published {publishedDate}</p>
+              <p className="text-sm font-bold text-[#0f1f6b] dark:text-white leading-none">CDA International School</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">{data.academic_year} · Published {publishedDate}</p>
             </div>
           </div>
 
@@ -108,8 +108,8 @@ export default async function TimetablePage({
                 href={`/timetable?class=${key}`}
                 className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-colors ${
                   !teacherMode && activeKey === key
-                    ? "bg-[#0f1f6b] text-white"
-                    : "text-slate-500 hover:text-[#0f1f6b] hover:bg-slate-100"
+                    ? "bg-[#0f1f6b] dark:bg-blue-600 text-white"
+                    : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5"
                 }`}
               >
                 {timetable[key].label}
@@ -132,25 +132,25 @@ export default async function TimetablePage({
                 </span>
               </div>
               <div>
-                <h1 className="text-xl font-bold text-[#0f1f6b]">{teacherName}</h1>
-                <p className="text-sm text-slate-400">Personal teaching schedule</p>
+                <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">{teacherName}</h1>
+                <p className="text-sm text-slate-400 dark:text-slate-500">Personal teaching schedule</p>
               </div>
             </div>
 
             {teacherRows.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center">
-                <p className="text-slate-400 text-sm">No lessons found for this teacher in the current timetable.</p>
+              <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-10 text-center">
+                <p className="text-slate-400 dark:text-slate-500 text-sm">No lessons found for this teacher in the current timetable.</p>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+              <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
                 <table className="w-full text-sm min-w-[640px]">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide w-24">Time</th>
-                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide">Day</th>
-                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide">Subject</th>
-                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide">Class</th>
-                      <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide">Room</th>
+                    <tr className="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                      <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide w-24">Time</th>
+                      <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide">Day</th>
+                      <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide">Subject</th>
+                      <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide">Class</th>
+                      <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide">Room</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -160,20 +160,20 @@ export default async function TimetablePage({
                         return a.dayIndex - b.dayIndex || toMin(a.row.time) - toMin(b.row.time);
                       })
                       .map(({ classLabel, row, dayIndex, cell }, i) => (
-                        <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition-colors">
+                        <tr key={i} className="border-b border-slate-100 dark:border-white/5 last:border-0 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
                           <td className="px-4 py-3">
-                            <span className="font-bold text-slate-700 text-sm">{row.time}</span>
-                            {row.duration && <span className="text-xs text-slate-400 ml-1">{row.duration}</span>}
+                            <span className="font-bold text-slate-700 dark:text-slate-200 text-sm">{row.time}</span>
+                            {row.duration && <span className="text-xs text-slate-400 dark:text-slate-500 ml-1">{row.duration}</span>}
                           </td>
-                          <td className="px-4 py-3 text-sm text-slate-600 font-medium">{DAYS[dayIndex]}</td>
+                          <td className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300 font-medium">{DAYS[dayIndex]}</td>
                           <td className="px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${BG[row.color]} ${TX[row.color]}`}>
                               {cell.subject}
                               {cell.groupLabel && <span className="ml-1 opacity-60">({cell.groupLabel})</span>}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-sm text-slate-500">{classLabel}</td>
-                          <td className="px-4 py-3 text-sm text-slate-400">{cell.room || "—"}</td>
+                          <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">{classLabel}</td>
+                          <td className="px-4 py-3 text-sm text-slate-400 dark:text-slate-500">{cell.room || "—"}</td>
                         </tr>
                       ))}
                   </tbody>
@@ -187,30 +187,30 @@ export default async function TimetablePage({
         {!teacherMode && timetable[activeKey] && (
           <>
             <div className="flex items-center justify-between mb-5">
-              <h1 className="text-xl font-bold text-[#0f1f6b]">
+              <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">
                 {timetable[activeKey].label} — Weekly Timetable
               </h1>
-              <span className="text-xs text-slate-400 bg-white border border-slate-200 px-3 py-1.5 rounded-full font-medium">
+              <span className="text-xs text-slate-400 dark:text-slate-400 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 px-3 py-1.5 rounded-full font-medium">
                 Mon – Fri · 08:00 – 15:30
               </span>
             </div>
 
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
+            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 overflow-x-auto">
               <table className="w-full text-sm min-w-[700px]">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide w-24">Time</th>
+                  <tr className="bg-slate-50 dark:bg-white/5 border-b border-slate-200 dark:border-white/10">
+                    <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide w-24">Time</th>
                     {DAYS.map(d => (
-                      <th key={d} className="px-3 py-3 text-slate-500 font-semibold text-xs uppercase tracking-wide text-center">{d}</th>
+                      <th key={d} className="px-3 py-3 text-slate-500 dark:text-slate-400 font-semibold text-xs uppercase tracking-wide text-center">{d}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {timetable[activeKey].rows.map((row, ri) => (
-                    <tr key={ri} className="border-b border-slate-100 last:border-0">
+                    <tr key={ri} className="border-b border-slate-100 dark:border-white/5 last:border-0">
                       <td className="px-4 py-2 align-middle">
-                        <p className="font-bold text-slate-700 text-xs">{row.time}</p>
-                        {row.duration && <p className="text-[10px] text-slate-400 mt-0.5">{row.duration}</p>}
+                        <p className="font-bold text-slate-700 dark:text-slate-200 text-xs">{row.time}</p>
+                        {row.duration && <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{row.duration}</p>}
                       </td>
                       {row.cells.map((cellArr, di) => {
                         const isSplit = cellArr.length > 1;
@@ -255,8 +255,8 @@ export default async function TimetablePage({
               </table>
             </div>
 
-            <p className="text-xs text-slate-300 text-center mt-4">
-              CDI International School of Laos · {data.academic_year}
+            <p className="text-xs text-slate-300 dark:text-slate-600 text-center mt-4">
+              CDA International School of Laos · {data.academic_year}
             </p>
           </>
         )}

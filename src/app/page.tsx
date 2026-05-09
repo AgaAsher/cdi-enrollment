@@ -1,5 +1,6 @@
 import EnrollmentForm from "@/components/EnrollmentForm";
 import Image from "next/image";
+import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
@@ -8,12 +9,12 @@ export default function Home() {
       {/* Top bar */}
       <div className="flex justify-end items-center gap-3 px-5 py-3">
         <ThemeToggle />
-        <a
+        <Link
           href="/admin/login"
           className="text-xs font-medium text-slate-500 dark:text-white/50 hover:text-[#0f1f6b] dark:hover:text-white px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-slate-50 dark:hover:bg-white/10 transition-all shadow-sm"
         >
           Admin Login
-        </a>
+        </Link>
       </div>
 
       <div className="max-w-3xl mx-auto px-4 pb-12">

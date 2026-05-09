@@ -17,6 +17,9 @@ const PARENT_PROMPT = `This is a parent or guardian's passport or ID document. E
 }
 Use null for any field you cannot confidently read from the document.`;
 
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -26,11 +29,16 @@ export async function POST(req: NextRequest) {
     if (!file || file.size === 0) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json({ error: "File too large (max 5MB)" }, { status: 413 });
+    }
+    if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+      return NextResponse.json({ error: "Only JPEG, PNG, and WebP images are allowed" }, { status: 415 });
+    }
 
     const bytes = await file.arrayBuffer();
     const base64 = Buffer.from(bytes).toString("base64");
-    const mimeType = file.type.startsWith("image/") ? file.type : "image/jpeg";
-    const dataUrl = `data:${mimeType};base64,${base64}`;
+    const dataUrl = `data:${file.type};base64,${base64}`;
 
     const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -59,8 +67,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ extracted: cleaned });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error("Extraction error:", msg);
-    return NextResponse.json({ extracted: {}, extractionError: msg });
+    console.error("Extraction error:", err);
+    return NextResponse.json({ extracted: {}, extractionError: "Could not read document" });
   }
 }

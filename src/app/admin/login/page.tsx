@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -105,9 +106,9 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/8 text-center">
-            <a href="/" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
+            <Link href="/" className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors">
               Go to Enrollment Form →
-            </a>
+            </Link>
           </div>
         </div>
       </div>

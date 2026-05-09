@@ -56,10 +56,10 @@ type AdminUser = {
 type LinkModal = { userId: string; userName: string; timetableTeachers: string[] };
 
 const ROLE_COLORS: Record<string, string> = {
-  super_admin: "bg-purple-100 text-purple-800",
-  admin:       "bg-blue-100 text-blue-800",
-  staff:       "bg-slate-100 text-slate-700",
-  teacher:     "bg-emerald-100 text-emerald-800",
+  super_admin: "bg-purple-100 text-purple-800 dark:bg-purple-500/15 dark:text-purple-300",
+  admin:       "bg-blue-100 text-blue-800 dark:bg-blue-500/15 dark:text-blue-300",
+  staff:       "bg-slate-100 text-slate-700 dark:bg-white/8 dark:text-slate-300",
+  teacher:     "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-300",
 };
 
 const DEFAULT_PERMS: Record<string, boolean> = {
@@ -195,8 +195,8 @@ export default function UsersManager() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-xl font-bold text-[#0f1f6b]">User Management</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Control who can access the admin panel and what they can do</p>
+          <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">User Management</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Control who can access the admin panel and what they can do</p>
         </div>
         <button
           onClick={openAdd}
@@ -214,17 +214,17 @@ export default function UsersManager() {
         <svg className="w-5 h-5 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
-        <p className="text-sm text-slate-700">
-          The <strong className="text-slate-900">Super Admin</strong> account (set in .env) has full access and is not managed here.
+        <p className="text-sm text-slate-700 dark:text-slate-300">
+          The <strong className="text-slate-900 dark:text-white">Super Admin</strong> account (set in .env) has full access and is not managed here.
         </p>
       </div>
 
       {/* Users list */}
       <div className="glass-card overflow-hidden mb-6">
         {loading ? (
-          <div className="p-12 text-center text-slate-400 text-sm">Loading…</div>
+          <div className="p-12 text-center text-slate-400 dark:text-slate-500 text-sm">Loading…</div>
         ) : users.length === 0 ? (
-          <div className="p-12 text-center text-slate-400 text-sm">No users yet. Add your first admin user.</div>
+          <div className="p-12 text-center text-slate-400 dark:text-slate-500 text-sm">No users yet. Add your first admin user.</div>
         ) : (
           <table className="w-full text-sm">
             <thead className="bg-slate-50 dark:bg-white/4 border-b border-slate-100 dark:border-white/6">
@@ -240,11 +240,11 @@ export default function UsersManager() {
               {users.map((u) => (
                 <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-white/4 transition-colors">
                   <td className="px-4 py-3">
-                    <p className="font-medium text-slate-800">{u.name}</p>
-                    <p className="text-xs text-slate-400">{u.email}</p>
+                    <p className="font-medium text-slate-800 dark:text-slate-100">{u.name}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{u.email}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[u.role] ?? "bg-slate-100 text-slate-600"}`}>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${ROLE_COLORS[u.role] ?? "bg-slate-100 text-slate-600 dark:bg-white/8 dark:text-slate-300"}`}>
                       {u.role.replace("_", " ")}
                     </span>
                   </td>
@@ -263,7 +263,7 @@ export default function UsersManager() {
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {PERMISSIONS.filter((p) => u.permissions?.[p.key]).map((p) => (
-                          <span key={p.key} className="bg-blue-50 text-blue-700 text-xs px-1.5 py-0.5 rounded">
+                          <span key={p.key} className="bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300 text-xs px-1.5 py-0.5 rounded">
                             {p.label}
                           </span>
                         ))}
@@ -275,8 +275,8 @@ export default function UsersManager() {
                       onClick={() => toggleActive(u)}
                       className={`inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full border transition-colors ${
                         u.active
-                          ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
-                          : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
+                          ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30 dark:hover:bg-emerald-500/25"
+                          : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200 dark:bg-white/8 dark:text-slate-400 dark:border-white/15 dark:hover:bg-white/15"
                       }`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${u.active ? "bg-green-500" : "bg-slate-400"}`} />
@@ -285,8 +285,8 @@ export default function UsersManager() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2 justify-end">
-                      <button onClick={() => openEdit(u)} className="text-blue-700 hover:text-blue-900 text-sm font-medium">Edit</button>
-                      <button onClick={() => handleDelete(u)} className="text-red-400 hover:text-red-600 text-sm">Delete</button>
+                      <button onClick={() => openEdit(u)} className="text-blue-700 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-sm font-medium">Edit</button>
+                      <button onClick={() => handleDelete(u)} className="text-red-400 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 text-sm">Delete</button>
                     </div>
                   </td>
                 </tr>

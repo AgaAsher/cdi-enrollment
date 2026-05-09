@@ -6,40 +6,40 @@ import StatusUpdater from "@/components/StatusUpdater";
 
 function Row({ label, value }: { label: string; value?: string | null }) {
   return (
-    <div className="grid grid-cols-3 gap-2 py-3 border-b border-slate-100 last:border-0">
-      <dt className="text-slate-500 text-sm">{label}</dt>
-      <dd className="col-span-2 text-slate-800 text-sm font-medium">{value || "—"}</dd>
+    <div className="grid grid-cols-3 gap-2 py-3 border-b border-slate-100 dark:border-white/10 last:border-0">
+      <dt className="text-slate-500 dark:text-slate-400 text-sm">{label}</dt>
+      <dd className="col-span-2 text-slate-800 dark:text-slate-100 text-sm font-medium">{value || "—"}</dd>
     </div>
   );
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-      <h2 className="font-semibold text-blue-900 mb-4 pb-2 border-b border-slate-100">{title}</h2>
+    <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+      <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">{title}</h2>
       <dl>{children}</dl>
     </div>
   );
 }
 
 function ConsentBadge({ value }: { value?: string | null }) {
-  if (!value) return <span className="text-slate-400 text-sm">—</span>;
+  if (!value) return <span className="text-slate-400 dark:text-slate-500 text-sm">—</span>;
   return value === "given" ? (
-    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-emerald-500/15 text-green-800 dark:text-emerald-300">
       ✓ Consent given
     </span>
   ) : (
-    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700">
+    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-500/15 text-red-700 dark:text-red-300">
       ✗ Consent not given
     </span>
   );
 }
 
 const STATUS_COLORS: Record<EnrollmentStatus, string> = {
-  pending: "bg-yellow-100 text-yellow-800",
-  reviewed: "bg-blue-100 text-blue-800",
-  accepted: "bg-green-100 text-green-800",
-  rejected: "bg-red-100 text-red-800",
+  pending:  "bg-yellow-100 text-yellow-800 dark:bg-amber-500/15 dark:text-amber-300",
+  reviewed: "bg-blue-100 text-blue-800 dark:bg-blue-500/15 dark:text-blue-300",
+  accepted: "bg-green-100 text-green-800 dark:bg-emerald-500/15 dark:text-emerald-300",
+  rejected: "bg-red-100 text-red-800 dark:bg-red-500/15 dark:text-red-300",
 };
 
 export default async function EnrollmentDetailPage({
@@ -85,13 +85,13 @@ export default async function EnrollmentDetailPage({
       </div>
 
       {/* Header */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5 flex items-start justify-between">
+      <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-white">
             {e.child_first_name} {e.child_last_name}
           </h1>
-          <p className="text-slate-500 mt-1">{e.applying_for_grade} · {e.academic_year}</p>
-          <p className="text-slate-400 text-xs mt-2">
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{e.applying_for_grade} · {e.academic_year}</p>
+          <p className="text-slate-400 dark:text-slate-500 text-xs mt-2">
             Submitted {new Date(e.created_at).toLocaleString()}
           </p>
         </div>
@@ -105,12 +105,12 @@ export default async function EnrollmentDetailPage({
 
       {/* Documents */}
       {(student3x4Url || studentPhotoUrl || parentPhotoUrl) && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-          <h2 className="font-semibold text-blue-900 mb-4 pb-2 border-b border-slate-100">Documents</h2>
+        <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+          <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">Documents</h2>
           <div className="grid grid-cols-2 gap-4">
             {student3x4Url && (
               <div>
-                <p className="text-slate-500 text-xs mb-2">Student 3×4 Photo</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">Student 3×4 Photo</p>
                 <a href={student3x4Url} target="_blank" rel="noopener noreferrer">
                   <img src={student3x4Url} alt="Student 3x4" className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
                 </a>
@@ -118,7 +118,7 @@ export default async function EnrollmentDetailPage({
             )}
             {studentPhotoUrl && (
               <div>
-                <p className="text-slate-500 text-xs mb-2">Student ID / Passport</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">Student ID / Passport</p>
                 <a href={studentPhotoUrl} target="_blank" rel="noopener noreferrer">
                   <img src={studentPhotoUrl} alt="Student document" className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
                 </a>
@@ -126,7 +126,7 @@ export default async function EnrollmentDetailPage({
             )}
             {parentPhotoUrl && (
               <div>
-                <p className="text-slate-500 text-xs mb-2">Parent / Guardian ID / Passport</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">Parent / Guardian ID / Passport</p>
                 <a href={parentPhotoUrl} target="_blank" rel="noopener noreferrer">
                   <img src={parentPhotoUrl} alt="Parent document" className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
                 </a>
@@ -185,8 +185,8 @@ export default async function EnrollmentDetailPage({
 
       {/* Pickup Persons */}
       {e.pickup_persons?.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-          <h2 className="font-semibold text-blue-900 mb-4 pb-2 border-b border-slate-100">Authorized to Pick Up</h2>
+        <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+          <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">Authorized to Pick Up</h2>
           <div className="space-y-4">
             {e.pickup_persons.map(async (p, i) => {
               const [photo3x4Url, photoIdUrl] = await Promise.all([
@@ -194,12 +194,12 @@ export default async function EnrollmentDetailPage({
                 p.photo_id_path ? (await supabase.storage.from("enrollment-docs").createSignedUrl(p.photo_id_path, 3600)).data?.signedUrl ?? null : null,
               ]);
               return (
-                <div key={i} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
-                  <p className="text-xs text-slate-400 mb-2">Person {i + 1}</p>
+                <div key={i} className="border border-slate-100 dark:border-white/10 rounded-lg p-4 bg-slate-50 dark:bg-white/3">
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mb-2">Person {i + 1}</p>
                   <div className="flex gap-4 mb-3">
                     {photo3x4Url && (
                       <div>
-                        <p className="text-slate-400 text-xs mb-1">3×4 Photo</p>
+                        <p className="text-slate-400 dark:text-slate-500 text-xs mb-1">3×4 Photo</p>
                         <a href={photo3x4Url} target="_blank" rel="noopener noreferrer">
                           <img src={photo3x4Url} alt="3x4" className="w-20 h-20 object-cover rounded-lg border border-slate-200 hover:opacity-90" />
                         </a>
@@ -207,7 +207,7 @@ export default async function EnrollmentDetailPage({
                     )}
                     {photoIdUrl && (
                       <div>
-                        <p className="text-slate-400 text-xs mb-1">ID / Passport</p>
+                        <p className="text-slate-400 dark:text-slate-500 text-xs mb-1">ID / Passport</p>
                         <a href={photoIdUrl} target="_blank" rel="noopener noreferrer">
                           <img src={photoIdUrl} alt="ID" className="w-20 h-20 object-cover rounded-lg border border-slate-200 hover:opacity-90" />
                         </a>
@@ -228,15 +228,15 @@ export default async function EnrollmentDetailPage({
       )}
 
       {/* Photo Consent */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-        <h2 className="font-semibold text-blue-900 mb-4 pb-2 border-b border-slate-100">Photo Consent</h2>
+      <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+        <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">Photo Consent</h2>
         <div className="space-y-3">
-          <div className="grid grid-cols-3 gap-2 py-3 border-b border-slate-100">
-            <dt className="text-slate-500 text-sm">Social Media</dt>
+          <div className="grid grid-cols-3 gap-2 py-3 border-b border-slate-100 dark:border-white/10">
+            <dt className="text-slate-500 dark:text-slate-400 text-sm">Social Media</dt>
             <dd className="col-span-2"><ConsentBadge value={e.consent_social_media} /></dd>
           </div>
           <div className="grid grid-cols-3 gap-2 py-3">
-            <dt className="text-slate-500 text-sm">Posters & Ads</dt>
+            <dt className="text-slate-500 dark:text-slate-400 text-sm">Posters & Ads</dt>
             <dd className="col-span-2"><ConsentBadge value={e.consent_marketing} /></dd>
           </div>
         </div>
@@ -244,8 +244,8 @@ export default async function EnrollmentDetailPage({
 
       {/* School Visit */}
       {e.visit_date && (
-        <div className="bg-white rounded-xl border border-blue-100 shadow-sm p-6 mb-5">
-          <h2 className="font-semibold text-blue-900 mb-4 pb-2 border-b border-slate-100">School Visit Request</h2>
+        <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-blue-100 dark:border-white/10 shadow-sm p-6 mb-5">
+          <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">School Visit Request</h2>
           <dl>
             <Row label="Preferred Date" value={e.visit_date} />
             <Row label="Preferred Time" value={e.visit_time} />

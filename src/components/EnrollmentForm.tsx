@@ -440,7 +440,7 @@ export default function EnrollmentForm() {
           Documents
         </h2>
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-          Upload ID or passport photos — we'll automatically fill in the form fields below.
+          Upload ID or passport photos — we&apos;ll automatically fill in the form fields below.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUpload

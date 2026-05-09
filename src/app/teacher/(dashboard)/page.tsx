@@ -35,26 +35,26 @@ const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 const DAY_SHORT = ["Mon", "Tue", "Wed", "Thu", "Fri"];
 
 const BG: Record<string, string> = {
-  blue:   "bg-blue-50 border-blue-200",
-  indigo: "bg-indigo-50 border-indigo-200",
-  amber:  "bg-amber-50 border-amber-200",
-  green:  "bg-emerald-50 border-emerald-200",
-  purple: "bg-purple-50 border-purple-200",
-  orange: "bg-orange-50 border-orange-200",
-  pink:   "bg-pink-50 border-pink-200",
-  violet: "bg-violet-50 border-violet-200",
-  slate:  "bg-slate-50 border-slate-200",
+  blue:   "bg-blue-50 border-blue-200 dark:bg-blue-500/10 dark:border-blue-500/30",
+  indigo: "bg-indigo-50 border-indigo-200 dark:bg-indigo-500/10 dark:border-indigo-500/30",
+  amber:  "bg-amber-50 border-amber-200 dark:bg-amber-500/10 dark:border-amber-500/30",
+  green:  "bg-emerald-50 border-emerald-200 dark:bg-emerald-500/10 dark:border-emerald-500/30",
+  purple: "bg-purple-50 border-purple-200 dark:bg-purple-500/10 dark:border-purple-500/30",
+  orange: "bg-orange-50 border-orange-200 dark:bg-orange-500/10 dark:border-orange-500/30",
+  pink:   "bg-pink-50 border-pink-200 dark:bg-pink-500/10 dark:border-pink-500/30",
+  violet: "bg-violet-50 border-violet-200 dark:bg-violet-500/10 dark:border-violet-500/30",
+  slate:  "bg-slate-50 border-slate-200 dark:bg-white/5 dark:border-white/10",
 };
 const TX: Record<string, string> = {
-  blue:   "text-blue-800",
-  indigo: "text-indigo-800",
-  amber:  "text-amber-800",
-  green:  "text-emerald-800",
-  purple: "text-purple-800",
-  orange: "text-orange-800",
-  pink:   "text-pink-800",
-  violet: "text-violet-800",
-  slate:  "text-slate-500",
+  blue:   "text-blue-800 dark:text-blue-300",
+  indigo: "text-indigo-800 dark:text-indigo-300",
+  amber:  "text-amber-800 dark:text-amber-300",
+  green:  "text-emerald-800 dark:text-emerald-300",
+  purple: "text-purple-800 dark:text-purple-300",
+  orange: "text-orange-800 dark:text-orange-300",
+  pink:   "text-pink-800 dark:text-pink-300",
+  violet: "text-violet-800 dark:text-violet-300",
+  slate:  "text-slate-500 dark:text-slate-400",
 };
 
 function getTodayIndex(): number {
@@ -79,9 +79,9 @@ function formatDate(iso: string): string {
 }
 
 const STATUS_CONFIG = {
-  present: { label: "Present", bg: "bg-emerald-100 border-emerald-300 text-emerald-800", dot: "bg-emerald-500" },
-  late:    { label: "Late",    bg: "bg-amber-100 border-amber-300 text-amber-800",       dot: "bg-amber-400" },
-  absent:  { label: "Absent",  bg: "bg-red-100 border-red-300 text-red-700",             dot: "bg-red-500"  },
+  present: { label: "Present", bg: "bg-emerald-100 border-emerald-300 text-emerald-800 dark:bg-emerald-500/15 dark:border-emerald-500/30 dark:text-emerald-300", dot: "bg-emerald-500" },
+  late:    { label: "Late",    bg: "bg-amber-100 border-amber-300 text-amber-800 dark:bg-amber-500/15 dark:border-amber-500/30 dark:text-amber-300",             dot: "bg-amber-400"  },
+  absent:  { label: "Absent",  bg: "bg-red-100 border-red-300 text-red-700 dark:bg-red-500/15 dark:border-red-500/30 dark:text-red-300",                         dot: "bg-red-500"    },
 } as const;
 
 export default function TeacherPage() {
@@ -193,22 +193,22 @@ export default function TeacherPage() {
       {/* Greeting */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-bold text-[#0f1f6b]">
+          <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">
             {teacherName ? `Welcome, ${teacherName.split(" ")[0]}` : "Teacher Dashboard"}
           </h1>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
             {new Date().toLocaleDateString("en", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
           </p>
         </div>
         {!loading && (
           <div className="flex gap-3">
-            <div className="bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-center">
-              <p className="text-lg font-bold text-[#0f1f6b]">{totalLessons}</p>
-              <p className="text-[11px] text-slate-400">lessons/week</p>
+            <div className="bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-2.5 text-center">
+              <p className="text-lg font-bold text-[#0f1f6b] dark:text-white">{totalLessons}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">lessons/week</p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl px-4 py-2.5 text-center">
-              <p className="text-lg font-bold text-[#0f1f6b]">{todayLessons.length}</p>
-              <p className="text-[11px] text-slate-400">
+            <div className="bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-2.5 text-center">
+              <p className="text-lg font-bold text-[#0f1f6b] dark:text-white">{todayLessons.length}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500">
                 {selectedDay === todayIndex ? "today" : DAY_SHORT[selectedDay]}
               </p>
             </div>
@@ -217,18 +217,18 @@ export default function TeacherPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-16 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-[#0f1f6b] border-t-transparent rounded-full animate-spin" />
+        <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-[#0f1f6b] dark:border-white border-t-transparent rounded-full animate-spin" />
         </div>
       ) : rows.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 p-16 text-center">
-          <div className="w-14 h-14 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-7 h-7 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 text-center">
+          <div className="w-14 h-14 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <svg className="w-7 h-7 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <p className="text-sm font-semibold text-slate-600 mb-1">No timetable found</p>
-          <p className="text-xs text-slate-400">
+          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">No timetable found</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             Your name has not been assigned to any lessons in the current timetable.<br />
             Please contact the admin.
           </p>
@@ -236,15 +236,15 @@ export default function TeacherPage() {
       ) : (
         <>
           {/* Day tabs */}
-          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-2xl p-1.5 w-fit">
+          <div className="flex items-center gap-1 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 w-fit">
             {DAY_SHORT.map((d, i) => (
               <button
                 key={i}
                 onClick={() => setSelectedDay(i)}
                 className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors relative ${
                   selectedDay === i
-                    ? "bg-[#0f1f6b] text-white shadow-sm"
-                    : "text-slate-500 hover:text-[#0f1f6b] hover:bg-slate-50"
+                    ? "bg-[#0f1f6b] dark:bg-blue-600 text-white shadow-sm"
+                    : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
                 }`}
               >
                 {d}
@@ -259,17 +259,17 @@ export default function TeacherPage() {
 
           {/* Day label */}
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-slate-700">{DAYS[selectedDay]}</h2>
-            <span className="text-xs text-slate-400">{formatDate(getDateForDayIndex(selectedDay))}</span>
+            <h2 className="text-base font-semibold text-slate-700 dark:text-white">{DAYS[selectedDay]}</h2>
+            <span className="text-xs text-slate-400 dark:text-slate-500">{formatDate(getDateForDayIndex(selectedDay))}</span>
             {selectedDay === todayIndex && (
-              <span className="text-[11px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Today</span>
+              <span className="text-[11px] font-bold bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">Today</span>
             )}
           </div>
 
           {/* Lesson cards for selected day */}
           {todayLessons.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center">
-              <p className="text-sm text-slate-400">No lessons on {DAYS[selectedDay]}.</p>
+            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-10 text-center">
+              <p className="text-sm text-slate-400 dark:text-slate-500">No lessons on {DAYS[selectedDay]}.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -284,7 +284,7 @@ export default function TeacherPage() {
                   >
                     <div className="flex items-start justify-between mb-3">
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wide">
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                           {lesson.time}{lesson.duration ? ` · ${lesson.duration}` : ""}
                         </p>
                         <p className={`text-base font-bold mt-0.5 ${TX[lesson.color] ?? TX.slate}`}>
@@ -292,21 +292,21 @@ export default function TeacherPage() {
                         </p>
                       </div>
                       {done ? (
-                        <span className="flex items-center gap-1 text-[11px] font-semibold bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full shrink-0">
+                        <span className="flex items-center gap-1 text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-full shrink-0">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                           </svg>
                           Done
                         </span>
                       ) : (
-                        <span className="text-[11px] font-semibold text-slate-400 group-hover:text-[#0f1f6b] transition-colors">
+                        <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:text-[#0f1f6b] dark:group-hover:text-white transition-colors">
                           Attendance →
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-slate-500">
-                      <span className="font-semibold text-slate-700">{lesson.classLabel}</span>
-                      {lesson.groupLabel && <span className="text-slate-400">({lesson.groupLabel})</span>}
+                    <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                      <span className="font-semibold text-slate-700 dark:text-slate-200">{lesson.classLabel}</span>
+                      {lesson.groupLabel && <span className="text-slate-400 dark:text-slate-500">({lesson.groupLabel})</span>}
                       {lesson.room && (
                         <span className="flex items-center gap-1">
                           <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -325,15 +325,15 @@ export default function TeacherPage() {
 
           {/* Weekly overview grid */}
           <div>
-            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">Weekly Overview</h2>
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto">
+            <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Weekly Overview</h2>
+            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 overflow-x-auto">
               <table className="w-full text-sm min-w-[600px]">
                 <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="text-left px-4 py-3 text-slate-400 font-semibold text-xs uppercase tracking-wide w-20">Time</th>
+                  <tr className="border-b border-slate-100 dark:border-white/10">
+                    <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide w-20">Time</th>
                     {DAY_SHORT.map((d, i) => (
                       <th key={i} className={`px-3 py-3 text-xs uppercase tracking-wide font-semibold text-center ${
-                        i === todayIndex ? "text-[#0f1f6b]" : "text-slate-400"
+                        i === todayIndex ? "text-[#0f1f6b] dark:text-white" : "text-slate-400 dark:text-slate-500"
                       }`}>
                         {d}
                         {i === todayIndex && <span className="ml-1 w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />}
@@ -343,10 +343,10 @@ export default function TeacherPage() {
                 </thead>
                 <tbody>
                   {rows.map((row, ri) => (
-                    <tr key={ri} className="border-b border-slate-50 last:border-0">
+                    <tr key={ri} className="border-b border-slate-50 dark:border-white/5 last:border-0">
                       <td className="px-4 py-2 align-middle">
-                        <p className="font-bold text-slate-700 text-xs">{row.time}</p>
-                        {row.duration && <p className="text-[10px] text-slate-400">{row.duration}</p>}
+                        <p className="font-bold text-slate-700 dark:text-slate-200 text-xs">{row.time}</p>
+                        {row.duration && <p className="text-[10px] text-slate-400 dark:text-slate-500">{row.duration}</p>}
                       </td>
                       {row.cells.map((lesson, di) => (
                         <td key={di} className="px-1.5 py-1.5">
@@ -358,10 +358,10 @@ export default function TeacherPage() {
                               <span className={`font-semibold text-xs leading-tight ${TX[lesson.color] ?? TX.slate}`}>
                                 {lesson.subject}
                               </span>
-                              <span className="text-[10px] text-slate-500">{lesson.classLabel}</span>
+                              <span className="text-[10px] text-slate-500 dark:text-slate-400">{lesson.classLabel}</span>
                             </button>
                           ) : (
-                            <div className="min-h-[48px] rounded-xl flex items-center justify-center text-slate-200">
+                            <div className="min-h-[48px] rounded-xl flex items-center justify-center text-slate-200 dark:text-slate-700">
                               <span className="text-xs">—</span>
                             </div>
                           )}
@@ -383,10 +383,10 @@ export default function TeacherPage() {
             className="absolute inset-0 bg-black/30 backdrop-blur-sm"
             onClick={() => setModal(null)}
           />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
+          <div className="relative bg-white dark:bg-[#1a2035] rounded-3xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
 
             {/* Modal header */}
-            <div className={`rounded-t-3xl px-6 py-5 border-b border-slate-100`}>
+            <div className={`rounded-t-3xl px-6 py-5 border-b border-slate-100 dark:border-white/10`}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -394,18 +394,18 @@ export default function TeacherPage() {
                       {modal.lesson.subject}
                     </span>
                     {modal.lesson.groupLabel && (
-                      <span className="text-xs text-slate-400">({modal.lesson.groupLabel})</span>
+                      <span className="text-xs text-slate-400 dark:text-slate-500">({modal.lesson.groupLabel})</span>
                     )}
                   </div>
-                  <h3 className="text-lg font-bold text-slate-800">{modal.lesson.classLabel}</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <h3 className="text-lg font-bold text-slate-800 dark:text-white">{modal.lesson.classLabel}</h3>
+                  <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                     {modal.lesson.time}{modal.lesson.duration ? ` · ${modal.lesson.duration}` : ""}
                     {modal.lesson.room ? ` · ${modal.lesson.room}` : ""}
                   </p>
                 </div>
                 <button
                   onClick={() => setModal(null)}
-                  className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors shrink-0"
+                  className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 transition-colors shrink-0"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -415,12 +415,12 @@ export default function TeacherPage() {
 
               {/* Date selector */}
               <div className="flex items-center gap-3 mt-4">
-                <label className="text-xs font-semibold text-slate-500 shrink-0">Date</label>
+                <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0">Date</label>
                 <input
                   type="date"
                   value={modal.date}
                   onChange={e => handleDateChange(e.target.value)}
-                  className="flex-1 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 outline-none focus:border-blue-400 transition-colors"
+                  className="flex-1 text-sm font-medium text-slate-700 dark:text-white bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 outline-none focus:border-blue-400 transition-colors"
                 />
               </div>
             </div>
@@ -433,13 +433,13 @@ export default function TeacherPage() {
                 </div>
               ) : students.length === 0 ? (
                 <div className="text-center py-10">
-                  <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <svg className="w-6 h-6 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </div>
-                  <p className="text-sm font-semibold text-slate-600 mb-1">No students found</p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">No students found</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">
                     No accepted students match &quot;{modal.lesson.classLabel}&quot;.
                     <br />Ask admin to update student grade assignments.
                   </p>
@@ -459,21 +459,21 @@ export default function TeacherPage() {
                     <div className="flex-1" />
                     <button
                       onClick={() => markAll("present")}
-                      className="text-[11px] font-semibold text-emerald-700 hover:text-emerald-900 px-2 py-1 rounded-lg hover:bg-emerald-50 transition-colors"
+                      className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
                     >
                       All Present
                     </button>
                   </div>
 
                   {students.map(student => (
-                    <div key={student.student_id} className="flex items-center justify-between gap-3 py-2.5 border-b border-slate-50 last:border-0">
+                    <div key={student.student_id} className="flex items-center justify-between gap-3 py-2.5 border-b border-slate-50 dark:border-white/5 last:border-0">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                          <span className="text-xs font-bold text-slate-500">
+                        <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center shrink-0">
+                          <span className="text-xs font-bold text-slate-500 dark:text-slate-300">
                             {student.student_name.split(" ").map(w => w[0]).join("").slice(0, 2)}
                           </span>
                         </div>
-                        <span className="text-sm font-medium text-slate-700">{student.student_name}</span>
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{student.student_name}</span>
                       </div>
                       <div className="flex items-center gap-1">
                         {(["present", "late", "absent"] as const).map(s => (
@@ -483,7 +483,7 @@ export default function TeacherPage() {
                             className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition-all ${
                               student.status === s
                                 ? STATUS_CONFIG[s].bg + " shadow-sm"
-                                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300"
+                                : "bg-white dark:bg-transparent border-slate-200 dark:border-white/15 text-slate-400 dark:text-slate-500 hover:border-slate-300 dark:hover:border-white/30"
                             }`}
                           >
                             {STATUS_CONFIG[s].label}
@@ -497,17 +497,17 @@ export default function TeacherPage() {
             </div>
 
             {/* Modal footer */}
-            <div className="px-6 py-4 border-t border-slate-100 flex items-center gap-3">
+            <div className="px-6 py-4 border-t border-slate-100 dark:border-white/10 flex items-center gap-3">
               <button
                 onClick={() => setModal(null)}
-                className="px-4 py-2.5 text-sm text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
+                className="px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={saveAttendance}
                 disabled={saving || modalLoading || students.length === 0}
-                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#0f1f6b] hover:bg-[#1a30a0] disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-[#0f1f6b] hover:bg-[#1a30a0] dark:bg-blue-600 dark:hover:bg-blue-700 disabled:opacity-50 text-white text-sm font-semibold rounded-xl transition-colors"
               >
                 {saving ? (
                   <>

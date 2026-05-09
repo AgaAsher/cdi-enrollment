@@ -29,7 +29,7 @@ export default async function ArchiveGrid({ enrollments }: { enrollments: Enroll
     return (
       <div className="glass-card p-16 text-center">
         <div className="w-12 h-12 bg-slate-100 dark:bg-white/8 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-6 h-6 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
           </svg>
         </div>
