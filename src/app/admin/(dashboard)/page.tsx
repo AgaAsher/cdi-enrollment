@@ -312,7 +312,7 @@ export default async function AdminPage({
                   {visitRequests.map((e) => {
                     const isPast = e.visit_date! < new Date().toISOString().split("T")[0];
                     return (
-                      <tr key={e.id} className={`hover:bg-slate-50 transition-colors ${isPast ? "opacity-50" : ""}`}>
+                      <tr key={e.id} className={`hover:bg-slate-50 dark:hover:bg-white/5 transition-colors ${isPast ? "opacity-50" : ""}`}>
                         <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">{e.child_first_name} {e.child_last_name}</td>
                         <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{e.applying_for_grade}</td>
                         <td className="px-4 py-3 text-slate-600 dark:text-slate-300">{e.parent1_full_name}</td>
