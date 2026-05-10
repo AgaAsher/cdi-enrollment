@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -119,6 +120,8 @@ const glass = {
 
 export default function Home() {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === "dark";
   const [lang, setLang]         = useState<LangKey>("en");
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
@@ -129,6 +132,14 @@ export default function Home() {
   const [passwordFocus, setPasswordFocus] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const t = LANGS[lang];
+
+  const cardStyle = isDark ? {
+    backdropFilter: "blur(56px) saturate(200%) brightness(0.85)",
+    WebkitBackdropFilter: "blur(56px) saturate(200%) brightness(0.85)",
+    background: "linear-gradient(145deg, rgba(10,30,60,0.55) 0%, rgba(5,15,40,0.60) 40%, rgba(0,40,80,0.50) 100%)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.05), 0 32px 80px rgba(0,0,0,0.70), 0 8px 24px rgba(0,0,0,0.50)",
+  } : glass.card;
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -177,8 +188,9 @@ export default function Home() {
       <div
         className="absolute inset-0"
         style={{
-          background:
-            "linear-gradient(160deg, rgba(0,50,30,0.52) 0%, rgba(5,25,45,0.44) 50%, rgba(0,70,50,0.50) 100%)",
+          background: isDark
+            ? "linear-gradient(160deg, rgba(0,10,20,0.70) 0%, rgba(0,5,15,0.65) 50%, rgba(0,15,30,0.68) 100%)"
+            : "linear-gradient(160deg, rgba(0,50,30,0.52) 0%, rgba(5,25,45,0.44) 50%, rgba(0,70,50,0.50) 100%)",
         }}
       />
 
@@ -222,12 +234,12 @@ export default function Home() {
           )}
         </div>
 
-        <ThemeToggle />
+        <ThemeToggle variant="glass" />
       </div>
 
       {/* ── Glass card ──────────────────────────────────────────────────────── */}
       <div className="relative z-10 w-full max-w-[360px]">
-        <div className="rounded-3xl p-8" style={glass.card}>
+        <div className="rounded-3xl p-8" style={cardStyle}>
 
           {/* Logo */}
           <div className="text-center mb-7">
