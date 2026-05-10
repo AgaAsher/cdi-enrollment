@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Groq from "groq-sdk";
+import { rateLimit } from "@/lib/rate-limit";
 
 const STUDENT_PROMPT = `This is a child's passport or ID document. Extract the following fields and return ONLY a valid JSON object — no explanation, no markdown:
 {
@@ -21,6 +22,14 @@ const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, "extract", { limit: 20, windowMs: 60 * 60 * 1000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many document scans. Try again later." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;

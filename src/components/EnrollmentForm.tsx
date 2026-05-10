@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { enrollmentSchema, EnrollmentFormData } from "@/lib/enrollment-schema";
@@ -123,7 +124,7 @@ const GRADES = [
   "Pre-KG (54–72 months)",
 ];
 
-function getGradeFromDOB(dob: string): string | null {
+function getGradeFromDOB(dob: string): EnrollmentFormData["applying_for_grade"] | null {
   if (!dob) return null;
   const birth = new Date(dob);
   if (isNaN(birth.getTime())) return null;
@@ -198,7 +199,7 @@ function FileUpload({
       ) : (
         <div className="relative flex items-center gap-3 border border-slate-200 dark:border-white/10 rounded-lg p-3 bg-slate-50 dark:bg-white/5">
           {preview ? (
-            <img src={preview} alt="preview" className="w-12 h-12 object-cover rounded border border-slate-200 dark:border-white/10" />
+            <Image src={preview} alt="preview" width={48} height={48} unoptimized className="w-12 h-12 object-cover rounded border border-slate-200 dark:border-white/10" />
           ) : (
             <div className="w-12 h-12 bg-blue-100 dark:bg-blue-500/20 rounded flex items-center justify-center shrink-0">
               <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

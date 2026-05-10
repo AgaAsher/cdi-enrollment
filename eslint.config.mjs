@@ -5,6 +5,16 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    rules: {
+      // The hydration mount pattern (useEffect(() => setMounted(true), []))
+      // is the canonical Next.js / next-themes pattern; the React Compiler
+      // rule flags it but it is correct.
+      "react-hooks/set-state-in-effect": "off",
+      // React Hook Form's watch() is intentionally a non-stable function.
+      "react-hooks/incompatible-library": "off",
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

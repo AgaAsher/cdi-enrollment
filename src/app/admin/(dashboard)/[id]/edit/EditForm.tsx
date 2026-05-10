@@ -46,7 +46,7 @@ export default function EditForm({ enrollment }: { enrollment: Enrollment }) {
       child_date_of_birth: enrollment.child_date_of_birth,
       child_gender: enrollment.child_gender as EnrollmentFormData["child_gender"],
       child_nationality: enrollment.child_nationality,
-      applying_for_grade: enrollment.applying_for_grade,
+      applying_for_grade: enrollment.applying_for_grade as EnrollmentFormData["applying_for_grade"],
       academic_year: enrollment.academic_year,
       previous_school: enrollment.previous_school ?? "",
       languages_spoken: enrollment.languages_spoken ?? "",

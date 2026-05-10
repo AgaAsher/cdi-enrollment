@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSessionToken, sessionCookieOptions } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { verifyPassword } from "@/lib/password";
+import { verifyPassword, constantTimeEqual } from "@/lib/password";
+import { rateLimit } from "@/lib/rate-limit";
 
 const SUPER_ADMIN_PERMISSIONS = {
   dashboard: true,
@@ -12,22 +13,41 @@ const SUPER_ADMIN_PERMISSIONS = {
 };
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, "login", { limit: 10, windowMs: 5 * 60 * 1000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many login attempts. Try again in a few minutes." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   const { email, password } = await req.json();
   if (!email || !password) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
-  // Check super admin from env first
-  if (email === process.env.ADMIN_EMAIL && password === process.env.ADMIN_PASSWORD) {
-    const token = createSessionToken({
-      email,
-      name: "Super Admin",
-      role: "super_admin",
-      permissions: SUPER_ADMIN_PERMISSIONS,
-    });
-    const res = NextResponse.json({ success: true, redirectTo: "/admin" });
-    res.cookies.set(sessionCookieOptions(token));
-    return res;
+  // Check super admin from env first.
+  // Prefer ADMIN_PASSWORD_HASH (scrypt). Fall back to ADMIN_PASSWORD (plain) only if hash not set.
+  const envEmail = process.env.ADMIN_EMAIL ?? "";
+  const envHash = process.env.ADMIN_PASSWORD_HASH ?? "";
+  const envPlain = process.env.ADMIN_PASSWORD ?? "";
+
+  if (envEmail && constantTimeEqual(email, envEmail)) {
+    const passwordOk = envHash
+      ? verifyPassword(password, envHash)
+      : envPlain ? constantTimeEqual(password, envPlain) : false;
+
+    if (passwordOk) {
+      const token = createSessionToken({
+        email: envEmail,
+        name: "Super Admin",
+        role: "super_admin",
+        permissions: SUPER_ADMIN_PERMISSIONS,
+      });
+      const res = NextResponse.json({ success: true, redirectTo: "/admin" });
+      res.cookies.set(sessionCookieOptions(token));
+      return res;
+    }
   }
 
   // Check DB users

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { enrollmentSchema } from "@/lib/enrollment-schema";
+import { adminNotificationEmail, parentConfirmationEmail } from "@/lib/email-templates";
+import { rateLimit } from "@/lib/rate-limit";
 import { Resend } from "resend";
 
 const ALLOWED_UPLOAD_TYPES = new Set([
@@ -26,6 +28,14 @@ async function uploadFile(supabase: ReturnType<typeof createAdminClient>, file: 
 }
 
 export async function POST(req: NextRequest) {
+  const rl = rateLimit(req, "enroll", { limit: 5, windowMs: 60 * 60 * 1000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many submissions. Please contact us directly if you need help." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }
+    );
+  }
+
   const resend = new Resend(process.env.RESEND_API_KEY ?? "");
   try {
     const formData = await req.formData();
@@ -132,47 +142,4 @@ export async function POST(req: NextRequest) {
     console.error("Enrollment error:", err);
     return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
-}
-
-function parentConfirmationEmail(firstName: string, lastName: string, grade: string) {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
-      <div style="background: #1e40af; padding: 24px; border-radius: 8px 8px 0 0; text-align: center;">
-        <h1 style="color: white; margin: 0; font-size: 22px;">Child Development Academy</h1>
-        <p style="color: #bfdbfe; margin: 4px 0 0;">International School of Laos</p>
-      </div>
-      <div style="background: #f8fafc; padding: 32px; border-radius: 0 0 8px 8px; border: 1px solid #e2e8f0;">
-        <h2 style="color: #1e293b;">Application Received!</h2>
-        <p style="color: #475569;">Thank you for submitting an enrollment application for:</p>
-        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
-          <strong style="color: #1e293b;">${firstName} ${lastName}</strong><br/>
-          <span style="color: #64748b;">Applying for: ${grade}</span>
-        </div>
-        <p style="color: #475569;">Our admissions team will review your application and contact you within <strong>3–5 business days</strong>.</p>
-        <p style="color: #475569;">If you have any questions, please contact us at:</p>
-        <p style="color: #1e40af;"><a href="mailto:${process.env.ADMIN_EMAIL}">${process.env.ADMIN_EMAIL}</a></p>
-        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;"/>
-        <p style="color: #94a3b8; font-size: 12px; text-align: center;">
-          Child Development Academy – International School of Laos<br/>Vientiane, Laos PDR
-        </p>
-      </div>
-    </div>
-  `;
-}
-
-function adminNotificationEmail(data: Record<string, unknown>) {
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px;">
-      <h2 style="color: #1e40af;">New Enrollment Application</h2>
-      <table style="width: 100%; border-collapse: collapse;">
-        <tr><td style="padding: 8px; color: #64748b;">Child Name</td><td style="padding: 8px; font-weight: bold;">${data.child_first_name} ${data.child_last_name}</td></tr>
-        <tr style="background:#f8fafc"><td style="padding: 8px; color: #64748b;">Date of Birth</td><td style="padding: 8px;">${data.child_date_of_birth}</td></tr>
-        <tr><td style="padding: 8px; color: #64748b;">Applying For</td><td style="padding: 8px;">${data.applying_for_grade}</td></tr>
-        <tr style="background:#f8fafc"><td style="padding: 8px; color: #64748b;">Parent</td><td style="padding: 8px;">${data.parent1_full_name}</td></tr>
-        <tr><td style="padding: 8px; color: #64748b;">Parent Email</td><td style="padding: 8px;">${data.parent1_email}</td></tr>
-        <tr style="background:#f8fafc"><td style="padding: 8px; color: #64748b;">Parent Phone</td><td style="padding: 8px;">${data.parent1_phone}</td></tr>
-      </table>
-      <p style="margin-top: 24px;"><a href="${process.env.NEXT_PUBLIC_APP_URL}/admin" style="background: #1e40af; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">View in Dashboard</a></p>
-    </div>
-  `;
 }
