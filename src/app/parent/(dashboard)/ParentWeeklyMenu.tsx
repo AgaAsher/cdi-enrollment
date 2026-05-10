@@ -30,8 +30,7 @@ export default function ParentWeeklyMenu({
   const hasAnyMenu = !!menuData && DAYS.some(d => MEALS.some(m => menuData[d]?.[m]));
 
   return (
-    <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-100 dark:border-white/8 shadow-sm overflow-hidden">
-
+    <>
       {/* Today label */}
       <div className="px-5 pt-4 pb-2">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
@@ -45,7 +44,7 @@ export default function ParentWeeklyMenu({
       ) : !hasToday ? (
         <p className="px-5 pb-4 text-sm text-slate-400 dark:text-slate-500 italic">No menu available for today.</p>
       ) : (
-        <div className="px-5 pb-1 space-y-2.5">
+        <div className="px-5 pb-3 space-y-2.5">
           {MEALS.map(meal => {
             const val = todayMeals[meal] ?? "";
             if (!val) return null;
@@ -70,7 +69,7 @@ export default function ParentWeeklyMenu({
         <>
           <button
             onClick={() => setWeekOpen(v => !v)}
-            className="w-full flex items-center justify-center gap-1.5 px-5 py-3 mt-2 border-t border-slate-100 dark:border-white/8 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+            className="w-full flex items-center justify-center gap-1.5 px-5 py-3 border-t border-slate-100 dark:border-white/8 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
           >
             {weekOpen ? "Hide full week" : "View full week"}
             <svg
@@ -139,6 +138,6 @@ export default function ParentWeeklyMenu({
           )}
         </>
       )}
-    </div>
+    </>
   );
 }

@@ -308,7 +308,7 @@ export default async function ParentDashboardPage() {
 
       {/* Upcoming Events */}
       <CollapsibleSection title="Upcoming Events" defaultOpen={true}>
-        <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-100 dark:border-white/8 shadow-sm divide-y divide-slate-100 dark:divide-white/6 overflow-hidden">
+        <div className="divide-y divide-slate-100 dark:divide-white/8">
           {upcomingEvents.length === 0 ? (
             <div className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">No upcoming events.</div>
           ) : (
@@ -335,9 +335,9 @@ export default async function ParentDashboardPage() {
 
       {/* Noticeboard */}
       <CollapsibleSection title="Noticeboard" defaultOpen={true}>
-        <div className="space-y-3">
+        <div className="divide-y divide-slate-100 dark:divide-white/8">
           {NOTICES.map((n, i) => (
-            <div key={i} className="bg-white dark:bg-[#1a2035] rounded-2xl p-5 border border-slate-100 dark:border-white/8 shadow-sm">
+            <div key={i} className="px-5 py-4">
               <div className="flex items-start justify-between gap-3 mb-1.5">
                 <p className="text-sm font-semibold text-slate-800 dark:text-white">{n.title}</p>
                 <div className="flex items-center gap-2 shrink-0">
