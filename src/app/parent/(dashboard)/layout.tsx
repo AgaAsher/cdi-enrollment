@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default async function ParentDashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
-  if (!session || session.role !== "parent") redirect("/parent/login");
+  if (!session || session.role !== "parent") redirect("/admin/login");
 
   return (
     <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0d1117]">
