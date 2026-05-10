@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import Image from "next/image";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default async function ParentDashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -16,11 +17,14 @@ export default async function ParentDashboardLayout({ children }: { children: Re
             <p className="text-xs text-slate-500">Parent Portal</p>
           </div>
         </div>
-        <form action="/api/auth/logout" method="POST">
-          <button className="text-xs text-slate-500 hover:text-slate-800 dark:text-white/60 dark:hover:text-white px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/15 transition-all">
-            Sign out
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <form action="/api/auth/logout" method="POST">
+            <button className="text-xs text-slate-500 hover:text-slate-800 dark:text-white/60 dark:hover:text-white px-3 py-1.5 rounded-full border border-slate-200 dark:border-white/15 transition-all">
+              Sign out
+            </button>
+          </form>
+        </div>
       </header>
       <main className="max-w-4xl mx-auto p-6">{children}</main>
     </div>
