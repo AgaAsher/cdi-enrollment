@@ -15,9 +15,8 @@ const LANGS = {
     placeholder: "your@email.com",
     signIn: "Sign In", signingIn: "Signing in…",
     invalidCreds: "Invalid email or password.",
-    newToCda: "New to CDA? Apply for enrolment below.",
+    newToCda: "New to CDA? Apply for enrolment.",
     enrollBtn: "Enroll Your Child",
-    footer: "Child Development Academy · International School of Laos",
   },
   lo: {
     flag: "🇱🇦", label: "ລາວ",
@@ -27,9 +26,8 @@ const LANGS = {
     placeholder: "your@email.com",
     signIn: "ເຂົ້າສູ່ລະບົບ", signingIn: "ກຳລັງເຂົ້າສູ່ລະບົບ…",
     invalidCreds: "ອີເມວ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ.",
-    newToCda: "ໃໝ່ກັບ CDA? ສະໝັກລົງທະບຽນຂ້າງລຸ່ມ.",
+    newToCda: "ໃໝ່ກັບ CDA? ສະໝັກລົງທະບຽນ.",
     enrollBtn: "ລົງທະບຽນລູກຂອງທ່ານ",
-    footer: "ສະຖາບັນພັດທະນາເດັກ · ໂຮງຮຽນສາກົນລາວ",
   },
   zh: {
     flag: "🇨🇳", label: "中文",
@@ -39,9 +37,8 @@ const LANGS = {
     placeholder: "your@email.com",
     signIn: "登录", signingIn: "登录中…",
     invalidCreds: "邮箱或密码无效。",
-    newToCda: "初次来到 CDA？请在下方申请入学。",
+    newToCda: "初次来到 CDA？申请入学。",
     enrollBtn: "为孩子报名",
-    footer: "儿童发展学院 · 老挝国际学校",
   },
   ko: {
     flag: "🇰🇷", label: "한국어",
@@ -51,9 +48,8 @@ const LANGS = {
     placeholder: "your@email.com",
     signIn: "로그인", signingIn: "로그인 중…",
     invalidCreds: "이메일 또는 비밀번호가 올바르지 않습니다.",
-    newToCda: "CDA가 처음이신가요? 아래에서 등록 신청하세요.",
+    newToCda: "CDA가 처음이신가요? 등록 신청하세요.",
     enrollBtn: "자녀 등록하기",
-    footer: "아동 발달 아카데미 · 라오스 국제 학교",
   },
   th: {
     flag: "🇹🇭", label: "ไทย",
@@ -63,9 +59,8 @@ const LANGS = {
     placeholder: "your@email.com",
     signIn: "เข้าสู่ระบบ", signingIn: "กำลังเข้าสู่ระบบ…",
     invalidCreds: "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
-    newToCda: "ใหม่กับ CDA? สมัครเข้าเรียนด้านล่าง",
+    newToCda: "ใหม่กับ CDA? สมัครเข้าเรียน",
     enrollBtn: "ลงทะเบียนบุตรหลาน",
-    footer: "สถาบันพัฒนาการเด็ก · โรงเรียนนานาชาติลาว",
   },
 } as const;
 
@@ -83,7 +78,6 @@ export default function Home() {
 
   const t = LANGS[lang];
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -114,15 +108,27 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-white dark:bg-[#0d1117] transition-colors duration-300">
+    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+
+      {/* Background photo */}
+      <Image
+        src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1920&q=80"
+        alt="School background"
+        fill
+        priority
+        className="object-cover object-center"
+        unoptimized
+      />
+      {/* Subtle dark overlay for legibility */}
+      <div className="absolute inset-0 bg-black/30" />
 
       {/* Top bar */}
-      <div className="fixed top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+      <div className="fixed top-4 left-4 right-4 z-20 flex items-center justify-between">
         {/* Language picker */}
-        <div ref={dropdownRef} className="relative pointer-events-auto">
+        <div ref={dropdownRef} className="relative">
           <button
             onClick={() => setLangOpen(v => !v)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-slate-600 dark:text-slate-300 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 shadow-sm hover:border-slate-300 dark:hover:border-white/20 transition-all"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-white backdrop-blur-md bg-white/20 border border-white/30 shadow hover:bg-white/30 transition-all"
           >
             <span className="text-base leading-none">{t.flag}</span>
             <span>{t.label}</span>
@@ -132,21 +138,19 @@ export default function Home() {
           </button>
 
           {langOpen && (
-            <div className="absolute top-full left-0 mt-1.5 w-40 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden z-50">
+            <div className="absolute top-full left-0 mt-1.5 w-40 backdrop-blur-2xl bg-white/25 border border-white/40 rounded-2xl shadow-2xl overflow-hidden z-50">
               {(Object.keys(LANGS) as LangKey[]).map(key => (
                 <button
                   key={key}
                   onClick={() => { setLang(key); setLangOpen(false); }}
-                  className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium transition-colors ${
-                    lang === key
-                      ? "bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300"
-                      : "text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-white/5"
+                  className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-white transition-colors ${
+                    lang === key ? "bg-white/25" : "hover:bg-white/15"
                   }`}
                 >
                   <span className="text-base leading-none">{LANGS[key].flag}</span>
                   <span>{LANGS[key].label}</span>
                   {lang === key && (
-                    <svg className="w-3 h-3 ml-auto text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-3 h-3 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
@@ -156,32 +160,42 @@ export default function Home() {
           )}
         </div>
 
-        {/* Theme toggle */}
-        <div className="pointer-events-auto">
-          <ThemeToggle />
-        </div>
+        <ThemeToggle />
       </div>
 
-      <div className="w-full max-w-sm">
+      {/* Glass card */}
+      <div className="relative z-10 w-full max-w-[360px]">
         <div
-          className="bg-white dark:bg-[#1a2035] rounded-3xl p-8 shadow-xl dark:shadow-2xl border border-slate-100 dark:border-white/8"
-          style={{ boxShadow: "0 8px 40px rgba(15,31,107,0.10), 0 2px 8px rgba(15,31,107,0.06)" }}
+          className="rounded-3xl p-8 border border-white/40"
+          style={{
+            backdropFilter: "blur(32px) saturate(180%)",
+            WebkitBackdropFilter: "blur(32px) saturate(180%)",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.16) 100%)",
+            boxShadow: "0 8px 48px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.5)",
+          }}
         >
           {/* Logo + title */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-7">
             <div className="flex justify-center mb-4">
-              <div className="w-20 h-20 rounded-2xl bg-white shadow-md p-1.5 flex items-center justify-center">
-                <Image src="/logo.png" alt="CDA" width={72} height={72} priority className="object-contain" />
+              <div
+                className="w-20 h-20 rounded-2xl p-1.5 flex items-center justify-center"
+                style={{
+                  backdropFilter: "blur(12px)",
+                  background: "rgba(255,255,255,0.85)",
+                  boxShadow: "0 4px 20px rgba(0,0,0,0.18)",
+                }}
+              >
+                <Image src="/logo.png" alt="CDA" width={68} height={68} priority className="object-contain" />
               </div>
             </div>
-            <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white tracking-tight">{t.title}</h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">{t.subtitle}</p>
+            <h1 className="text-lg font-bold text-white drop-shadow tracking-tight">{t.title}</h1>
+            <p className="text-white/75 text-sm mt-0.5">{t.subtitle}</p>
           </div>
 
-          {/* Sign-in form */}
-          <form onSubmit={handleLogin} className="space-y-4">
+          {/* Form */}
+          <form onSubmit={handleLogin} className="space-y-3">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/70 mb-1.5">
                 {t.emailLabel}
               </label>
               <input
@@ -190,12 +204,19 @@ export default function Home() {
                 onChange={e => setEmail(e.target.value)}
                 placeholder={t.placeholder}
                 required
-                className="w-full px-4 py-2.5 text-sm text-slate-800 dark:text-white bg-slate-50 dark:bg-white/6 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:border-blue-400 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                className="w-full px-4 py-2.5 text-sm text-white rounded-xl outline-none transition-all placeholder:text-white/40"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  border: "1px solid rgba(255,255,255,0.30)",
+                  backdropFilter: "blur(8px)",
+                }}
+                onFocus={e => (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
+                onBlur={e => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 mb-1.5">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/70 mb-1.5">
                 {t.passwordLabel}
               </label>
               <input
@@ -204,12 +225,19 @@ export default function Home() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-2.5 text-sm text-slate-800 dark:text-white bg-slate-50 dark:bg-white/6 border border-slate-200 dark:border-white/10 rounded-xl outline-none focus:border-blue-400 dark:focus:border-blue-500 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                className="w-full px-4 py-2.5 text-sm text-white rounded-xl outline-none transition-all placeholder:text-white/40"
+                style={{
+                  background: "rgba(255,255,255,0.15)",
+                  border: "1px solid rgba(255,255,255,0.30)",
+                  backdropFilter: "blur(8px)",
+                }}
+                onFocus={e => (e.currentTarget.style.background = "rgba(255,255,255,0.22)")}
+                onBlur={e => (e.currentTarget.style.background = "rgba(255,255,255,0.15)")}
               />
             </div>
 
             {error && (
-              <div className="rounded-xl px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20">
+              <div className="rounded-xl px-4 py-2.5 text-xs font-medium text-red-100 bg-red-500/30 border border-red-400/40">
                 {error}
               </div>
             )}
@@ -217,25 +245,27 @@ export default function Home() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 text-sm font-semibold text-white rounded-xl transition-all disabled:opacity-60"
+              className="w-full py-2.5 text-sm font-bold text-white rounded-xl transition-all disabled:opacity-60 mt-1"
               style={{
-                background: "linear-gradient(135deg, #1a3fa8 0%, #2563eb 100%)",
-                boxShadow: "0 4px 16px rgba(37,99,235,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
+                background: "linear-gradient(135deg, rgba(37,99,235,0.85) 0%, rgba(99,102,241,0.85) 100%)",
+                boxShadow: "0 4px 20px rgba(37,99,235,0.45), inset 0 1px 0 rgba(255,255,255,0.25)",
+                backdropFilter: "blur(8px)",
               }}
             >
               {loading ? t.signingIn : t.signIn}
             </button>
           </form>
 
-          {/* Enroll CTA */}
-          <div className="mt-6 pt-5 border-t border-slate-100 dark:border-white/8">
-            <p className="text-center text-xs text-slate-400 dark:text-slate-500 mb-3">{t.newToCda}</p>
+          {/* Divider + Enroll */}
+          <div className="mt-5 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.20)" }}>
+            <p className="text-center text-xs text-white/60 mb-3">{t.newToCda}</p>
             <Link
               href="/enroll"
-              className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-semibold text-white rounded-xl transition-all"
+              className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-bold text-white rounded-xl transition-all"
               style={{
-                background: "linear-gradient(135deg, #059669 0%, #10b981 100%)",
-                boxShadow: "0 4px 16px rgba(16,185,129,0.40), inset 0 1px 0 rgba(255,255,255,0.2)",
+                background: "linear-gradient(135deg, rgba(5,150,105,0.80) 0%, rgba(16,185,129,0.80) 100%)",
+                boxShadow: "0 4px 20px rgba(16,185,129,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
+                backdropFilter: "blur(8px)",
               }}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -246,8 +276,8 @@ export default function Home() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-5">
-          © {new Date().getFullYear()} {t.footer}
+        <p className="text-center text-xs text-white/50 mt-5 drop-shadow">
+          © {new Date().getFullYear()} Child Development Academy
         </p>
       </div>
     </div>
