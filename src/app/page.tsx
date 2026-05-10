@@ -34,10 +34,6 @@ export default function Home() {
           </div>
           <h1 className="text-3xl font-bold text-[#0f1f6b] dark:text-white tracking-tight">Child Development Academy</h1>
           <p className="text-[#1a3fa8] dark:text-blue-400 text-lg mt-1">International School of Laos</p>
-          <p className="text-slate-500 dark:text-slate-400 mt-3 max-w-xl mx-auto text-sm leading-relaxed">
-            Complete the form below to begin your child&apos;s enrollment application.
-            Our admissions team will review and respond within 3–5 business days.
-          </p>
         </div>
 
         <EnrollmentForm />

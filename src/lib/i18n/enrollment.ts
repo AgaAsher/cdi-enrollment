@@ -10,6 +10,7 @@ export const LANG_META: Record<Lang, { flag: string; label: string }> = {
 
 export const translations = {
   en: {
+    pageSubtitle: "Complete the form below to begin your child's enrollment application. Our admissions team will review and respond within 3–5 business days.",
     // Sections
     documents: "Documents",
     documentsHint: "Upload ID or passport photos — we'll automatically fill in the form fields below.",
@@ -125,6 +126,7 @@ export const translations = {
   },
 
   zh: {
+    pageSubtitle: "请填写以下表格开始孩子的入学申请。招生团队将在 3–5 个工作日内审核并回复。",
     documents: "文件",
     documentsHint: "上传身份证或护照照片——系统将自动填写下方的表格信息。",
     childInfo: "儿童信息",
@@ -228,6 +230,7 @@ export const translations = {
   },
 
   ko: {
+    pageSubtitle: "아래 양식을 작성하여 자녀의 입학 신청을 시작해 주세요. 입학 담당팀이 검토 후 영업일 기준 3~5일 이내에 답변드립니다.",
     documents: "서류",
     documentsHint: "신분증 또는 여권 사진을 업로드하면 아래 양식이 자동으로 채워집니다.",
     childInfo: "아동 정보",
@@ -331,6 +334,7 @@ export const translations = {
   },
 
   th: {
+    pageSubtitle: "กรุณากรอกแบบฟอร์มด้านล่างเพื่อเริ่มต้นการสมัครเข้าเรียนของบุตรหลาน ทีมรับสมัครจะตรวจสอบและตอบกลับภายใน 3–5 วันทำการ",
     documents: "เอกสาร",
     documentsHint: "อัปโหลดรูปบัตรประชาชนหรือหนังสือเดินทาง — ระบบจะกรอกข้อมูลในแบบฟอร์มด้านล่างโดยอัตโนมัติ",
     childInfo: "ข้อมูลเด็ก",
@@ -434,6 +438,7 @@ export const translations = {
   },
 
   lo: {
+    pageSubtitle: "ກະລຸນາຕື່ມແບບຟອມດ້ານລຸ່ມເພື່ອເລີ່ມຕົ້ນການສະໝັກຮຽນຂອງລູກ. ທີມຮັບສະໝັກຈະກວດສອບ ແລະ ຕອບກັບພາຍໃນ 3–5 ວັນທຳການ",
     documents: "ເອກະສານ",
     documentsHint: "ອັບໂຫຼດຮູບບັດປະຈຳຕົວ ຫຼື ໜັງສືຜ່ານແດນ — ລະບົບຈະຕື່ມຂໍ້ມູນໃນແບບຟອມດ້ານລຸ່ມໂດຍອັດຕະໂນມັດ",
     childInfo: "ຂໍ້ມູນເດັກ",

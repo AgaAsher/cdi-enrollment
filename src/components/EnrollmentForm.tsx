@@ -435,6 +435,7 @@ export default function EnrollmentForm() {
   );
 
   if (submitted) {
+
     return (
       <div className="glass p-10 text-center" style={{ borderColor: "rgba(134,239,172,0.3)" }}>
         <div className="w-16 h-16 bg-green-100 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -461,6 +462,10 @@ export default function EnrollmentForm() {
   }
 
   return (
+    <>
+    <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-xl mx-auto text-sm leading-relaxed text-center">
+      {t.pageSubtitle}
+    </p>
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
       {langBar}
 
@@ -908,5 +913,6 @@ export default function EnrollmentForm() {
         {t.submitDisclaimer}
       </p>
     </form>
+    </>
   );
 }
