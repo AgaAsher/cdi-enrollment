@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { useAdminLang } from "@/components/AdminLangProvider";
 
 type NavLeaf     = { label: string; href: string; badge?: number };
 type NavSubGroup = { type: "subgroup"; label: string; key: string; icon?: React.ReactNode; children: NavLeaf[] };
@@ -27,6 +28,7 @@ export default function Sidebar({
   const section = sp.get("section") ?? "dashboard";
   const status  = sp.get("status") ?? "all";
   const tab     = sp.get("tab") ?? "";
+  const { t } = useAdminLang();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     admission: true,
@@ -53,33 +55,33 @@ export default function Sidebar({
 
   // ── students children ──────────────────────────────────────────────────────
   const studentsChildren: NavLeaf[] = [
-    permissions.students_all      && { label: "All",      href: "/admin?section=master&status=all",      badge: counts.all },
-    permissions.students_pending  && { label: "Pending",  href: "/admin?section=master&status=pending",  badge: counts.pending },
-    permissions.students_reviewed && { label: "Reviewed", href: "/admin?section=master&status=reviewed", badge: counts.reviewed },
-    permissions.students_accepted && { label: "Accepted", href: "/admin?section=master&status=accepted", badge: counts.accepted },
-    permissions.students_rejected && { label: "Rejected", href: "/admin?section=master&status=rejected", badge: counts.rejected },
+    permissions.students_all      && { label: t.all,      href: "/admin?section=master&status=all",      badge: counts.all },
+    permissions.students_pending  && { label: t.pending,  href: "/admin?section=master&status=pending",  badge: counts.pending },
+    permissions.students_reviewed && { label: t.reviewed, href: "/admin?section=master&status=reviewed", badge: counts.reviewed },
+    permissions.students_accepted && { label: t.accepted, href: "/admin?section=master&status=accepted", badge: counts.accepted },
+    permissions.students_rejected && { label: t.rejected, href: "/admin?section=master&status=rejected", badge: counts.rejected },
   ].filter(Boolean) as NavLeaf[];
 
   // ── admission group children ───────────────────────────────────────────────
   const admissionChildren: NavGroupChild[] = [
     ...(permissions.students_view
       ? studentsChildren.length > 1
-        ? [{ type: "subgroup" as const, label: "Students", key: "students", icon: studentsIcon, children: studentsChildren }]
+        ? [{ type: "subgroup" as const, label: t.students, key: "students", icon: studentsIcon, children: studentsChildren }]
         : studentsChildren.length === 1
           ? [studentsChildren[0]]
           : []
       : []
     ),
-    ...(permissions.visits  ? [{ label: "Visit Requests", href: "/admin?section=visits",  badge: visitCount }] : []),
-    ...(permissions.archive ? [{ label: "Archive",        href: "/admin?section=archive"               }] : []),
-    ...(permissions.reports ? [{ label: "Reports",        href: "/admin?section=reports"               }] : []),
+    ...(permissions.visits  ? [{ label: t.visitRequests, href: "/admin?section=visits",  badge: visitCount }] : []),
+    ...(permissions.archive ? [{ label: t.archive,       href: "/admin?section=archive"               }] : []),
+    ...(permissions.reports ? [{ label: t.reports,       href: "/admin?section=reports"               }] : []),
   ];
 
   // ── nav items ──────────────────────────────────────────────────────────────
   const items: NavItem[] = [
     ...(permissions.dashboard ? [{
       type: "link" as const,
-      label: "Dashboard",
+      label: t.dashboard,
       href: "/admin?section=dashboard",
       icon: (
         <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -90,7 +92,7 @@ export default function Sidebar({
 
     ...(admissionChildren.length > 0 ? [{
       type: "group" as const,
-      label: "Admission",
+      label: t.admission,
       key: "admission",
       icon: (
         <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -102,7 +104,7 @@ export default function Sidebar({
 
     [{
       type: "group" as const,
-      label: "School",
+      label: t.school,
       key: "school",
       icon: (
         <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -111,18 +113,18 @@ export default function Sidebar({
         </svg>
       ),
       children: [
-        { label: "Timetable",   href: "/admin?section=school&tab=timetable" },
-        { label: "Attendance",  href: "/admin?section=school&tab=attendance" },
-        { label: "Classes",     href: "/admin?section=school&tab=classes" },
-        { label: "Teachers",    href: "/admin?section=school&tab=teachers" },
-        { label: "Events",      href: "/admin?section=school&tab=events" },
-        { label: "Noticeboard", href: "/admin?section=school&tab=noticeboard" },
+        { label: t.timetable,   href: "/admin?section=school&tab=timetable" },
+        { label: t.attendance,  href: "/admin?section=school&tab=attendance" },
+        { label: t.classes,     href: "/admin?section=school&tab=classes" },
+        { label: t.teachers,    href: "/admin?section=school&tab=teachers" },
+        { label: t.events,      href: "/admin?section=school&tab=events" },
+        { label: t.noticeboard, href: "/admin?section=school&tab=noticeboard" },
       ] as NavLeaf[],
     }][0],
 
     ...(permissions.users ? [{
       type: "link" as const,
-      label: "Users",
+      label: t.users,
       href: "/admin?section=users",
       icon: (
         <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -133,7 +135,7 @@ export default function Sidebar({
 
     ...(permissions.settings ? [{
       type: "link" as const,
-      label: "Settings",
+      label: t.settings,
       href: "/admin/settings",
       icon: (
         <svg className="w-[18px] h-[18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
