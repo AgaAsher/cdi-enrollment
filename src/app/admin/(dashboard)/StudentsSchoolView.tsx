@@ -185,7 +185,7 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
             <p className="text-slate-400 dark:text-slate-500 text-sm">No students in this class yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
             {visibleStudents.map((s) => {
               const c = gradeColorFor(s.applying_for_grade);
               const initials =
@@ -194,63 +194,55 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
               const fb = feedbackFor(s.id);
               const isExpanded = expandedId === s.id;
               return (
-                <div key={s.id} className="glass-card p-5 flex flex-col gap-3">
+                <div key={s.id} className="glass-card p-3 flex flex-col gap-2">
                   {/* Avatar + name — double-click to open profile */}
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center shrink-0">
-                      <span className="text-sm font-bold text-blue-700 dark:text-blue-300">{initials}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-blue-700 dark:text-blue-300">{initials}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
-                        className="text-sm font-bold text-slate-800 dark:text-white truncate cursor-pointer select-none"
+                        className="text-xs font-bold text-slate-800 dark:text-white truncate cursor-pointer select-none"
                         onDoubleClick={() => router.push(`/admin/${s.id}`)}
                         title="Double-click to open profile"
                       >
                         {s.child_first_name} {s.child_last_name}
                       </p>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${c.bg} ${c.text}`}>
+                      <span className={`inline-flex items-center px-1.5 py-px rounded-full text-[9px] font-bold ${c.bg} ${c.text}`}>
                         {gradeLabel(s.applying_for_grade)}
                       </span>
                     </div>
                   </div>
 
                   {/* Details */}
-                  <div className="space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
-                    <div className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+                    <div className="flex items-center gap-1">
+                      <svg className="w-3 h-3 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                       <span>{s.child_date_of_birth}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <svg className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="flex items-center gap-1">
+                      <svg className="w-3 h-3 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 21l1.9-5.7a8.5 8.5 0 113.8 3.8L3 21" />
                       </svg>
-                      <span>{s.child_nationality}</span>
+                      <span className="truncate">{s.child_nationality}</span>
                     </div>
-                    {s.languages_spoken && (
-                      <div className="flex items-center gap-1.5">
-                        <svg className="w-3.5 h-3.5 shrink-0 text-slate-400 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        <span className="truncate">{s.languages_spoken}</span>
-                      </div>
-                    )}
                   </div>
 
                   {/* Parent info */}
-                  <div className="pt-3 border-t border-slate-100 dark:border-white/8">
-                    <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1">Parent</p>
-                    <p className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{s.parent1_full_name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{s.parent1_phone}</p>
+                  <div className="pt-2 border-t border-slate-100 dark:border-white/8">
+                    <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-0.5">Parent</p>
+                    <p className="text-[11px] font-medium text-slate-700 dark:text-slate-300 truncate">{s.parent1_full_name}</p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400">{s.parent1_phone}</p>
                   </div>
 
                   {/* Feedback toggle */}
                   <button
                     onClick={() => setExpandedId(isExpanded ? null : s.id)}
-                    className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/8 text-left w-full group"
+                    className="flex items-center justify-between pt-1.5 border-t border-slate-100 dark:border-white/8 text-left w-full group"
                   >
-                    <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+                    <span className="flex items-center gap-1 text-[10px] font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
                       Teacher Feedback
                       {fb.length > 0 && (
                         <span className="bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
@@ -259,7 +251,7 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
                       )}
                     </span>
                     <svg
-                      className={`w-3.5 h-3.5 text-slate-400 dark:text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                      className={`w-3 h-3 text-slate-400 dark:text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}
                       fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
