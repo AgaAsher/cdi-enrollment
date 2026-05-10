@@ -3,6 +3,7 @@ import { getSession } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Enrollment } from "@/lib/types";
 import ParentTimetable from "./ParentTimetable";
+import CollapsibleSection from "./CollapsibleSection";
 
 const SCHOOL_EVENTS = [
   { date: "2026-05-15", title: "Parent–Teacher Meeting",   type: "Meeting",  color: "blue"   },
@@ -283,8 +284,7 @@ export default async function ParentDashboardPage() {
       )}
 
       {/* Upcoming Events */}
-      <div>
-        <h2 className="text-base font-bold text-slate-800 dark:text-white mb-3">Upcoming Events</h2>
+      <CollapsibleSection title="Upcoming Events" defaultOpen={true}>
         <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-100 dark:border-white/8 shadow-sm divide-y divide-slate-100 dark:divide-white/6 overflow-hidden">
           {upcomingEvents.length === 0 ? (
             <div className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">No upcoming events.</div>
@@ -308,11 +308,10 @@ export default async function ParentDashboardPage() {
             })
           )}
         </div>
-      </div>
+      </CollapsibleSection>
 
       {/* Noticeboard */}
-      <div>
-        <h2 className="text-base font-bold text-slate-800 dark:text-white mb-3">Noticeboard</h2>
+      <CollapsibleSection title="Noticeboard" defaultOpen={true}>
         <div className="space-y-3">
           {NOTICES.map((n, i) => (
             <div key={i} className="bg-white dark:bg-[#1a2035] rounded-2xl p-5 border border-slate-100 dark:border-white/8 shadow-sm">
@@ -329,7 +328,7 @@ export default async function ParentDashboardPage() {
             </div>
           ))}
         </div>
-      </div>
+      </CollapsibleSection>
     </div>
   );
 }
