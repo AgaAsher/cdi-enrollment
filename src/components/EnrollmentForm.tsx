@@ -415,20 +415,20 @@ export default function EnrollmentForm() {
 
   // Language switcher bar
   const langBar = (
-    <div className="flex flex-wrap gap-1.5 mb-5 p-1 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
+    <div className="flex mb-5 p-1 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
       {(Object.entries(LANG_META) as [Lang, { flag: string; label: string }][]).map(([code, meta]) => (
         <button
           key={code}
           type="button"
           onClick={() => setLang(code)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+          className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
             lang === code
               ? "bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-sm"
               : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white"
           }`}
         >
           <span>{meta.flag}</span>
-          <span>{meta.label}</span>
+          <span className="hidden sm:inline">{meta.label}</span>
         </button>
       ))}
     </div>
