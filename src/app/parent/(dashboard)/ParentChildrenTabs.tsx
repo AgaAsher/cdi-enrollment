@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Enrollment } from "@/lib/types";
 import ParentTimetable from "./ParentTimetable";
+import { useParentLang } from "@/components/ParentLangProvider";
 
 type FeedbackEntry = {
   id: string;
@@ -58,6 +59,7 @@ export default function ParentChildrenTabs({
   timetableData: TimetableData | null;
 }) {
   const [activeIdx, setActiveIdx] = useState(0);
+  const { t } = useParentLang();
 
   if (children.length === 0) {
     return (
@@ -133,21 +135,21 @@ export default function ParentChildrenTabs({
         {/* Attendance */}
         <div className="border-t border-slate-100 dark:border-white/8 pt-4">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-3">
-            Attendance — Last 30 Days
+            {t.attendance}
           </p>
           {att.present === 0 && att.absent === 0 ? (
-            <p className="text-xs text-slate-400 dark:text-slate-500 italic">No attendance records found.</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 italic">{t.noAttendance}</p>
           ) : (
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
                 <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{att.present}</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500">Present</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{t.present}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0" />
                 <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{att.absent}</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500">Absent</span>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{t.absent}</span>
               </div>
               <div className="flex-1 h-2 bg-slate-100 dark:bg-white/8 rounded-full overflow-hidden ml-2">
                 {att.present + att.absent > 0 && (
@@ -170,7 +172,7 @@ export default function ParentChildrenTabs({
         {childFeedback.length > 0 && (
           <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/8">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-3">
-              Teacher Feedback
+              {t.teacherFeedback}
             </p>
             <div className="space-y-3">
               {childFeedback.map(entry => (
