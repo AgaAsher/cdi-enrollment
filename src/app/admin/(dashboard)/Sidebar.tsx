@@ -31,9 +31,9 @@ export default function Sidebar({
   const { t } = useAdminLang();
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    admission: true,
-    students: true,
-    school: true,
+    admission: false,
+    students: false,
+    school: false,
   });
 
   useEffect(() => {
