@@ -9,7 +9,7 @@ const SUPER_ADMIN_PERMISSIONS = {
   students_view: true, students_all: true, students_pending: true,
   students_reviewed: true, students_accepted: true, students_rejected: true,
   students_edit: true, students_accept: true,
-  visits: true, archive: true, reports: true, users: true, school: true,
+  visits: true, archive: true, reports: true, users: true, school: true, settings: true,
 };
 
 export async function POST(req: NextRequest) {

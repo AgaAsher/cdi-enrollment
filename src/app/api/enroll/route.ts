@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { enrollmentSchema } from "@/lib/enrollment-schema";
 import { adminNotificationEmail, parentConfirmationEmail } from "@/lib/email-templates";
 import { rateLimit } from "@/lib/rate-limit";
+import { getSettings, applyVars } from "@/lib/settings";
 import { Resend } from "resend";
 
 const ALLOWED_UPLOAD_TYPES = new Set([
@@ -119,19 +120,31 @@ export async function POST(req: NextRequest) {
 
     // Send confirmation to parent
     if (process.env.RESEND_API_KEY) {
+      const emailSettings = await getSettings(["email_parent_subject", "email_parent_message", "email_admin_subject"]);
+      const vars = {
+        parent_name: data.parent1_full_name,
+        child_name: `${data.child_first_name} ${data.child_last_name}`,
+        grade: data.applying_for_grade,
+        parent_email: data.parent1_email,
+        parent_phone: data.parent1_phone,
+      };
+      const parentSubject = applyVars(emailSettings.email_parent_subject, vars);
+      const parentMessage = applyVars(emailSettings.email_parent_message, vars);
+
       await resend.emails.send({
-        from: `CDI School <${process.env.EMAIL_FROM}>`,
+        from: `CDA School <${process.env.EMAIL_FROM}>`,
         to: data.parent1_email,
-        subject: "Enrollment Application Received – CDI International School of Laos",
-        html: parentConfirmationEmail(data.child_first_name, data.child_last_name, data.applying_for_grade),
+        subject: parentSubject,
+        html: parentConfirmationEmail(data.child_first_name, data.child_last_name, data.applying_for_grade, parentMessage),
       });
 
       // Notify admin
       if (process.env.ADMIN_EMAIL) {
+        const adminSubject = applyVars(emailSettings.email_admin_subject, vars);
         await resend.emails.send({
-          from: `CDI School <${process.env.EMAIL_FROM}>`,
+          from: `CDA School <${process.env.EMAIL_FROM}>`,
           to: process.env.ADMIN_EMAIL,
-          subject: `New Enrollment: ${data.child_first_name} ${data.child_last_name}`,
+          subject: adminSubject,
           html: adminNotificationEmail(data),
         });
       }
