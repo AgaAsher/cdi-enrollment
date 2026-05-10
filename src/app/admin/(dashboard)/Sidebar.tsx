@@ -66,7 +66,7 @@ export default function Sidebar({
   const admissionChildren: NavGroupChild[] = [
     ...(permissions.students_view
       ? studentsChildren.length > 1
-        ? [{ type: "subgroup" as const, label: t.students, key: "students", icon: studentsIcon, children: studentsChildren }]
+        ? [{ type: "subgroup" as const, label: t.applicants, key: "students", icon: studentsIcon, children: studentsChildren }]
         : studentsChildren.length === 1
           ? [studentsChildren[0]]
           : []
