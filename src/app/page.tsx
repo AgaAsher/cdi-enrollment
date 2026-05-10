@@ -164,7 +164,7 @@ export default function Home() {
       setTimeout(() => {
         router.push(data.redirectTo ?? "/admin");
         router.refresh();
-      }, 2200);
+      }, 1800);
     } else {
       setError(t.invalidCreds);
       setLoading(false);
