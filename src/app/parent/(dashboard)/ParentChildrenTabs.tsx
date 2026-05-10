@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import { Enrollment } from "@/lib/types";
 import ParentTimetable from "./ParentTimetable";
 import { useParentLang } from "@/components/ParentLangProvider";
@@ -52,13 +52,16 @@ export default function ParentChildrenTabs({
   attendanceSummaries,
   allFeedback,
   timetableData,
+  activeIdx,
+  setActiveIdx,
 }: {
   children: Enrollment[];
   attendanceSummaries: { present: number; absent: number }[];
   allFeedback: FeedbackEntry[];
   timetableData: TimetableData | null;
+  activeIdx: number;
+  setActiveIdx: (i: number) => void;
 }) {
-  const [activeIdx, setActiveIdx] = useState(0);
   const { t } = useParentLang();
 
   if (children.length === 0) {

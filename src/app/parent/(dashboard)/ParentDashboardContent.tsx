@@ -96,6 +96,7 @@ export default function ParentDashboardContent({
 }) {
   const { t } = useParentLang();
   const [tab, setTab] = useState<Tab>("child");
+  const [activeChildIdx, setActiveChildIdx] = useState(0);
 
   const tabLabels: Record<Tab, string> = {
     child:       children.length === 1
@@ -106,15 +107,13 @@ export default function ParentDashboardContent({
     noticeboard: t.noticeboard,
   };
 
-  /* ── Hero summary numbers ─────────────────────────────────────────────── */
-  const totalPresent = attendanceSummaries.reduce((s, a) => s + a.present, 0);
-  const totalAbsent  = attendanceSummaries.reduce((s, a) => s + a.absent, 0);
-  const totalFeedback = allFeedback.length;
-  const firstChild = children[0];
-  const firstInitials = firstChild
-    ? (firstChild.child_first_name?.[0] ?? "").toUpperCase() + (firstChild.child_last_name?.[0] ?? "").toUpperCase()
+  /* ── Hero summary numbers (per active child) ──────────────────────────── */
+  const activeChild = children[activeChildIdx];
+  const activeAtt   = attendanceSummaries[activeChildIdx] ?? { present: 0, absent: 0 };
+  const activeInitials = activeChild
+    ? (activeChild.child_first_name?.[0] ?? "").toUpperCase() + (activeChild.child_last_name?.[0] ?? "").toUpperCase()
     : "?";
-  const firstGrade = firstChild ? gradeShort(firstChild.applying_for_grade) : "";
+  const activeGrade = activeChild ? gradeShort(activeChild.applying_for_grade) : "";
 
   return (
     <div className="min-h-[calc(100vh-65px)] flex flex-col">
@@ -130,14 +129,14 @@ export default function ParentDashboardContent({
             {/* Greeting row */}
             <div className="flex items-center gap-4 mb-6">
               <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/20">
-                <span className="text-xl font-bold text-white">{firstInitials}</span>
+                <span className="text-xl font-bold text-white">{activeInitials}</span>
               </div>
               <div>
                 <p className="text-white/60 text-xs font-medium tracking-wide uppercase mb-0.5">{t.welcome}</p>
                 <h1 className="text-2xl font-bold text-white tracking-tight leading-none">{firstName}</h1>
-                {firstGrade && (
+                {activeGrade && (
                   <p className="text-white/55 text-xs mt-1">
-                    {firstGrade}{children.length > 1 ? ` +${children.length - 1}` : ""} · {firstChild?.academic_year}
+                    {activeGrade} · {activeChild?.academic_year}
                   </p>
                 )}
               </div>
@@ -146,9 +145,9 @@ export default function ParentDashboardContent({
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-3">
               {[
-                { value: children.length,  label: children.length === 1 ? "Child" : "Children", color: "text-blue-200" },
-                { value: totalPresent,     label: t.present,   color: "text-emerald-300" },
-                { value: totalAbsent,      label: t.absent,    color: "text-red-300" },
+                { value: children.length,    label: children.length === 1 ? "Child" : "Children", color: "text-blue-200" },
+                { value: activeAtt.present,  label: t.present,   color: "text-emerald-300" },
+                { value: activeAtt.absent,   label: t.absent,    color: "text-red-300" },
               ].map(({ value, label, color }) => (
                 <div key={label} className="rounded-2xl px-4 py-3 text-center"
                   style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
@@ -193,6 +192,8 @@ export default function ParentDashboardContent({
               attendanceSummaries={attendanceSummaries}
               allFeedback={allFeedback}
               timetableData={timetableData}
+              activeIdx={activeChildIdx}
+              setActiveIdx={setActiveChildIdx}
             />
           </div>
         )}
