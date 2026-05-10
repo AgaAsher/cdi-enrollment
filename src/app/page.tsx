@@ -134,11 +134,11 @@ export default function Home() {
   const t = LANGS[lang];
 
   const cardStyle = isDark ? {
-    backdropFilter: "blur(56px) saturate(200%) brightness(0.85)",
-    WebkitBackdropFilter: "blur(56px) saturate(200%) brightness(0.85)",
-    background: "linear-gradient(145deg, rgba(10,30,60,0.55) 0%, rgba(5,15,40,0.60) 40%, rgba(0,40,80,0.50) 100%)",
-    border: "1px solid rgba(255,255,255,0.14)",
-    boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(255,255,255,0.05), 0 32px 80px rgba(0,0,0,0.70), 0 8px 24px rgba(0,0,0,0.50)",
+    backdropFilter: "blur(56px) saturate(200%) brightness(0.95)",
+    WebkitBackdropFilter: "blur(56px) saturate(200%) brightness(0.95)",
+    background: "linear-gradient(145deg, rgba(10,30,60,0.28) 0%, rgba(5,15,40,0.30) 40%, rgba(0,40,80,0.24) 100%)",
+    border: "1px solid rgba(255,255,255,0.18)",
+    boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.06), 0 32px 80px rgba(0,0,0,0.50), 0 8px 24px rgba(0,0,0,0.35)",
   } : glass.card;
 
   useEffect(() => {
@@ -189,7 +189,7 @@ export default function Home() {
         className="absolute inset-0"
         style={{
           background: isDark
-            ? "linear-gradient(160deg, rgba(0,10,20,0.70) 0%, rgba(0,5,15,0.65) 50%, rgba(0,15,30,0.68) 100%)"
+            ? "linear-gradient(160deg, rgba(0,10,20,0.52) 0%, rgba(0,5,15,0.48) 50%, rgba(0,15,30,0.50) 100%)"
             : "linear-gradient(160deg, rgba(0,50,30,0.52) 0%, rgba(5,25,45,0.44) 50%, rgba(0,70,50,0.50) 100%)",
         }}
       />
