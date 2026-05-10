@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         role: "super_admin",
         permissions: SUPER_ADMIN_PERMISSIONS,
       });
-      const res = NextResponse.json({ success: true, redirectTo: "/admin" });
+      const res = NextResponse.json({ success: true, redirectTo: "/admin", name: "Super Admin" });
       res.cookies.set(sessionCookieOptions(token));
       return res;
     }
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
   });
 
   const redirectTo = user.role === "teacher" ? "/teacher" : user.role === "parent" ? "/parent" : "/admin";
-  const res = NextResponse.json({ success: true, redirectTo });
+  const res = NextResponse.json({ success: true, redirectTo, name: user.name });
   res.cookies.set(sessionCookieOptions(token));
   return res;
 }

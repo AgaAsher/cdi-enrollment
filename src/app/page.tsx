@@ -127,6 +127,7 @@ export default function Home() {
   const [langOpen, setLangOpen] = useState(false);
   const [emailFocus, setEmailFocus]       = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
+  const [welcomeName, setWelcomeName]     = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const t = LANGS[lang];
 
@@ -159,8 +160,11 @@ export default function Home() {
     });
     if (res.ok) {
       const data = await res.json();
-      router.push(data.redirectTo ?? "/admin");
-      router.refresh();
+      setWelcomeName(data.name ?? "");
+      setTimeout(() => {
+        router.push(data.redirectTo ?? "/admin");
+        router.refresh();
+      }, 2200);
     } else {
       setError(t.invalidCreds);
       setLoading(false);
@@ -330,6 +334,47 @@ export default function Home() {
           © {new Date().getFullYear()} Child Development Academy
         </p>
       </div>
+
+      {/* ── Welcome splash ──────────────────────────────────────────────────── */}
+      {welcomeName !== null && (
+        <div
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center"
+          style={{
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            background: "rgba(0,10,30,0.70)",
+            animation: "fadeIn 0.4s ease",
+          }}
+        >
+          <style>{`
+            @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+            @keyframes checkPop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+          `}</style>
+
+          {/* Checkmark circle */}
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
+            style={{
+              background: "linear-gradient(135deg, rgba(16,185,129,0.90), rgba(5,150,105,0.85))",
+              boxShadow: "0 0 0 8px rgba(16,185,129,0.15), 0 8px 32px rgba(16,185,129,0.40)",
+              animation: "checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.15s both",
+            }}
+          >
+            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+
+          <p className="text-white/60 text-sm font-medium uppercase tracking-widest mb-2"
+            style={{ animation: "fadeIn 0.4s ease 0.3s both" }}>
+            Welcome
+          </p>
+          <h2 className="text-white text-3xl font-bold tracking-tight"
+            style={{ textShadow: "0 2px 16px rgba(0,0,0,0.5)", animation: "fadeIn 0.4s ease 0.4s both" }}>
+            {welcomeName}
+          </h2>
+        </div>
+      )}
     </div>
   );
 }
