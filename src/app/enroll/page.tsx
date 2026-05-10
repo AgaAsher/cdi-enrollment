@@ -1,7 +1,6 @@
 import EnrollmentForm from "@/components/EnrollmentForm";
 import Image from "next/image";
 import Link from "next/link";
-import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata = {
   title: "Enroll – Child Development Academy",
@@ -31,7 +30,6 @@ export default function EnrollPage() {
         >
           ← Sign In
         </Link>
-        <ThemeToggle variant="glass" />
       </div>
 
       {/* ── Content ──────────────────────────────────────────────────────────── */}

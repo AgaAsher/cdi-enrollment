@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import ThemeToggle from "@/components/ThemeToggle";
 import { useAdminLang } from "@/components/AdminLangProvider";
 import { ADMIN_LANG_META, type AdminLang } from "@/lib/i18n/admin";
 
@@ -46,8 +45,6 @@ export default function AdminHeader() {
             </button>
           ))}
         </div>
-
-        <ThemeToggle variant="glass" />
 
         <form action="/api/auth/logout" method="POST">
           <button

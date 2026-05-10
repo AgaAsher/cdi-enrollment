@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import Image from "next/image";
-import ThemeToggle from "@/components/ThemeToggle";
 
 export default async function TeacherLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -35,7 +34,6 @@ export default async function TeacherLayout({ children }: { children: React.Reac
               <p className="text-sm font-semibold text-white leading-none">{session.name}</p>
               <p className="text-[11px] text-white/50 mt-0.5">Teacher</p>
             </div>
-            <ThemeToggle variant="glass" />
             <form action="/api/auth/logout" method="POST">
               <button
                 className="text-xs font-semibold text-white px-3 py-1.5 rounded-full transition-all"

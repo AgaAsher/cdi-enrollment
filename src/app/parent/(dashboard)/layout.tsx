@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import Image from "next/image";
-import ThemeToggle from "@/components/ThemeToggle";
 
 export default async function ParentDashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await getSession();
@@ -28,7 +27,6 @@ export default async function ParentDashboardLayout({ children }: { children: Re
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <ThemeToggle variant="glass" />
           <form action="/api/auth/logout" method="POST">
             <button
               className="text-xs font-semibold text-white px-3 py-1.5 rounded-full transition-all"
