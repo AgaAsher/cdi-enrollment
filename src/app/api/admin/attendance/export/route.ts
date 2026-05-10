@@ -3,6 +3,25 @@ import { getSession } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import * as XLSX from "xlsx";
 
+const CLASSES = [
+  "Toddler (18–30 months)",
+  "Nursery (30–42 months)",
+  "Reception (42–54 months)",
+  "Pre-KG (54–72 months)",
+];
+
+// Generate every calendar date between from and to inclusive
+function dateRange(from: string, to: string): string[] {
+  const dates: string[] = [];
+  const cur = new Date(from + "T00:00:00");
+  const end = new Date(to + "T00:00:00");
+  while (cur <= end) {
+    dates.push(cur.toISOString().split("T")[0]);
+    cur.setDate(cur.getDate() + 1);
+  }
+  return dates;
+}
+
 // GET /api/admin/attendance/export?from=YYYY-MM-DD&to=YYYY-MM-DD
 export async function GET(req: NextRequest) {
   const session = await getSession();
@@ -10,75 +29,101 @@ export async function GET(req: NextRequest) {
 
   const { searchParams } = req.nextUrl;
   const from = searchParams.get("from");
-  const to = searchParams.get("to");
-
+  const to   = searchParams.get("to");
   if (!from || !to) return NextResponse.json({ error: "Missing from/to" }, { status: 400 });
 
   const supabase = createAdminClient();
 
-  // Fetch all attendance records in range (both teacher-slot and admin-daily)
+  // All attendance rows in the date range
   const { data: rows, error } = await supabase
     .from("attendance")
-    .select("date, class_label, subject, slot_time, teacher_name, records")
+    .select("date, class_label, records")
     .gte("date", from)
     .lte("date", to)
-    .order("date")
-    .order("class_label");
+    .order("date");
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   type AttRecord = { student_id: string; student_name: string; status: string };
-  type Row = { date: string; class_label: string; subject: string; slot_time: string; teacher_name: string; records: AttRecord[] };
+  type Row      = { date: string; class_label: string; records: AttRecord[] };
 
   const data = (rows ?? []) as Row[];
 
-  // ── Sheet 1: Summary ──────────────────────────────────────────────────────
-  const summaryData: Record<string, string | number>[] = [];
-  for (const row of data) {
-    const records: AttRecord[] = Array.isArray(row.records) ? row.records : [];
-    const present  = records.filter((r) => r.status === "present").length;
-    const late     = records.filter((r) => r.status === "late").length;
-    const absent   = records.filter((r) => r.status === "absent").length;
-    const total    = records.length;
-    summaryData.push({
-      Date: row.date,
-      Class: row.class_label,
-      Session: row.subject === "daily" ? "Daily" : `${row.subject} (${row.slot_time})`,
-      Teacher: row.teacher_name,
-      Total: total,
-      Present: present,
-      Late: late,
-      Absent: absent,
-      "% Present": total > 0 ? `${Math.round(((present + late) / total) * 100)}%` : "—",
-    });
-  }
+  // Index: classLabel → date → studentId → status
+  const index = new Map<string, Map<string, Map<string, string>>>();
+  // Also collect all student names seen per class
+  const studentNames = new Map<string, Map<string, string>>(); // classLabel → id → name
 
-  // ── Sheet 2: Detail ───────────────────────────────────────────────────────
-  const detailData: Record<string, string>[] = [];
   for (const row of data) {
-    const records: AttRecord[] = Array.isArray(row.records) ? row.records : [];
-    for (const r of records) {
-      detailData.push({
-        Date: row.date,
-        Class: row.class_label,
-        Session: row.subject === "daily" ? "Daily" : `${row.subject} (${row.slot_time})`,
-        Teacher: row.teacher_name,
-        "Student Name": r.student_name,
-        Status: r.status.charAt(0).toUpperCase() + r.status.slice(1),
-      });
+    if (!index.has(row.class_label)) index.set(row.class_label, new Map());
+    if (!studentNames.has(row.class_label)) studentNames.set(row.class_label, new Map());
+    const byDate = index.get(row.class_label)!;
+    const names  = studentNames.get(row.class_label)!;
+    const byId   = new Map<string, string>();
+    for (const r of (row.records ?? []) as AttRecord[]) {
+      byId.set(r.student_id, r.status);
+      names.set(r.student_id, r.student_name);
     }
+    byDate.set(row.date, byId);
   }
 
-  // Build workbook
+  const dates = dateRange(from, to);
   const wb = XLSX.utils.book_new();
 
-  if (summaryData.length === 0) {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["No attendance data found for this period."]]), "Summary");
-  } else {
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(summaryData), "Summary");
-    if (detailData.length > 0) {
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(detailData), "Detail");
+  // One sheet per class
+  for (const cls of CLASSES) {
+    const byDate = index.get(cls);
+    const names  = studentNames.get(cls);
+
+    if (!names || names.size === 0) {
+      // No data for this class — add an empty placeholder sheet
+      const ws = XLSX.utils.aoa_to_sheet([["No attendance data recorded for this class in the selected period."]]);
+      XLSX.utils.book_append_sheet(wb, ws, cls.split(" ")[0]);
+      continue;
     }
+
+    // Build header row: ["Student Name", date1, date2, ...]
+    const header = ["Student Name", ...dates];
+
+    // One row per student
+    const studentIds = [...names.keys()].sort((a, b) =>
+      (names.get(a) ?? "").localeCompare(names.get(b) ?? "")
+    );
+
+    const sheetRows: (string | number)[][] = [header];
+    const presentCounts: number[] = new Array(dates.length).fill(0);
+    const absentCounts:  number[] = new Array(dates.length).fill(0);
+
+    for (const sid of studentIds) {
+      const name = names.get(sid) ?? sid;
+      const row: (string | number)[] = [name];
+      dates.forEach((d, di) => {
+        const status = byDate?.get(d)?.get(sid) ?? "";
+        let cell = "";
+        if (status === "present")  { cell = "P"; presentCounts[di]++; }
+        else if (status === "late") { cell = "L"; presentCounts[di]++; }
+        else if (status === "absent") { cell = "A"; absentCounts[di]++; }
+        row.push(cell);
+      });
+      sheetRows.push(row);
+    }
+
+    // Summary row
+    const summaryPresent: (string | number)[] = ["Present"];
+    const summaryAbsent:  (string | number)[] = ["Absent"];
+    dates.forEach((_, di) => {
+      summaryPresent.push(presentCounts[di]);
+      summaryAbsent.push(absentCounts[di]);
+    });
+    sheetRows.push([], summaryPresent, summaryAbsent);
+
+    const ws = XLSX.utils.aoa_to_sheet(sheetRows);
+
+    // Column widths
+    ws["!cols"] = [{ wch: 24 }, ...dates.map(() => ({ wch: 12 }))];
+
+    const sheetName = cls.split(" ")[0]; // "Toddler", "Nursery", etc.
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
   }
 
   const buffer = XLSX.write(wb, { type: "buffer", bookType: "xlsx" });
