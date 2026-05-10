@@ -113,6 +113,8 @@ export default function Sidebar({
         </svg>
       ),
       children: [
+        { label: t.students,    href: "/admin?section=school&tab=students" },
+        { label: t.parents,     href: "/admin?section=school&tab=parents" },
         { label: t.timetable,   href: "/admin?section=school&tab=timetable" },
         { label: t.attendance,  href: "/admin?section=school&tab=attendance" },
         { label: t.classes,     href: "/admin?section=school&tab=classes" },

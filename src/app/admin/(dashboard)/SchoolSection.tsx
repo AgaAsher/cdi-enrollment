@@ -2,6 +2,8 @@ import { Enrollment } from "@/lib/types";
 import AttendanceView from "./AttendanceView";
 import TimetableEditor from "./TimetableEditor";
 import TeachersSection from "./TeachersSection";
+import StudentsSchoolView from "./StudentsSchoolView";
+import ParentsPortalView from "./ParentsPortalView";
 
 const GRADES = [
   { key: "Toddler (18–30 months)",   label: "Toddler",   age: "18–30 months", color: "blue"    },
@@ -47,6 +49,12 @@ const NOTICE_COLORS: Record<string, string> = {
 
 export default function SchoolSection({ tab, enrollments }: { tab: string; enrollments: Enrollment[] }) {
   const today = new Date().toISOString().split("T")[0];
+
+  // ── STUDENTS ───────────────────────────────────────────────────────────────
+  if (tab === "students") return <StudentsSchoolView enrollments={enrollments} />;
+
+  // ── PARENTS ────────────────────────────────────────────────────────────────
+  if (tab === "parents")  return <ParentsPortalView  enrollments={enrollments} />;
 
   // ── TIMETABLE ──────────────────────────────────────────────────────────────
   if (tab === "timetable") {

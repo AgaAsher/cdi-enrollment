@@ -68,9 +68,10 @@ export async function POST(req: NextRequest) {
     name: user.name,
     role: user.role,
     permissions: user.permissions ?? {},
+    enrollment_ids: user.enrollment_ids ?? [],
   });
 
-  const redirectTo = user.role === "teacher" ? "/teacher" : "/admin";
+  const redirectTo = user.role === "teacher" ? "/teacher" : user.role === "parent" ? "/parent" : "/admin";
   const res = NextResponse.json({ success: true, redirectTo });
   res.cookies.set(sessionCookieOptions(token));
   return res;

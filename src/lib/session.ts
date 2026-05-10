@@ -7,8 +7,9 @@ const MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 export type SessionPayload = {
   email: string;
   name: string;
-  role: "super_admin" | "admin" | "staff" | "teacher";
+  role: "super_admin" | "admin" | "staff" | "teacher" | "parent";
   permissions: Record<string, boolean>;
+  enrollment_ids?: string[];
 };
 
 function sign(payload: SessionPayload): string {

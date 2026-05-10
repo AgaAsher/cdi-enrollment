@@ -90,6 +90,9 @@ const en = {
 
   // Students section
   studentsTitle: "Students",
+
+  // School section nav
+  parents: "Parents",
 };
 
 const lo: typeof en = {
@@ -168,6 +171,9 @@ const lo: typeof en = {
   records: "ບັນທຶກ",
 
   studentsTitle: "ນັກຮຽນ",
+
+  // School section nav
+  parents: "ຜູ້ປົກຄອງ",
 };
 
 export const adminTranslations: Record<AdminLang, typeof en> = { en, lo };
