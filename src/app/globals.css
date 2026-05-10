@@ -353,6 +353,4 @@ textarea::placeholder { color: rgba(255, 255, 255, 0.38) !important; }
 /* Border colors inside glass context */
 .glass-context .border-slate-200,
 .glass-context .border-slate-100 { border-color: rgba(255, 255, 255, 0.12) !important; }
-.glass-context .bg-white { background: rgba(255, 255, 255, 0.10) !important; }
-.glass-context .bg-slate-50 { background: rgba(255, 255, 255, 0.06) !important; }
 
