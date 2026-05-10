@@ -513,8 +513,8 @@ export const translations = {
     email: "ອີເມລ",
     addAnotherPerson: "ເພີ່ມຄົນອື່ນ",
 
-    consentSocialMedia: "ຂ້ອຍຍິນຍອມໃຫ້ໃຊ້ຮູບພາບຂອງລູກໃນສື່ສັງຄົມຂອງໂຮງຮຽນ",
-    consentMarketing: "ຂ້ອຍຍິນຍອມໃຫ້ໃຊ້ຮູບພາບຂອງລູກໃນໂປສເຕີ ແລະ ໂຄສະນາຂອງໂຮງຮຽນ",
+    consentSocialMedia: "ຂ້າພະເຈົ້າຍິນຍອມໃຫ້ໃຊ້ຮູບພາບຂອງລູກໃນສື່ສັງຄົມຂອງໂຮງຮຽນ",
+    consentMarketing: "ຂ້າພະເຈົ້າຍິນຍອມໃຫ້ໃຊ້ຮູບພາບຂອງລູກໃນໂປສເຕີ ແລະ ໂຄສະນາຂອງໂຮງຮຽນ",
     iGiveConsent: "ຍິນຍອມ",
     iDoNotGiveConsent: "ບໍ່ຍິນຍອມ",
 
