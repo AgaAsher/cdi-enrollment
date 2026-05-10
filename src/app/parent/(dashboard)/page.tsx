@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Enrollment } from "@/lib/types";
+import ParentTimetable from "./ParentTimetable";
 
 const SCHOOL_EVENTS = [
   { date: "2026-05-15", title: "Parent–Teacher Meeting",   type: "Meeting",  color: "blue"   },
@@ -30,6 +31,41 @@ function gradeShort(gradeKey: string): string {
   if (gradeKey.startsWith("Reception")) return "Reception";
   if (gradeKey.startsWith("Pre-KG"))    return "Pre-KG";
   return gradeKey;
+}
+
+type FeedbackEntry = {
+  id: string;
+  enrollment_id: string;
+  teacher_name: string;
+  class_label: string;
+  category: string;
+  content: string;
+  created_at: string;
+};
+
+const FEEDBACK_COLORS: Record<string, string> = {
+  academic: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  behavior: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  social:   "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+  health:   "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  general:  "bg-slate-100 text-slate-600 dark:bg-white/8 dark:text-slate-400",
+};
+const FEEDBACK_LABELS: Record<string, string> = {
+  academic: "Academic", behavior: "Behavior", social: "Social", health: "Health", general: "General",
+};
+
+type SlotCell = { subject: string; teacher: string; room: string; isFixed: boolean };
+type TimetableRow = { time: string; duration: string; color: string; cells: SlotCell[][] };
+type ClassOut = { label: string; rows: TimetableRow[] };
+type TimetableData = Record<string, ClassOut>;
+
+function findClassRows(data: TimetableData, gradeKey: string): TimetableRow[] | null {
+  const short = gradeShort(gradeKey);
+  const byLabel = Object.values(data).find(c => c.label.toLowerCase() === short.toLowerCase());
+  if (byLabel) return byLabel.rows;
+  const byKey = Object.entries(data).find(([k]) => k.toLowerCase() === short.toLowerCase());
+  if (byKey) return byKey[1].rows;
+  return null;
 }
 
 type AttendanceRecord = { student_id: string; status: "present" | "absent" };
@@ -72,7 +108,7 @@ async function fetchAttendanceSummary(
 
 export default async function ParentDashboardPage() {
   const session = await getSession();
-  if (!session || session.role !== "parent") redirect("/parent/login");
+  if (!session || session.role !== "parent") redirect("/admin/login");
 
   const enrollmentIds = session.enrollment_ids ?? [];
   const firstName = session.name.split(" ")[0];
@@ -95,6 +131,27 @@ export default async function ParentDashboardPage() {
       fetchAttendanceSummary(supabase, child.applying_for_grade, child.id)
     )
   );
+
+  // Fetch published timetable
+  const { data: ttData } = await supabase
+    .from("published_timetables")
+    .select("timetable_data")
+    .eq("is_active", true)
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const timetableData = (ttData?.timetable_data ?? null) as TimetableData | null;
+
+  // Fetch feedback for all linked children
+  let allFeedback: FeedbackEntry[] = [];
+  if (enrollmentIds.length > 0) {
+    const { data: feedbackData } = await supabase
+      .from("student_feedback")
+      .select("*")
+      .in("enrollment_id", enrollmentIds)
+      .order("created_at", { ascending: false });
+    allFeedback = (feedbackData ?? []) as FeedbackEntry[];
+  }
 
   const today = new Date().toISOString().split("T")[0];
   const upcomingEvents = SCHOOL_EVENTS.filter((e) => e.date >= today).slice(0, 4);
@@ -182,11 +239,42 @@ export default async function ParentDashboardPage() {
                   )}
                 </div>
 
-                {/* Timetable link placeholder */}
+                {/* Teacher feedback */}
+                {(() => {
+                  const childFeedback = allFeedback
+                    .filter(f => f.enrollment_id === child.id)
+                    .slice(0, 5);
+                  if (childFeedback.length === 0) return null;
+                  return (
+                    <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/8">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-3">
+                        Teacher Feedback
+                      </p>
+                      <div className="space-y-3">
+                        {childFeedback.map(entry => (
+                          <div key={entry.id} className="bg-slate-50 dark:bg-white/4 rounded-xl p-3.5">
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${FEEDBACK_COLORS[entry.category] ?? FEEDBACK_COLORS.general}`}>
+                                {FEEDBACK_LABELS[entry.category] ?? entry.category}
+                              </span>
+                              <span className="text-[11px] text-slate-400 dark:text-slate-500">
+                                {entry.teacher_name} · {new Date(entry.created_at).toLocaleDateString("en", { day: "numeric", month: "short", year: "numeric" })}
+                              </span>
+                            </div>
+                            <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">{entry.content}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {/* Timetable */}
                 <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/8">
-                  <button className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
-                    View Timetable →
-                  </button>
+                  <ParentTimetable
+                    gradeLabel={gradeShort(child.applying_for_grade)}
+                    rows={timetableData ? (findClassRows(timetableData, child.applying_for_grade) ?? []) : null}
+                  />
                 </div>
               </div>
             );

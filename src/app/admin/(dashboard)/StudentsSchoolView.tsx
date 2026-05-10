@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { Enrollment } from "@/lib/types";
 
 const GRADES = [
@@ -14,6 +17,27 @@ const GRADE_COLORS: Record<string, { ring: string; bg: string; text: string }> =
   amber:   { ring: "ring-amber-200 dark:ring-amber-500/30",   bg: "bg-amber-50 dark:bg-amber-500/10",   text: "text-amber-700 dark:text-amber-300"   },
 };
 
+const FEEDBACK_COLORS: Record<string, string> = {
+  academic: "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+  behavior: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
+  social:   "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300",
+  health:   "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+  general:  "bg-slate-100 text-slate-600 dark:bg-white/8 dark:text-slate-400",
+};
+const FEEDBACK_LABELS: Record<string, string> = {
+  academic: "Academic", behavior: "Behavior", social: "Social", health: "Health", general: "General",
+};
+
+type FeedbackEntry = {
+  id: string;
+  enrollment_id: string;
+  teacher_name: string;
+  class_label: string;
+  category: string;
+  content: string;
+  created_at: string;
+};
+
 function gradeColorFor(gradeKey: string) {
   const grade = GRADES.find((g) => g.key === gradeKey);
   return grade ? GRADE_COLORS[grade.color] : GRADE_COLORS.blue;
@@ -23,8 +47,78 @@ function gradeLabel(gradeKey: string) {
   return GRADES.find((g) => g.key === gradeKey)?.label ?? gradeKey;
 }
 
+function StudentFeedbackPanel({ student, feedback, onDelete }: {
+  student: Enrollment;
+  feedback: FeedbackEntry[];
+  onDelete: (id: string) => void;
+}) {
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleDelete(id: string) {
+    setDeleting(id);
+    await fetch(`/api/admin/feedback?id=${id}`, { method: "DELETE" });
+    onDelete(id);
+    setDeleting(null);
+  }
+
+  return (
+    <div className="mt-3 pt-3 border-t border-slate-100 dark:border-white/8">
+      <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">
+        Teacher Feedback
+        {feedback.length > 0 && (
+          <span className="ml-1.5 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+            {feedback.length}
+          </span>
+        )}
+      </p>
+      {feedback.length === 0 ? (
+        <p className="text-[11px] text-slate-400 dark:text-slate-500 italic">No feedback yet.</p>
+      ) : (
+        <div className="space-y-2">
+          {feedback.map(entry => (
+            <div key={entry.id} className="bg-slate-50 dark:bg-white/4 rounded-xl p-3 relative group">
+              <div className="flex items-center gap-1.5 mb-1">
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${FEEDBACK_COLORS[entry.category] ?? FEEDBACK_COLORS.general}`}>
+                  {FEEDBACK_LABELS[entry.category] ?? entry.category}
+                </span>
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 flex-1 truncate">
+                  {entry.teacher_name} · {new Date(entry.created_at).toLocaleDateString("en", { day: "numeric", month: "short" })}
+                </span>
+                <button
+                  onClick={() => handleDelete(entry.id)}
+                  disabled={deleting === entry.id}
+                  className="opacity-0 group-hover:opacity-100 text-slate-300 dark:text-slate-600 hover:text-red-400 disabled:opacity-50 transition-all"
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">{entry.content}</p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function StudentsSchoolView({ enrollments }: { enrollments: Enrollment[] }) {
   const accepted = enrollments.filter((e) => e.status === "accepted");
+  const [feedback, setFeedback] = useState<FeedbackEntry[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/feedback")
+      .then(r => r.json())
+      .then(d => setFeedback(d.feedback ?? []));
+  }, []);
+
+  const feedbackFor = (id: string) => feedback.filter(f => f.enrollment_id === id);
+
+  function handleDeleteFeedback(id: string) {
+    setFeedback(prev => prev.filter(f => f.id !== id));
+  }
 
   const countsByGrade = GRADES.map(({ key, label, color }) => ({
     key,
@@ -67,6 +161,8 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
             const initials =
               (s.child_first_name?.[0] ?? "").toUpperCase() +
               (s.child_last_name?.[0] ?? "").toUpperCase();
+            const fb = feedbackFor(s.id);
+            const isExpanded = expandedId === s.id;
             return (
               <div key={s.id} className="glass-card p-5 flex flex-col gap-3">
                 {/* Avatar + name */}
@@ -114,6 +210,35 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
                   <p className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{s.parent1_full_name}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400">{s.parent1_phone}</p>
                 </div>
+
+                {/* Feedback toggle */}
+                <button
+                  onClick={() => setExpandedId(isExpanded ? null : s.id)}
+                  className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/8 text-left w-full group"
+                >
+                  <span className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+                    Teacher Feedback
+                    {fb.length > 0 && (
+                      <span className="bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full text-[10px] font-bold">
+                        {fb.length}
+                      </span>
+                    )}
+                  </span>
+                  <svg
+                    className={`w-3.5 h-3.5 text-slate-400 dark:text-slate-500 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isExpanded && (
+                  <StudentFeedbackPanel
+                    student={s}
+                    feedback={fb}
+                    onDelete={handleDeleteFeedback}
+                  />
+                )}
               </div>
             );
           })}

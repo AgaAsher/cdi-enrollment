@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import TeacherFeedbackTab from "./TeacherFeedbackTab";
 
 type TeacherLesson = {
   classLabel: string;
@@ -84,7 +85,10 @@ const STATUS_CONFIG = {
   absent:  { label: "Absent",  bg: "bg-red-100 border-red-300 text-red-700 dark:bg-red-500/15 dark:border-red-500/30 dark:text-red-300",                         dot: "bg-red-500"    },
 } as const;
 
+type ViewTab = "timetable" | "feedback";
+
 export default function TeacherPage() {
+  const [view, setView] = useState<ViewTab>("timetable");
   const [teacherName, setTeacherName] = useState("");
   const [rows, setRows] = useState<TeacherRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -187,10 +191,16 @@ export default function TeacherPage() {
     (sum, r) => sum + r.cells.filter(c => c !== null).length, 0
   );
 
+  const uniqueClasses = Array.from(
+    new Set(
+      rows.flatMap(r => r.cells.filter((c): c is TeacherLesson => c !== null).map(c => c.classLabel))
+    )
+  ).sort();
+
   return (
     <div className="space-y-6">
 
-      {/* Greeting */}
+      {/* Greeting + view tabs */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">
@@ -216,7 +226,26 @@ export default function TeacherPage() {
         )}
       </div>
 
-      {loading ? (
+      {/* Main view tabs */}
+      <div className="flex items-center gap-1 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 w-fit">
+        {(["timetable", "feedback"] as ViewTab[]).map(tab => (
+          <button
+            key={tab}
+            onClick={() => setView(tab)}
+            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-colors capitalize ${
+              view === tab
+                ? "bg-[#0f1f6b] dark:bg-blue-600 text-white shadow-sm"
+                : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
+            }`}
+          >
+            {tab === "timetable" ? "Timetable" : "Feedback"}
+          </button>
+        ))}
+      </div>
+
+      {view === "feedback" ? (
+        <TeacherFeedbackTab classes={uniqueClasses} />
+      ) : loading ? (
         <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 flex items-center justify-center">
           <div className="w-6 h-6 border-2 border-[#0f1f6b] dark:border-white border-t-transparent rounded-full animate-spin" />
         </div>
