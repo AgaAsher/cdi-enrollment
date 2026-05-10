@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const LANGS = {
   en: {
@@ -232,6 +233,7 @@ export default function Home() {
           )}
         </div>
 
+        <ThemeToggle variant="glass" />
       </div>
 
       {/* ── Glass card ──────────────────────────────────────────────────────── */}
