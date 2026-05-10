@@ -5,7 +5,11 @@ import { hashPassword } from "@/lib/password";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session || !session.permissions?.users) {
+  const isPrivileged =
+    session?.permissions?.users ||
+    session?.role === "admin" ||
+    session?.role === "super_admin";
+  if (!session || !isPrivileged) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -29,7 +33,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getSession();
-  if (!session || !session.permissions?.users) {
+  const isPrivileged =
+    session?.permissions?.users ||
+    session?.role === "admin" ||
+    session?.role === "super_admin";
+  if (!session || !isPrivileged) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
