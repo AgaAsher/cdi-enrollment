@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { translations, LANG_META, type Lang, type T } from "@/lib/i18n/enrollment";
 
 const VISIT_CAPACITY = 3;
 
@@ -39,10 +40,12 @@ function VisitSlotPicker({
   date,
   value,
   onChange,
+  t,
 }: {
   date: string;
   value: string | undefined;
   onChange: (time: string | undefined) => void;
+  t: T;
 }) {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(false);
@@ -60,7 +63,7 @@ function VisitSlotPicker({
   if (!date) {
     return (
       <p className="text-sm text-slate-400 dark:text-slate-500 italic">
-        Select a date above to see available time slots.
+        {t.selectDateFirst}
       </p>
     );
   }
@@ -72,7 +75,7 @@ function VisitSlotPicker({
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
         </svg>
-        Checking availability…
+        {t.checkingAvailability}
       </div>
     );
   }
@@ -108,7 +111,7 @@ function VisitSlotPicker({
               : spotsLeft === 1 ? "text-amber-500 dark:text-amber-400"
               : "text-slate-400 dark:text-slate-500"
             }`}>
-              {isFull ? "Full" : spotsLeft === VISIT_CAPACITY ? "Free" : `${spotsLeft} left`}
+              {isFull ? t.full : spotsLeft === VISIT_CAPACITY ? t.free : `${spotsLeft} ${t.left}`}
             </span>
           </button>
         );
@@ -145,12 +148,14 @@ function FileUpload({
   onChange,
   error,
   extracting,
+  t,
 }: {
   label: string;
   required?: boolean;
   onChange: (file: File | null) => void;
   error?: string;
   extracting?: boolean;
+  t: T;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -186,8 +191,8 @@ function FileUpload({
           <svg className="w-7 h-7 text-slate-400 dark:text-white/30 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
-          <span className="text-sm text-slate-500 dark:text-slate-400">Click to upload</span>
-          <span className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">JPG, PNG or PDF · max 5 MB</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400">{t.clickToUpload}</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t.uploadHint}</span>
           <input
             ref={inputRef}
             type="file"
@@ -215,10 +220,10 @@ function FileUpload({
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                 </svg>
-                Extracting information…
+                {t.extracting}
               </p>
             ) : (
-              <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">Ready to upload</p>
+              <p className="text-xs text-green-600 dark:text-green-400 mt-0.5">{t.readyToUpload}</p>
             )}
           </div>
           {!extracting && (
@@ -272,6 +277,9 @@ function Field({
 }
 
 export default function EnrollmentForm() {
+  const [lang, setLang] = useState<Lang>("en");
+  const t = translations[lang];
+
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState("");
   const [studentPhoto, setStudentPhoto] = useState<File | null>(null);
@@ -333,9 +341,9 @@ export default function EnrollmentForm() {
       } else {
         if (extracted.parent1_full_name) { setValue("parent1_full_name", extracted.parent1_full_name); filled.push("parent name"); }
       }
-      setExtractNote(filled.length > 0 ? `Auto-filled: ${filled.join(", ")}.` : "Could not read document — please fill in manually.");
+      setExtractNote(filled.length > 0 ? `${t.autofilled} ${filled.join(", ")}.` : t.couldNotRead);
     } catch {
-      setExtractNote("Could not read document — please fill in manually.");
+      setExtractNote(t.couldNotRead);
     } finally {
       setExtracting(false);
     }
@@ -354,15 +362,14 @@ export default function EnrollmentForm() {
   async function onSubmit(data: EnrollmentFormData) {
     setServerError("");
 
-    // Validate required files
-    const errors: Record<string, string> = {};
-    if (!student3x4Photo) errors.student_3x4 = "Student 3×4 photo is required";
+    const errs: Record<string, string> = {};
+    if (!student3x4Photo) errs.student_3x4 = "Student 3×4 photo is required";
     pickupPhotos.forEach(({ photo3x4, photoId }, i) => {
-      if (!photo3x4) errors[`pickup_3x4_${i}`] = "3×4 photo is required";
-      if (!photoId) errors[`pickup_id_${i}`] = "ID / Passport photo is required";
+      if (!photo3x4) errs[`pickup_3x4_${i}`] = "3×4 photo is required";
+      if (!photoId) errs[`pickup_id_${i}`] = "ID / Passport photo is required";
     });
-    if (Object.keys(errors).length > 0) {
-      setFileErrors(errors);
+    if (Object.keys(errs).length > 0) {
+      setFileErrors(errs);
       return;
     }
     setFileErrors({});
@@ -406,6 +413,27 @@ export default function EnrollmentForm() {
     reset();
   }
 
+  // Language switcher bar
+  const langBar = (
+    <div className="flex flex-wrap gap-1.5 mb-5 p-1 bg-slate-100 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/10">
+      {(Object.entries(LANG_META) as [Lang, { flag: string; label: string }][]).map(([code, meta]) => (
+        <button
+          key={code}
+          type="button"
+          onClick={() => setLang(code)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+            lang === code
+              ? "bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-sm"
+              : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white"
+          }`}
+        >
+          <span>{meta.flag}</span>
+          <span>{meta.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+
   if (submitted) {
     return (
       <div className="glass p-10 text-center" style={{ borderColor: "rgba(134,239,172,0.3)" }}>
@@ -414,10 +442,9 @@ export default function EnrollmentForm() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Application Submitted!</h2>
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">{t.submitted}</h2>
         <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-          Thank you! Your enrollment application has been received. A confirmation email has been
-          sent to you. Our admissions team will be in touch within <strong>3–5 business days</strong>.
+          {t.submittedMessage}
         </p>
         <button
           type="button"
@@ -427,7 +454,7 @@ export default function EnrollmentForm() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Register Another Student
+          {t.registerAnother}
         </button>
       </div>
     );
@@ -435,81 +462,77 @@ export default function EnrollmentForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate>
-      {/* Documents — top so extraction fills fields below */}
+      {langBar}
+
+      {/* Documents */}
       <div className="glass p-6 mb-5">
         <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-2">
-          Documents
+          {t.documents}
         </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-          Upload ID or passport photos — we&apos;ll automatically fill in the form fields below.
-        </p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t.documentsHint}</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <FileUpload
-            label="Student ID / Passport Photo"
+            label={t.studentIdLabel}
             required
             onChange={(file) => { handleStudentPhotoChange(file); if (file) setFileErrors((p) => { const n={...p}; delete n.student_photo; return n; }); }}
             extracting={extractingStudent}
             error={fileErrors.student_photo}
+            t={t}
           />
           <FileUpload
-            label="Parent / Guardian ID / Passport Photo"
+            label={t.parentIdLabel}
             onChange={handleParentPhotoChange}
             extracting={extractingParent}
+            t={t}
           />
         </div>
         {extractNote && (
-          <p className={`text-xs mt-3 ${extractNote.startsWith("Auto") ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
+          <p className={`text-xs mt-3 ${extractNote.startsWith(t.autofilled) || extractNote.startsWith("Auto") ? "text-green-600 dark:text-green-400" : "text-slate-500 dark:text-slate-400"}`}>
             {extractNote}
           </p>
         )}
       </div>
 
       {/* Child Information */}
-      <FormSection title="Child Information">
-        <Field label="First Name" error={errors.child_first_name?.message} required>
-          <Input {...register("child_first_name")} placeholder="First name" />
+      <FormSection title={t.childInfo}>
+        <Field label={t.firstName} error={errors.child_first_name?.message} required>
+          <Input {...register("child_first_name")} placeholder={t.firstNamePh} />
         </Field>
-        <Field label="Last Name" error={errors.child_last_name?.message} required>
-          <Input {...register("child_last_name")} placeholder="Last name" />
+        <Field label={t.lastName} error={errors.child_last_name?.message} required>
+          <Input {...register("child_last_name")} placeholder={t.lastNamePh} />
         </Field>
-        <Field label="Date of Birth" error={errors.child_date_of_birth?.message} required>
+        <Field label={t.dateOfBirth} error={errors.child_date_of_birth?.message} required>
           <Input type="date" {...register("child_date_of_birth")} />
         </Field>
-        <Field label="Gender" error={errors.child_gender?.message} required>
+        <Field label={t.gender} error={errors.child_gender?.message} required>
           <Controller
             name="child_gender"
             control={control}
             render={({ field }) => (
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(v) => field.onChange(v ?? "")}
-              >
-                <SelectTrigger><SelectValue placeholder="Select gender" /></SelectTrigger>
+              <Select value={field.value ?? ""} onValueChange={(v) => field.onChange(v ?? "")}>
+                <SelectTrigger><SelectValue placeholder={t.selectGender} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
+                  <SelectItem value="male">{t.male}</SelectItem>
+                  <SelectItem value="female">{t.female}</SelectItem>
+                  <SelectItem value="other">{t.other}</SelectItem>
                 </SelectContent>
               </Select>
             )}
           />
         </Field>
-        <Field label="Nationality" error={errors.child_nationality?.message} required>
-          <Input {...register("child_nationality")} placeholder="e.g. Lao, Thai, American" />
+        <Field label={t.nationality} error={errors.child_nationality?.message} required>
+          <Input {...register("child_nationality")} placeholder={t.nationalityPh} />
         </Field>
         <div>
-          <Label className="text-slate-700 font-medium mb-1 block">
-            Applying for Grade <span className="text-red-500 ml-1">*</span>
+          <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">
+            {t.applyingForGrade} <span className="text-red-500 ml-1">*</span>
           </Label>
           <Controller
             name="applying_for_grade"
             control={control}
             render={({ field }) => (
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(v) => field.onChange(v ?? "")}
-              >
-                <SelectTrigger><SelectValue placeholder="Select grade" /></SelectTrigger>
+              <Select value={field.value ?? ""} onValueChange={(v) => field.onChange(v ?? "")}>
+                <SelectTrigger><SelectValue placeholder={t.selectGrade} /></SelectTrigger>
                 <SelectContent>
                   {GRADES.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
                 </SelectContent>
@@ -528,7 +551,7 @@ export default function EnrollmentForm() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>
-                  Your child is <strong>{months} months old</strong> — automatically placed in <strong>{detected.split(" ")[0]}</strong>. You may select a different class above if needed.
+                  <strong>{months} {t.monthsOld}</strong> — {t.autoPlaced} <strong>{detected.split(" ")[0]}</strong>. {t.selectDifferent}
                 </span>
               </div>
             ) : (
@@ -537,7 +560,7 @@ export default function EnrollmentForm() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
                 </svg>
                 <span>
-                  Your child is <strong>{months} months old</strong>. This age is outside our current enrollment range (18–72 months). Please select a class manually or contact us.
+                  <strong>{months} {t.monthsOld}</strong>. {t.outsideRange}
                 </span>
               </div>
             );
@@ -546,16 +569,13 @@ export default function EnrollmentForm() {
             <p className="text-red-500 text-xs mt-1">{errors.applying_for_grade.message}</p>
           )}
         </div>
-        <Field label="Academic Year" error={errors.academic_year?.message} required>
+        <Field label={t.academicYear} error={errors.academic_year?.message} required>
           <Controller
             name="academic_year"
             control={control}
             render={({ field }) => (
-              <Select
-                value={field.value ?? ""}
-                onValueChange={(v) => field.onChange(v ?? "")}
-              >
-                <SelectTrigger><SelectValue placeholder="Select year" /></SelectTrigger>
+              <Select value={field.value ?? ""} onValueChange={(v) => field.onChange(v ?? "")}>
+                <SelectTrigger><SelectValue placeholder={t.selectYear} /></SelectTrigger>
                 <SelectContent>
                   {ACADEMIC_YEARS.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
                 </SelectContent>
@@ -563,132 +583,119 @@ export default function EnrollmentForm() {
             )}
           />
         </Field>
-        <Field label="Previous School">
-          <Input {...register("previous_school")} placeholder="Name of previous school (if any)" />
+        <Field label={t.previousSchool}>
+          <Input {...register("previous_school")} placeholder={t.previousSchoolPh} />
         </Field>
-        <Field label="Languages Spoken at Home" full>
-          <Input {...register("languages_spoken")} placeholder="e.g. Lao, English, Thai" />
+        <Field label={t.languagesSpoken} full>
+          <Input {...register("languages_spoken")} placeholder={t.languagesPh} />
         </Field>
         <div className="sm:col-span-2">
           <FileUpload
-            label="Student 3×4 Portrait Photo"
+            label={t.student3x4}
             required
             onChange={(file) => {
               setStudent3x4Photo(file);
               if (file) setFileErrors((p) => { const n = { ...p }; delete n.student_3x4; return n; });
             }}
             error={fileErrors.student_3x4}
+            t={t}
           />
         </div>
       </FormSection>
 
       {/* Parent / Guardian 1 */}
-      <FormSection title="Parent / Guardian 1">
-        <Field label="Full Name" error={errors.parent1_full_name?.message} required>
-          <Input {...register("parent1_full_name")} placeholder="Full name" />
+      <FormSection title={t.parent1}>
+        <Field label={t.fullName} error={errors.parent1_full_name?.message} required>
+          <Input {...register("parent1_full_name")} placeholder={t.firstNamePh} />
         </Field>
-        <Field label="Relationship to Child" error={errors.parent1_relationship?.message} required>
-          <Input {...register("parent1_relationship")} placeholder="e.g. Mother, Father, Guardian" />
+        <Field label={t.relationshipToChild} error={errors.parent1_relationship?.message} required>
+          <Input {...register("parent1_relationship")} placeholder={t.relationshipPh} />
         </Field>
-        <Field label="Phone Number" error={errors.parent1_phone?.message} required>
-          <Input {...register("parent1_phone")} placeholder="+856 xx xxx xxxx" />
+        <Field label={t.phoneNumber} error={errors.parent1_phone?.message} required>
+          <Input {...register("parent1_phone")} placeholder={t.phonePh} />
         </Field>
-        <Field label="Email Address" error={errors.parent1_email?.message} required>
-          <Input type="email" {...register("parent1_email")} placeholder="email@example.com" />
+        <Field label={t.emailAddress} error={errors.parent1_email?.message} required>
+          <Input type="email" {...register("parent1_email")} placeholder={t.emailPh} />
         </Field>
-        <Field label="Occupation" full>
-          <Input {...register("parent1_occupation")} placeholder="e.g. Teacher, Business owner" />
+        <Field label={t.occupation} full>
+          <Input {...register("parent1_occupation")} placeholder={t.occupationPh} />
         </Field>
       </FormSection>
 
       {/* Parent / Guardian 2 */}
-      <FormSection title="Parent / Guardian 2 (Optional)">
-        <Field label="Full Name">
-          <Input {...register("parent2_full_name")} placeholder="Full name" />
+      <FormSection title={t.parent2}>
+        <Field label={t.fullName}>
+          <Input {...register("parent2_full_name")} placeholder={t.firstNamePh} />
         </Field>
-        <Field label="Relationship to Child">
-          <Input {...register("parent2_relationship")} placeholder="e.g. Mother, Father" />
+        <Field label={t.relationshipToChild}>
+          <Input {...register("parent2_relationship")} placeholder={t.relationshipPh} />
         </Field>
-        <Field label="Phone Number">
-          <Input {...register("parent2_phone")} placeholder="+856 xx xxx xxxx" />
+        <Field label={t.phoneNumber}>
+          <Input {...register("parent2_phone")} placeholder={t.phonePh} />
         </Field>
-        <Field label="Email Address" error={errors.parent2_email?.message}>
-          <Input type="email" {...register("parent2_email")} placeholder="email@example.com" />
+        <Field label={t.emailAddress} error={errors.parent2_email?.message}>
+          <Input type="email" {...register("parent2_email")} placeholder={t.emailPh} />
         </Field>
       </FormSection>
 
       {/* Address */}
-      <FormSection title="Home Address">
-        <Field label="Street Address" error={errors.home_address?.message} required full>
-          <Input {...register("home_address")} placeholder="Village, Street, District" />
+      <FormSection title={t.homeAddress}>
+        <Field label={t.streetAddress} error={errors.home_address?.message} required full>
+          <Input {...register("home_address")} placeholder={t.addressPh} />
         </Field>
-        <Field label="City" error={errors.city?.message} required>
-          <Input {...register("city")} placeholder="City" />
+        <Field label={t.city} error={errors.city?.message} required>
+          <Input {...register("city")} placeholder={t.cityPh} />
         </Field>
       </FormSection>
 
       {/* Authorized Pickup */}
       <div className="glass p-6 mb-5">
         <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
-          Authorized to Pick Up Child
+          {t.authorizedPickup}
         </h2>
         <div className="space-y-4">
           {pickupFields.map((field, index) => (
             <div key={field.id} className="glass-sm p-4 relative">
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Person {index + 1}</p>
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">{t.person} {index + 1}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">
-                    Full Name <span className="text-red-500">*</span>
+                    {t.fullName} <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    {...register(`pickup_persons.${index}.name`)}
-                    placeholder="Full name"
-                  />
+                  <Input {...register(`pickup_persons.${index}.name`)} placeholder={t.firstNamePh} />
                   {errors.pickup_persons?.[index]?.name && (
                     <p className="text-red-500 text-xs mt-1">{errors.pickup_persons[index].name.message}</p>
                   )}
                 </div>
                 <div>
                   <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">
-                    Relationship <span className="text-red-500">*</span>
+                    {t.relationship} <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    {...register(`pickup_persons.${index}.relationship`)}
-                    placeholder="e.g. Mother, Uncle, Nanny"
-                  />
+                  <Input {...register(`pickup_persons.${index}.relationship`)} placeholder={t.pickupRelationshipPh} />
                   {errors.pickup_persons?.[index]?.relationship && (
                     <p className="text-red-500 text-xs mt-1">{errors.pickup_persons[index].relationship.message}</p>
                   )}
                 </div>
                 <div>
                   <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">
-                    Phone <span className="text-red-500">*</span>
+                    {t.phone} <span className="text-red-500">*</span>
                   </Label>
-                  <Input
-                    {...register(`pickup_persons.${index}.phone`)}
-                    placeholder="+856 xx xxx xxxx"
-                  />
+                  <Input {...register(`pickup_persons.${index}.phone`)} placeholder={t.phonePh} />
                   {errors.pickup_persons?.[index]?.phone && (
                     <p className="text-red-500 text-xs mt-1">{errors.pickup_persons[index].phone.message}</p>
                   )}
                 </div>
                 <div>
-                  <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">Email</Label>
-                  <Input
-                    type="email"
-                    {...register(`pickup_persons.${index}.email`)}
-                    placeholder="email@example.com (optional)"
-                  />
+                  <Label className="text-slate-700 dark:text-slate-300 font-medium mb-1 block">{t.email}</Label>
+                  <Input type="email" {...register(`pickup_persons.${index}.email`)} placeholder={t.pickupEmailPh} />
                   {errors.pickup_persons?.[index]?.email && (
                     <p className="text-red-500 text-xs mt-1">{errors.pickup_persons[index].email.message}</p>
                   )}
                 </div>
               </div>
-              {/* Pickup person photos */}
               <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 col-span-full">
                 <FileUpload
-                  label="3×4 Portrait Photo"
+                  label={t.portrait3x4}
                   required
                   onChange={(file) => {
                     setPickupPhotos((prev) => {
@@ -699,9 +706,10 @@ export default function EnrollmentForm() {
                     if (file) setFileErrors((prev) => { const n = { ...prev }; delete n[`pickup_3x4_${index}`]; return n; });
                   }}
                   error={fileErrors[`pickup_3x4_${index}`]}
+                  t={t}
                 />
                 <FileUpload
-                  label="ID / Passport Photo"
+                  label={t.idPassportPhoto}
                   required
                   onChange={(file) => {
                     setPickupPhotos((prev) => {
@@ -712,9 +720,9 @@ export default function EnrollmentForm() {
                     if (file) setFileErrors((prev) => { const n = { ...prev }; delete n[`pickup_id_${index}`]; return n; });
                   }}
                   error={fileErrors[`pickup_id_${index}`]}
+                  t={t}
                 />
               </div>
-
               {index > 0 && (
                 <button
                   type="button"
@@ -740,47 +748,38 @@ export default function EnrollmentForm() {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
           </svg>
-          Add another person
+          {t.addAnotherPerson}
         </button>
       </div>
 
       {/* Medical & Emergency */}
-      <FormSection title="Medical & Emergency Information">
-        <Field label="Medical Conditions" error={errors.medical_conditions?.message} required full>
-          <Textarea
-            {...register("medical_conditions")}
-            placeholder="List any medical conditions, disabilities, or special needs (write 'None' if not applicable)"
-            rows={3}
-          />
+      <FormSection title={t.medicalEmergency}>
+        <Field label={t.medicalConditions} error={errors.medical_conditions?.message} required full>
+          <Textarea {...register("medical_conditions")} placeholder={t.medicalPh} rows={3} />
         </Field>
-        <Field label="Allergies" error={errors.allergies?.message} required full>
-          <Textarea
-            {...register("allergies")}
-            placeholder="List any food or medication allergies (write 'None' if not applicable)"
-            rows={2}
-          />
+        <Field label={t.allergies} error={errors.allergies?.message} required full>
+          <Textarea {...register("allergies")} placeholder={t.allergiesPh} rows={2} />
         </Field>
-        <Field label="Emergency Contact Name" error={errors.emergency_contact_name?.message} required>
-          <Input {...register("emergency_contact_name")} placeholder="Full name" />
+        <Field label={t.emergencyContactName} error={errors.emergency_contact_name?.message} required>
+          <Input {...register("emergency_contact_name")} placeholder={t.firstNamePh} />
         </Field>
-        <Field label="Emergency Contact Phone" error={errors.emergency_contact_phone?.message} required>
-          <Input {...register("emergency_contact_phone")} placeholder="+856 xx xxx xxxx" />
+        <Field label={t.emergencyContactPhone} error={errors.emergency_contact_phone?.message} required>
+          <Input {...register("emergency_contact_phone")} placeholder={t.phonePh} />
         </Field>
-        <Field label="Relationship to Child" error={errors.emergency_contact_relationship?.message} required>
-          <Input {...register("emergency_contact_relationship")} placeholder="e.g. Aunt, Grandmother" />
+        <Field label={t.relationshipToChild} error={errors.emergency_contact_relationship?.message} required>
+          <Input {...register("emergency_contact_relationship")} placeholder={t.relationshipPh} />
         </Field>
       </FormSection>
 
       {/* Consent */}
       <div className="glass p-6 mb-5">
         <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
-          Photo Consent
+          {t.photoConsent}
         </h2>
         <div className="space-y-5">
-          {/* Social media */}
           <div>
             <p className="text-sm text-slate-700 dark:text-slate-300 mb-2">
-              I give consent to use my child&apos;s photo(s) on the school&apos;s <strong>social media</strong>.
+              {t.consentSocialMedia}
               <span className="text-red-500 ml-1">*</span>
             </p>
             <Controller
@@ -797,7 +796,7 @@ export default function EnrollmentForm() {
                         : "border-slate-300 dark:border-white/15 text-slate-600 dark:text-slate-400 hover:border-green-400 dark:hover:border-green-500 hover:text-green-700 dark:hover:text-green-400"
                     }`}
                   >
-                    I give consent
+                    {t.iGiveConsent}
                   </button>
                   <button
                     type="button"
@@ -808,7 +807,7 @@ export default function EnrollmentForm() {
                         : "border-slate-300 dark:border-white/15 text-slate-600 dark:text-slate-400 hover:border-red-400 dark:hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
                     }`}
                   >
-                    I do not give consent
+                    {t.iDoNotGiveConsent}
                   </button>
                 </div>
               )}
@@ -818,10 +817,9 @@ export default function EnrollmentForm() {
             )}
           </div>
 
-          {/* Marketing */}
           <div>
             <p className="text-sm text-slate-700 dark:text-slate-300 mb-2">
-              I give consent to use my child&apos;s photo(s) on school <strong>posters and advertisements</strong>.
+              {t.consentMarketing}
               <span className="text-red-500 ml-1">*</span>
             </p>
             <Controller
@@ -838,7 +836,7 @@ export default function EnrollmentForm() {
                         : "border-slate-300 dark:border-white/15 text-slate-600 dark:text-slate-400 hover:border-green-400 dark:hover:border-green-500 hover:text-green-700 dark:hover:text-green-400"
                     }`}
                   >
-                    I give consent
+                    {t.iGiveConsent}
                   </button>
                   <button
                     type="button"
@@ -849,7 +847,7 @@ export default function EnrollmentForm() {
                         : "border-slate-300 dark:border-white/15 text-slate-600 dark:text-slate-400 hover:border-red-400 dark:hover:border-red-500 hover:text-red-600 dark:hover:text-red-400"
                     }`}
                   >
-                    I do not give consent
+                    {t.iDoNotGiveConsent}
                   </button>
                 </div>
               )}
@@ -864,18 +862,16 @@ export default function EnrollmentForm() {
       {/* Book a Visit */}
       <div className="glass p-6 mb-5">
         <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
-          Book a Date to Visit the School
+          {t.bookVisit}
         </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
-          Optional — you are welcome to visit our campus before enrollment. Select a preferred date and time and our team will confirm the appointment.
-        </p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t.visitHint}</p>
         <div className="space-y-4">
-          <Field label="Preferred Visit Date">
+          <Field label={t.preferredVisitDate}>
             <Input type="date" {...register("visit_date")} min={new Date().toISOString().split("T")[0]} />
           </Field>
           <div>
             <Label className="text-slate-700 dark:text-slate-300 font-medium mb-2 block">
-              Preferred Visit Time
+              {t.preferredVisitTime}
             </Label>
             <Controller
               name="visit_time"
@@ -885,6 +881,7 @@ export default function EnrollmentForm() {
                   date={watchedVisitDate}
                   value={field.value}
                   onChange={field.onChange}
+                  t={t}
                 />
               )}
             />
@@ -904,11 +901,11 @@ export default function EnrollmentForm() {
         className="w-full text-white text-base font-semibold py-6"
         style={{ background: "rgba(0,90,220,0.88)", backdropFilter: "blur(10px)", border: "1px solid rgba(100,160,255,0.3)", boxShadow: "0 2px 20px rgba(0,90,220,0.28), inset 0 1px 0 rgba(255,255,255,0.2)" }}
       >
-        {isSubmitting ? "Submitting Application…" : "Submit Enrollment Application"}
+        {isSubmitting ? t.submitting : t.submitButton}
       </Button>
 
       <p className="text-center text-slate-400 dark:text-slate-500 text-xs mt-3">
-        By submitting, you agree that the information provided is accurate and complete.
+        {t.submitDisclaimer}
       </p>
     </form>
   );
