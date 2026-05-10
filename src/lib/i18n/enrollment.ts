@@ -238,7 +238,7 @@ export const translations = {
     parent2: "부모 / 보호자 2 (선택사항)",
     homeAddress: "주거지 주소",
     authorizedPickup: "아동 하원 권한자",
-    medicalEmergency: "의료 및 비상 정보",
+    medicalEmergency: "의료 및 비상 연락 정보",
     photoConsent: "사진 동의",
     bookVisit: "학교 방문 예약",
     visitHint: "선택사항 — 입학 전에 캠퍼스를 방문하실 수 있습니다. 선호하는 날짜와 시간을 선택하시면 팀이 예약을 확인해 드립니다.",
