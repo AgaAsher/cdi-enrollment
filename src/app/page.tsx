@@ -139,7 +139,13 @@ export default function Home() {
     background: "linear-gradient(145deg, rgba(10,30,60,0.28) 0%, rgba(5,15,40,0.30) 40%, rgba(0,40,80,0.24) 100%)",
     border: "1px solid rgba(255,255,255,0.18)",
     boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.22), inset 0 -1px 0 rgba(255,255,255,0.06), 0 32px 80px rgba(0,0,0,0.50), 0 8px 24px rgba(0,0,0,0.35)",
-  } : glass.card;
+  } : {
+    backdropFilter: "blur(56px) saturate(180%) brightness(0.80)",
+    WebkitBackdropFilter: "blur(56px) saturate(180%) brightness(0.80)",
+    background: "linear-gradient(145deg, rgba(0,60,40,0.55) 0%, rgba(5,30,80,0.52) 40%, rgba(0,50,100,0.48) 100%)",
+    border: "1px solid rgba(255,255,255,0.32)",
+    boxShadow: "inset 0 1.5px 0 rgba(255,255,255,0.50), inset 0 -1px 0 rgba(255,255,255,0.08), 0 32px 80px rgba(0,0,30,0.55), 0 8px 24px rgba(0,0,0,0.40)",
+  };
 
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -190,7 +196,7 @@ export default function Home() {
         style={{
           background: isDark
             ? "linear-gradient(160deg, rgba(0,10,20,0.52) 0%, rgba(0,5,15,0.48) 50%, rgba(0,15,30,0.50) 100%)"
-            : "linear-gradient(160deg, rgba(0,50,30,0.52) 0%, rgba(5,25,45,0.44) 50%, rgba(0,70,50,0.50) 100%)",
+            : "linear-gradient(160deg, rgba(0,40,20,0.62) 0%, rgba(5,20,50,0.58) 50%, rgba(0,50,40,0.60) 100%)",
         }}
       />
 
