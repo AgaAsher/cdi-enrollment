@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -120,8 +119,6 @@ const glass = {
 
 export default function Home() {
   const router = useRouter();
-  const { resolvedTheme } = useTheme();
-  const isDark = resolvedTheme === "dark";
   const [lang, setLang]         = useState<LangKey>("en");
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
