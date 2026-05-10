@@ -61,7 +61,7 @@ export default function ParentChildrenTabs({
 
   if (children.length === 0) {
     return (
-      <div className="bg-white dark:bg-[#1a2035] rounded-2xl p-8 text-center border border-slate-100 dark:border-white/8 shadow-sm">
+      <div className="p-8 text-center">
         <p className="text-slate-400 dark:text-slate-500 text-sm">No enrolled children found.</p>
       </div>
     );
@@ -76,7 +76,7 @@ export default function ParentChildrenTabs({
   const childFeedback = allFeedback.filter(f => f.enrollment_id === child.id).slice(0, 5);
 
   return (
-    <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-100 dark:border-white/8 shadow-sm overflow-hidden">
+    <div className="overflow-hidden">
 
       {/* Tabs — only shown if more than one child */}
       {children.length > 1 && (

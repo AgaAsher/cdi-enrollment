@@ -160,20 +160,22 @@ export default async function ParentDashboardPage() {
       </div>
 
       {/* Children tabs */}
-      <ParentChildrenTabs
-        children={children}
-        attendanceSummaries={attendanceSummaries}
-        allFeedback={allFeedback}
-        timetableData={timetableData}
-      />
+      <CollapsibleSection title={children.length === 1 ? `${children[0]?.child_first_name ?? "Child"} ${children[0]?.child_last_name ?? ""}`.trim() : "My Children"}>
+        <ParentChildrenTabs
+          children={children}
+          attendanceSummaries={attendanceSummaries}
+          allFeedback={allFeedback}
+          timetableData={timetableData}
+        />
+      </CollapsibleSection>
 
       {/* Weekly Menu */}
-      <CollapsibleSection title="Weekly Menu" defaultOpen={true}>
+      <CollapsibleSection title="Weekly Menu" defaultOpen={false}>
         <ParentWeeklyMenu menuData={menuData} todayDayName={todayDayName} />
       </CollapsibleSection>
 
       {/* Upcoming Events */}
-      <CollapsibleSection title="Upcoming Events" defaultOpen={true}>
+      <CollapsibleSection title="Upcoming Events" defaultOpen={false}>
         <div className="divide-y divide-slate-100 dark:divide-white/8">
           {upcomingEvents.length === 0 ? (
             <div className="py-8 text-center text-sm text-slate-400 dark:text-slate-500">No upcoming events.</div>
@@ -200,7 +202,7 @@ export default async function ParentDashboardPage() {
       </CollapsibleSection>
 
       {/* Noticeboard */}
-      <CollapsibleSection title="Noticeboard" defaultOpen={true}>
+      <CollapsibleSection title="Noticeboard" defaultOpen={false}>
         <div className="divide-y divide-slate-100 dark:divide-white/8">
           {NOTICES.map((n, i) => (
             <div key={i} className="px-5 py-4">
