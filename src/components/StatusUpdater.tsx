@@ -50,13 +50,13 @@ export default function StatusUpdater({
   }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-5">
-      <h2 className="font-semibold text-blue-900 mb-4 pb-2 border-b border-slate-100">
+    <div className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 shadow-sm p-6 mb-5">
+      <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">
         Admin Actions
       </h2>
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
-          <label className="text-slate-600 text-sm font-medium mb-1 block">Update Status</label>
+          <label className="text-slate-600 dark:text-slate-400 text-sm font-medium mb-1 block">Update Status</label>
           <Select value={status} onValueChange={(v) => { if (v) setStatus(v as EnrollmentStatus); }}>
             <SelectTrigger>
               <SelectValue />
@@ -71,7 +71,7 @@ export default function StatusUpdater({
           </Select>
         </div>
         <div className="flex-1">
-          <label className="text-slate-600 text-sm font-medium mb-1 block">Admin Notes</label>
+          <label className="text-slate-600 dark:text-slate-400 text-sm font-medium mb-1 block">Admin Notes</label>
           <Textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -88,7 +88,7 @@ export default function StatusUpdater({
         >
           {saving ? "Saving…" : "Save Changes"}
         </Button>
-        {saved && <span className="text-green-600 text-sm">Saved!</span>}
+        {saved && <span className="text-green-500 text-sm">Saved!</span>}
       </div>
     </div>
   );
