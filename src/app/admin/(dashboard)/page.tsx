@@ -140,7 +140,8 @@ export default async function AdminPage({
   // ── SCHOOL ──
   if (section === "school") {
     const tab = params.tab ?? "timetable";
-    return <SchoolSection tab={tab} enrollments={list} />;
+    const canMenuEdit = !!(p.menu_edit || session?.role === "admin" || session?.role === "super_admin");
+    return <SchoolSection tab={tab} enrollments={list} canMenuEdit={canMenuEdit} />;
   }
 
   // ── USERS ──

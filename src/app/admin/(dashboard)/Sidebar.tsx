@@ -121,6 +121,7 @@ export default function Sidebar({
         { label: t.teachers,    href: "/admin?section=school&tab=teachers" },
         { label: t.events,      href: "/admin?section=school&tab=events" },
         { label: t.noticeboard, href: "/admin?section=school&tab=noticeboard" },
+        { label: t.weeklyMenu,  href: "/admin?section=school&tab=menu" },
       ] as NavLeaf[],
     }][0],
 

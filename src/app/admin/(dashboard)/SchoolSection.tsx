@@ -4,6 +4,7 @@ import TimetableEditor from "./TimetableEditor";
 import TeachersSection from "./TeachersSection";
 import StudentsSchoolView from "./StudentsSchoolView";
 import ParentsPortalView from "./ParentsPortalView";
+import WeeklyMenuView from "./WeeklyMenuView";
 
 const GRADES = [
   { key: "Toddler (18–30 months)",   label: "Toddler",   age: "18–30 months", color: "blue"    },
@@ -47,7 +48,7 @@ const NOTICE_COLORS: Record<string, string> = {
   amber: "bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-300",
 };
 
-export default function SchoolSection({ tab, enrollments }: { tab: string; enrollments: Enrollment[] }) {
+export default function SchoolSection({ tab, enrollments, canMenuEdit }: { tab: string; enrollments: Enrollment[]; canMenuEdit: boolean }) {
   const today = new Date().toISOString().split("T")[0];
 
   // ── STUDENTS ───────────────────────────────────────────────────────────────
@@ -164,6 +165,11 @@ export default function SchoolSection({ tab, enrollments }: { tab: string; enrol
   // ── TEACHERS ───────────────────────────────────────────────────────────────
   if (tab === "teachers") {
     return <TeachersSection />;
+  }
+
+  // ── WEEKLY MENU ────────────────────────────────────────────────────────────
+  if (tab === "menu") {
+    return <WeeklyMenuView canEdit={canMenuEdit} />;
   }
 
   // ── EVENTS ─────────────────────────────────────────────────────────────────

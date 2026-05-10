@@ -22,6 +22,7 @@ const PERMISSIONS: Permission[] = [
   { key: "archive",             label: "Archive",             description: "Access the student archive" },
   { key: "reports",             label: "Reports",             description: "View analytics and reports" },
   { key: "school",              label: "School",              description: "Timetable, attendance, classes, teachers, events" },
+  { key: "menu_edit",           label: "Weekly Menu",         description: "Add and edit the weekly lunch menu" },
   { key: "users",               label: "User Management",     description: "Create and manage admin users" },
 ];
 

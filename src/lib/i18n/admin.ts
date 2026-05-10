@@ -29,6 +29,7 @@ const en = {
   teachers: "Teachers",
   events: "Events",
   noticeboard: "Noticeboard",
+  weeklyMenu: "Weekly Menu",
   users: "Users",
   settings: "Settings",
 
@@ -117,6 +118,7 @@ const lo: typeof en = {
   teachers: "ຄູສອນ",
   events: "ກິດຈະກຳ",
   noticeboard: "ກະດານຂ່າວ",
+  weeklyMenu: "ເມນູປະຈຳອາທິດ",
   users: "ຜູ້ໃຊ້",
   settings: "ການຕັ້ງຄ່າ",
 
