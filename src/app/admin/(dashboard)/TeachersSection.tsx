@@ -71,33 +71,36 @@ export default function TeachersSection() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [accRes, ttRes] = await Promise.all([
-      fetch("/api/admin/users?role=teacher"),
-      fetch("/api/timetable/teachers"),
-    ]);
-    const accounts: Teacher[] = await accRes.json().then(d => Array.isArray(d) ? d : []);
-    const timetableNames: string[] = await ttRes.json().then(d => d.teachers ?? []);
+    try {
+      const [accRes, ttRes] = await Promise.all([
+        fetch("/api/admin/users?role=teacher"),
+        fetch("/api/timetable/teachers"),
+      ]);
+      const accounts: Teacher[] = await accRes.json().then(d => Array.isArray(d) ? d : []);
+      const timetableNames: string[] = await ttRes.json().then(d => d.teachers ?? []);
 
-    // For each timetable name, find matching account (by name or profile.timetable_name)
-    const used = new Set<string>();
-    const merged: TeacherRow[] = timetableNames.map(tName => {
-      const acc = accounts.find(a =>
-        a.name === tName ||
-        (a.profile as TeacherProfile)?.timetable_name === tName
-      ) ?? null;
-      if (acc) used.add(acc.id);
-      return { timetableName: tName, account: acc };
-    });
+      const used = new Set<string>();
+      const merged: TeacherRow[] = timetableNames.map(tName => {
+        const acc = accounts.find(a =>
+          a.name === tName ||
+          (a.profile as TeacherProfile)?.timetable_name === tName
+        ) ?? null;
+        if (acc) used.add(acc.id);
+        return { timetableName: tName, account: acc };
+      });
 
-    // Also include teacher accounts not in timetable (e.g. admin-created but not yet in timetable)
-    for (const acc of accounts) {
-      if (!used.has(acc.id)) {
-        merged.push({ timetableName: acc.name, account: acc });
+      for (const acc of accounts) {
+        if (!used.has(acc.id)) {
+          merged.push({ timetableName: acc.name, account: acc });
+        }
       }
-    }
 
-    setRows(merged);
-    setLoading(false);
+      setRows(merged);
+    } catch {
+      // leave existing rows visible on error
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => { load(); }, [load]);
