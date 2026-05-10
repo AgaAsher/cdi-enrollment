@@ -232,7 +232,7 @@ export const translations = {
   ko: {
     pageSubtitle: "아래 양식을 작성하여 자녀의 입학 신청을 시작해 주세요. 입학 담당팀이 검토 후 영업일 기준 3~5일 이내에 답변드립니다.",
     documents: "서류",
-    documentsHint: "신분증 또는 여권 사진을 업로드하면 아래 양식이 자동으로 채워집니다.",
+    documentsHint: "신분증 또는 여권 사진을 업로드하면 아래 양식이 자동으로 입력됩니다.",
     childInfo: "아동 정보",
     parent1: "부모 / 보호자 1",
     parent2: "부모 / 보호자 2 (선택사항)",
