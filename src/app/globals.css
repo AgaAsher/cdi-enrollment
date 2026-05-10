@@ -132,90 +132,12 @@
   }
 }
 
-/* ── DARK MODE ── */
-.dark body {
-  background: #0d1117;
-  color: #e2e8f0;
-}
-.dark .glass {
-  background: #1a2035;
-  border-color: rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.4),
-    0 2px 8px rgba(0, 0, 0, 0.3);
-}
-.dark .glass-card {
-  background: #1a2035;
-  border-color: rgba(255, 255, 255, 0.07);
-  box-shadow:
-    0 6px 32px rgba(0, 0, 0, 0.35),
-    0 2px 8px rgba(0, 0, 0, 0.25);
-}
-.dark .glass-sm {
-  background: #1e2640;
-  border-color: rgba(255, 255, 255, 0.07);
-  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.3);
-}
-.dark .glass-dark {
-  background: #0d1117;
-  border-bottom-color: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 1px 12px rgba(0, 0, 0, 0.4);
-}
-.dark .glass-sidebar {
-  background: #111827;
-  border-right-color: rgba(255, 255, 255, 0.06);
-}
-.dark .glass-card th {
-  color: #94a3b8 !important;
-}
-.dark .glass-card td {
-  color: #cbd5e1 !important;
-}
-.dark h1, .dark h2, .dark h3 {
-  color: #f1f5f9;
-}
-.dark p {
-  color: #cbd5e1;
-}
-.dark .glass-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-.dark [data-slot="input"] {
-  background: #1e2640 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #e2e8f0 !important;
-}
-.dark [data-slot="input"]::placeholder {
-  color: rgba(148, 163, 184, 0.5) !important;
-}
-.dark [data-slot="input"]:focus-visible {
-  background: #243050 !important;
-  border-color: #3b82f6 !important;
-}
-.dark [data-slot="select-trigger"] {
-  background: #1e2640 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #e2e8f0 !important;
-}
-.dark textarea {
-  background: #1e2640 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: #e2e8f0 !important;
-}
-.dark textarea:focus {
-  background: #243050 !important;
-  border-color: #3b82f6 !important;
-}
-.dark [data-radix-popper-content-wrapper] > *,
-.dark [role="listbox"] {
-  background: #1a2035 !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
-}
+/* ── DARK MODE — glass is identical in both modes on photo background ── */
+.dark body { background: transparent; color: rgba(255,255,255,0.88); }
 
-/* Page-level heading: dark blue */
+/* Page-level heading */
 .page-title {
-  color: #0f1f6b;
+  color: white;
   font-weight: 700;
 }
 
@@ -225,106 +147,79 @@
   100% { background-position: 0% 50%; }
 }
 
-/* ── LIQUID GLASS SURFACES ── */
+/* ── LIQUID GLASS SURFACES (macOS 26 style — always on photo background) ── */
 
-/* Primary glass — translucent panels (forms, login card) */
+/* Primary glass — translucent panels */
 .glass {
-  background: #ffffff;
-  border: 1px solid rgba(15, 31, 107, 0.08);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background: rgba(10, 25, 70, 0.36);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow:
-    0 8px 40px rgba(15, 31, 107, 0.10),
-    0 2px 8px rgba(15, 31, 107, 0.06),
-    0 1px 2px rgba(0, 0, 0, 0.04);
-  border-radius: 28px;
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.25),
+    0 8px 40px rgba(0, 0, 0, 0.40);
+  border-radius: 24px;
 }
 
 /* Card glass — content areas with tables/text */
 .glass-card {
-  background: #ffffff;
-  border: 1px solid rgba(15, 31, 107, 0.07);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(10, 25, 70, 0.30);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    0 6px 32px rgba(15, 31, 107, 0.09),
-    0 2px 8px rgba(15, 31, 107, 0.05),
-    0 1px 2px rgba(0, 0, 0, 0.03);
-  border-radius: 24px;
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 6px 32px rgba(0, 0, 0, 0.35);
+  border-radius: 20px;
 }
 
 /* Small glass — sub-cards, info boxes */
 .glass-sm {
-  background: #f8faff;
-  border: 1px solid rgba(15, 31, 107, 0.08);
-  box-shadow:
-    0 3px 16px rgba(15, 31, 107, 0.07),
-    0 1px 4px rgba(15, 31, 107, 0.04);
-  border-radius: 18px;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(10, 25, 70, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.28);
+  border-radius: 16px;
 }
 
 /* Header */
 .glass-dark {
-  background: #ffffff;
-  border-bottom: 1px solid rgba(15, 31, 107, 0.08);
-  box-shadow: 0 1px 12px rgba(15, 31, 107, 0.07);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  background: rgba(5, 15, 50, 0.48);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 1px 16px rgba(0, 0, 0, 0.30);
 }
 
 /* Sidebar */
 .glass-sidebar {
-  background: #f4f6fb;
-  border-right: 1px solid rgba(15, 31, 107, 0.08);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  background: rgba(5, 15, 50, 0.40);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* ── SIDEBAR TAB ACTIVE (glass depth) ── */
 .glass-tab-active {
-  background: linear-gradient(
-    105deg,
-    rgba(59, 130, 246, 0.10) 0%,
-    rgba(255, 255, 255, 1) 35%
-  ) !important;
+  background: rgba(99, 155, 255, 0.22) !important;
   box-shadow:
-    inset 3px 0 0 #3b82f6,
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(59, 130, 246, 0.1),
-    0 2px 10px rgba(59, 130, 246, 0.12),
-    0 1px 3px rgba(0, 0, 0, 0.06) !important;
+    inset 3px 0 0 rgba(120, 180, 255, 0.90),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(99, 155, 255, 0.10),
+    0 2px 10px rgba(0, 0, 0, 0.25) !important;
   transform: translateX(2px);
 }
 .glass-tab-active-sub {
-  background: linear-gradient(
-    105deg,
-    rgba(59, 130, 246, 0.12) 0%,
-    rgba(255, 255, 255, 1) 40%
-  ) !important;
+  background: rgba(99, 155, 255, 0.18) !important;
   box-shadow:
-    inset 3px 0 0 #3b82f6,
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    inset 0 -1px 0 rgba(59, 130, 246, 0.08),
-    0 1px 6px rgba(59, 130, 246, 0.1) !important;
+    inset 3px 0 0 rgba(120, 180, 255, 0.80),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 1px 6px rgba(0, 0, 0, 0.20) !important;
   transform: translateX(2px);
 }
-
-/* Dark mode */
-.dark .glass-tab-active {
-  background: linear-gradient(
-    105deg,
-    rgba(99, 155, 255, 0.20) 0%,
-    rgba(255, 255, 255, 0.10) 50%
-  ) !important;
-  box-shadow:
-    inset 3px 0 0 rgba(99, 155, 255, 0.8),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(99, 155, 255, 0.1),
-    0 2px 10px rgba(0, 0, 0, 0.25) !important;
-}
-.dark .glass-tab-active-sub {
-  background: linear-gradient(
-    105deg,
-    rgba(99, 155, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0.08) 50%
-  ) !important;
-  box-shadow:
-    inset 3px 0 0 rgba(99, 155, 255, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 1px 6px rgba(0, 0, 0, 0.2) !important;
-}
+.dark .glass-tab-active { background: rgba(99, 155, 255, 0.22) !important; }
+.dark .glass-tab-active-sub { background: rgba(99, 155, 255, 0.18) !important; }
 
 /* Table row hover */
 .glass-row {
@@ -366,50 +261,51 @@
   transform: translateX(1px);
 }
 
-/* ── INPUTS ── */
+/* ── INPUTS (glass style for photo background) ── */
 [data-slot="input"] {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   border-radius: 11px !important;
-  color: #1e293b !important;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  color: white !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
   transition: all 0.18s ease !important;
   height: 2.6rem !important;
 }
 [data-slot="input"]:focus-visible {
-  background: #ffffff !important;
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(140, 200, 255, 0.55) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 0 0 3px rgba(80,160,255,0.20) !important;
 }
 [data-slot="input"]::placeholder {
-  color: #94a3b8 !important;
+  color: rgba(255, 255, 255, 0.38) !important;
 }
 
 /* Selects */
 [data-slot="select-trigger"] {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   border-radius: 11px !important;
-  color: #1e293b !important;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  color: white !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
   height: 2.6rem !important;
 }
 
 /* Textarea */
 textarea {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
+  background: rgba(255, 255, 255, 0.10) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
   border-radius: 11px !important;
-  color: #1e293b !important;
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04) !important;
+  color: white !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
   transition: all 0.18s ease !important;
 }
 textarea:focus {
-  background: #ffffff !important;
-  border-color: #3b82f6 !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-color: rgba(140, 200, 255, 0.55) !important;
   outline: none !important;
-  box-shadow: 0 0 0 3px rgba(59,130,246,0.15) !important;
+  box-shadow: 0 0 0 3px rgba(80, 160, 255, 0.20) !important;
 }
+textarea::placeholder { color: rgba(255, 255, 255, 0.38) !important; }
 
 /* ── PILL BUTTONS ── */
 [data-slot="button"] {
@@ -419,17 +315,44 @@ textarea:focus {
 /* ── DROPDOWNS ── */
 [data-radix-popper-content-wrapper] > *,
 [role="listbox"] {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  background: rgba(10, 25, 70, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.20) !important;
   border-radius: 14px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 8px 32px rgba(0,0,0,0.50) !important;
+  color: white !important;
 }
 
 /* Text legibility inside content cards */
-.glass-card th {
-  color: #0f1f6b;
-}
-.glass-card td {
-  color: #0f1f6b;
-}
+.glass-card th { color: rgba(255, 255, 255, 0.60) !important; }
+.glass-card td { color: rgba(255, 255, 255, 0.90) !important; }
+.dark .glass-card th { color: rgba(255, 255, 255, 0.60) !important; }
+.dark .glass-card td { color: rgba(255, 255, 255, 0.90) !important; }
+
+/* ── GLASS CONTEXT — forces white text on dark photo bg ── */
+.glass-context { color: rgba(255, 255, 255, 0.88); }
+.glass-context h1,
+.glass-context h2,
+.glass-context h3,
+.glass-context h4 { color: white !important; }
+
+/* Override Tailwind slate text colors inside glass context */
+.glass-context .text-slate-900,
+.glass-context .text-slate-800,
+.glass-context .text-slate-700 { color: rgba(255, 255, 255, 0.90) !important; }
+.glass-context .text-slate-600,
+.glass-context .text-slate-500 { color: rgba(255, 255, 255, 0.62) !important; }
+.glass-context .text-slate-400 { color: rgba(255, 255, 255, 0.48) !important; }
+.glass-context .text-slate-300 { color: rgba(255, 255, 255, 0.35) !important; }
+
+/* Override navy hex colors used in components */
+.glass-context [class*="[#0f1f6b]"] { color: white !important; }
+.glass-context [class*="[#1a3fa8]"] { color: rgba(160, 210, 255, 0.90) !important; }
+
+/* Border colors inside glass context */
+.glass-context .border-slate-200,
+.glass-context .border-slate-100 { border-color: rgba(255, 255, 255, 0.12) !important; }
+.glass-context .bg-white { background: rgba(255, 255, 255, 0.10) !important; }
+.glass-context .bg-slate-50 { background: rgba(255, 255, 255, 0.06) !important; }
 

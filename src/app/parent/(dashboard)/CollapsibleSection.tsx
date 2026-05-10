@@ -14,15 +14,25 @@ export default function CollapsibleSection({
   const [open, setOpen] = useState(defaultOpen);
 
   return (
-    <div className="bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl overflow-hidden shadow-sm">
+    <div
+      className="rounded-2xl overflow-hidden"
+      style={{
+        backdropFilter: "blur(20px) saturate(180%)",
+        WebkitBackdropFilter: "blur(20px) saturate(180%)",
+        background: "rgba(10, 25, 70, 0.30)",
+        border: "1px solid rgba(255, 255, 255, 0.14)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 32px rgba(0,0,0,0.35)",
+      }}
+    >
       <button
         onClick={() => setOpen(v => !v)}
-        className="flex items-center justify-between w-full px-5 py-4 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors"
+        className="flex items-center justify-between w-full px-5 py-4 transition-colors hover:bg-white/5"
       >
-        <h2 className="text-base font-bold text-slate-800 dark:text-white">{title}</h2>
-        <div className="w-7 h-7 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center shrink-0">
+        <h2 className="text-base font-bold text-white">{title}</h2>
+        <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+             style={{ background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)" }}>
           <svg
-            className={`w-4 h-4 text-slate-500 dark:text-slate-300 transition-transform ${open ? "rotate-180" : ""}`}
+            className={`w-4 h-4 text-white/70 transition-transform ${open ? "rotate-180" : ""}`}
             fill="none" viewBox="0 0 24 24" stroke="currentColor"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
@@ -31,7 +41,7 @@ export default function CollapsibleSection({
       </button>
 
       {open && (
-        <div className="border-t border-slate-100 dark:border-white/8">
+        <div style={{ borderTop: "1px solid rgba(255,255,255,0.10)" }}>
           {children}
         </div>
       )}
