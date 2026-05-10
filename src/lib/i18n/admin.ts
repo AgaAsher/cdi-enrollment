@@ -32,6 +32,13 @@ const en = {
   users: "Users",
   settings: "Settings",
 
+  // Chart tooltip
+  enrolledLabel: "Enrolled",
+  slotsAvailable: "slots available",
+  slotAvailable: "slot available",
+  classFull: "Class is full",
+  capacityUsed: "capacity used",
+
   // Dashboard section
   classEnrollment: "Class Enrollment",
   enrolled: "Enrolled",
@@ -109,6 +116,12 @@ const lo: typeof en = {
   noticeboard: "ກະດານຂ່າວ",
   users: "ຜູ້ໃຊ້",
   settings: "ການຕັ້ງຄ່າ",
+
+  enrolledLabel: "ລົງທະບຽນ",
+  slotsAvailable: "ຊ່ອງຫວ່າງ",
+  slotAvailable: "ຊ່ອງຫວ່າງ",
+  classFull: "ຫ້ອງຮຽນເຕັມ",
+  capacityUsed: "ຄວາມຈຸຖືກໃຊ້",
 
   classEnrollment: "ການລົງທະບຽນຫ້ອງຮຽນ",
   enrolled: "ລົງທະບຽນແລ້ວ",

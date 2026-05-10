@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { useState, useEffect } from "react";
 import { CLASS_LIMIT, type ClassData } from "./classConfig";
+import { useAdminLang } from "@/components/AdminLangProvider";
 
 export { CLASS_LIMIT, type ClassData };
 
@@ -17,7 +18,7 @@ function barColor(enrolled: number) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function CustomTooltip({ active, payload, dark }: any) {
+function CustomTooltip({ active, payload, dark, labels }: any) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload as ClassData;
   const enrolled = isNaN(d.enrolled) ? 0 : d.enrolled;
@@ -32,19 +33,20 @@ function CustomTooltip({ active, payload, dark }: any) {
     }}>
       <p style={{ fontWeight: 700, color: dark ? "#e2e8f0" : "#1e293b", marginBottom: 6, fontSize: 14 }}>{d.fullName}</p>
       <p style={{ color: dark ? "#94a3b8" : "#64748b", fontSize: 13 }}>
-        Enrolled: <strong style={{ color: dark ? "#e2e8f0" : "#1e293b" }}>{enrolled} / {CLASS_LIMIT}</strong>
+        {labels.enrolledLabel}: <strong style={{ color: dark ? "#e2e8f0" : "#1e293b" }}>{enrolled} / {CLASS_LIMIT}</strong>
       </p>
       <p style={{ color: dark ? "#94a3b8" : "#64748b", fontSize: 13 }}>
-        {slots <= 0 ? "Class is full" : `${slots} slot${slots === 1 ? "" : "s"} available`}
+        {slots <= 0 ? labels.classFull : `${slots} ${slots === 1 ? labels.slotAvailable : labels.slotsAvailable}`}
       </p>
       <p style={{ color: dark ? "#64748b" : "#94a3b8", fontSize: 12, marginTop: 4 }}>
-        {Math.round((enrolled / CLASS_LIMIT) * 100)}% capacity used
+        {Math.round((enrolled / CLASS_LIMIT) * 100)}% {labels.capacityUsed}
       </p>
     </div>
   );
 }
 
 export default function ClassCapacityChart({ data }: { data: ClassData[] }) {
+  const { t } = useAdminLang();
   const [isDark, setIsDark] = useState(false);
   useEffect(() => {
     const el = document.documentElement;
@@ -81,7 +83,7 @@ export default function ClassCapacityChart({ data }: { data: ClassData[] }) {
           axisLine={false} tickLine={false}
           tick={{ fontSize: 12, fill: axisColorDim, fontWeight: 500 }} width={28}
         />
-        <Tooltip content={<CustomTooltip dark={isDark} />} cursor={{ fill: cursorFill }} />
+        <Tooltip content={<CustomTooltip dark={isDark} labels={t} />} cursor={{ fill: cursorFill }} />
         <ReferenceLine y={CLASS_LIMIT} stroke={refStroke} strokeDasharray="4 3" />
         <Bar dataKey="enrolled" stackId="cap" radius={[0, 0, 6, 6]}>
           {safeData.map((entry, i) => (
