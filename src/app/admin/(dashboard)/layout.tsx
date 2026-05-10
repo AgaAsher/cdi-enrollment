@@ -47,7 +47,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="fixed inset-0 -z-10 scale-110">
           <Image src="/bg.jpg" alt="" fill priority className="object-cover object-center" style={{ filter: "blur(10px)" }} />
         </div>
-        <div className="fixed inset-0 -z-10" style={{ background: "linear-gradient(160deg, rgba(0,10,20,0.52) 0%, rgba(0,5,15,0.48) 50%, rgba(0,15,30,0.50) 100%)" }} />
+        <div className="fixed inset-0 -z-10" style={{ background: "linear-gradient(160deg, rgba(0,5,15,0.82) 0%, rgba(0,3,10,0.80) 50%, rgba(0,8,22,0.82) 100%)" }} />
 
         <AdminHeader />
 
