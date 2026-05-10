@@ -335,45 +335,53 @@ export default function Home() {
         </p>
       </div>
 
-      {/* ── Welcome splash ──────────────────────────────────────────────────── */}
+      {/* ── Welcome popup ───────────────────────────────────────────────────── */}
       {welcomeName !== null && (
-        <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center"
-          style={{
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            background: "rgba(0,10,30,0.70)",
-            animation: "fadeIn 0.4s ease",
-          }}
-        >
+        <>
           <style>{`
-            @keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
-            @keyframes checkPop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+            @keyframes wFadeIn  { from { opacity:0; transform:scale(0.88); } to { opacity:1; transform:scale(1); } }
+            @keyframes checkPop { 0%{transform:scale(0);opacity:0} 60%{transform:scale(1.2)} 100%{transform:scale(1);opacity:1} }
           `}</style>
+          {/* Dim backdrop — does NOT blur, keeps background visible */}
+          <div className="fixed inset-0 z-50 flex items-center justify-center"
+               style={{ background: "rgba(0,0,0,0.35)" }}>
+            {/* Compact card */}
+            <div
+              className="flex flex-col items-center px-10 py-8 rounded-3xl"
+              style={{
+                backdropFilter: "blur(40px) saturate(180%)",
+                WebkitBackdropFilter: "blur(40px) saturate(180%)",
+                background: "rgba(255,255,255,0.14)",
+                border: "1px solid rgba(255,255,255,0.28)",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 24px 60px rgba(0,0,0,0.50)",
+                animation: "wFadeIn 0.35s cubic-bezier(0.34,1.4,0.64,1) both",
+                minWidth: 220,
+              }}
+            >
+              {/* Checkmark */}
+              <div
+                className="w-16 h-16 rounded-full flex items-center justify-center mb-5"
+                style={{
+                  background: "linear-gradient(135deg, #10b981, #059669)",
+                  boxShadow: "0 0 0 6px rgba(16,185,129,0.18), 0 6px 24px rgba(16,185,129,0.45)",
+                  animation: "checkPop 0.45s cubic-bezier(0.34,1.56,0.64,1) 0.15s both",
+                }}
+              >
+                <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.8}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
 
-          {/* Checkmark circle */}
-          <div
-            className="w-20 h-20 rounded-full flex items-center justify-center mb-6"
-            style={{
-              background: "linear-gradient(135deg, rgba(16,185,129,0.90), rgba(5,150,105,0.85))",
-              boxShadow: "0 0 0 8px rgba(16,185,129,0.15), 0 8px 32px rgba(16,185,129,0.40)",
-              animation: "checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.15s both",
-            }}
-          >
-            <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-            </svg>
+              <p className="text-white/55 text-[11px] font-semibold uppercase tracking-widest mb-1">
+                Welcome
+              </p>
+              <p className="text-white text-xl font-bold tracking-tight text-center"
+                 style={{ textShadow: "0 1px 8px rgba(0,0,0,0.4)" }}>
+                {welcomeName}
+              </p>
+            </div>
           </div>
-
-          <p className="text-white/60 text-sm font-medium uppercase tracking-widest mb-2"
-            style={{ animation: "fadeIn 0.4s ease 0.3s both" }}>
-            Welcome
-          </p>
-          <h2 className="text-white text-3xl font-bold tracking-tight"
-            style={{ textShadow: "0 2px 16px rgba(0,0,0,0.5)", animation: "fadeIn 0.4s ease 0.4s both" }}>
-            {welcomeName}
-          </h2>
-        </div>
+        </>
       )}
     </div>
   );
