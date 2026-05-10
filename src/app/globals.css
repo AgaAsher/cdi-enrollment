@@ -340,11 +340,11 @@ textarea::placeholder { color: rgba(255, 255, 255, 0.38) !important; }
 /* Override Tailwind slate text colors inside glass context */
 .glass-context .text-slate-900,
 .glass-context .text-slate-800,
-.glass-context .text-slate-700 { color: rgba(255, 255, 255, 0.90) !important; }
+.glass-context .text-slate-700 { color: rgba(255, 255, 255, 0.95) !important; }
 .glass-context .text-slate-600,
-.glass-context .text-slate-500 { color: rgba(255, 255, 255, 0.62) !important; }
-.glass-context .text-slate-400 { color: rgba(255, 255, 255, 0.48) !important; }
-.glass-context .text-slate-300 { color: rgba(255, 255, 255, 0.35) !important; }
+.glass-context .text-slate-500 { color: rgba(255, 255, 255, 0.78) !important; }
+.glass-context .text-slate-400 { color: rgba(255, 255, 255, 0.62) !important; }
+.glass-context .text-slate-300 { color: rgba(255, 255, 255, 0.48) !important; }
 
 /* Override navy hex colors used in components */
 .glass-context [class*="[#0f1f6b]"] { color: white !important; }
