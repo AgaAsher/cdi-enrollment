@@ -21,14 +21,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { email, password } = await req.json();
+  const raw = await req.json();
+  const email = (raw.email ?? "").trim().toLowerCase();
+  const password: string = raw.password ?? "";
   if (!email || !password) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
   }
 
   // Check super admin from env first.
   // Prefer ADMIN_PASSWORD_HASH (scrypt). Fall back to ADMIN_PASSWORD (plain) only if hash not set.
-  const envEmail = process.env.ADMIN_EMAIL ?? "";
+  const envEmail = (process.env.ADMIN_EMAIL ?? "").toLowerCase();
   const envHash = process.env.ADMIN_PASSWORD_HASH ?? "";
   const envPlain = process.env.ADMIN_PASSWORD ?? "";
 
@@ -50,14 +52,14 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Check DB users
+  // Check DB users — ilike gives case-insensitive exact match
   const supabase = createAdminClient();
   const { data: user } = await supabase
     .from("admin_users")
     .select("*")
-    .eq("email", email)
+    .ilike("email", email)
     .eq("active", true)
-    .single();
+    .maybeSingle();
 
   if (!user || !verifyPassword(password, user.password_hash)) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });

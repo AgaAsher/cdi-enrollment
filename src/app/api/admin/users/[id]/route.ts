@@ -18,7 +18,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const update: Record<string, unknown> = {};
 
   if (body.name !== undefined) update.name = body.name;
-  if (body.email !== undefined) update.email = body.email;
+  if (body.email !== undefined) update.email = body.email.trim().toLowerCase();
   if (body.role !== undefined) update.role = body.role;
   if (body.permissions !== undefined) update.permissions = body.permissions;
   if (body.active !== undefined) update.active = body.active;
