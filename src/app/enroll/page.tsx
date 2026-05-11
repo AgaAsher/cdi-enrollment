@@ -21,10 +21,10 @@ export default function EnrollPage() {
         <ThemeToggle />
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 pb-12">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-5">
-            <div className="w-36 h-36 rounded-3xl bg-white shadow-lg p-2 flex items-center justify-center">
+      <div className="max-w-3xl mx-auto px-3 sm:px-4 pb-10 sm:pb-12">
+        <div className="text-center mb-6 sm:mb-8">
+          <div className="flex justify-center mb-4">
+            <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl sm:rounded-3xl bg-white shadow-lg p-2 flex items-center justify-center">
               <Image
                 src="/logo.png"
                 alt="Child Development Academy"
@@ -35,8 +35,8 @@ export default function EnrollPage() {
               />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#0f1f6b] dark:text-white tracking-tight">Child Development Academy</h1>
-          <p className="text-[#1a3fa8] dark:text-blue-400 text-lg mt-1">International School of Laos</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#0f1f6b] dark:text-white tracking-tight">Child Development Academy</h1>
+          <p className="text-[#1a3fa8] dark:text-blue-400 text-base sm:text-lg mt-1">International School of Laos</p>
         </div>
 
         <EnrollmentForm />

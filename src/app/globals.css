@@ -433,3 +433,13 @@ textarea:focus {
   color: #0f1f6b;
 }
 
+/* ── ENROLLMENT FORM — mobile touch targets ── */
+/* Inputs and selects must be ≥44px tall and ≥16px font to avoid iOS auto-zoom */
+@media (max-width: 767px) {
+  .enroll-form [data-slot="input"],
+  .enroll-form [data-slot="select-trigger"] {
+    min-height: 2.75rem;
+    font-size: 1rem;
+  }
+}
+

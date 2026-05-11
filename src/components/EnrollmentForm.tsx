@@ -81,7 +81,7 @@ function VisitSlotPicker({
   }
 
   return (
-    <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
+    <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
       {VISIT_SLOTS.map((slot) => {
         const booked = counts[slot] ?? 0;
         const isFull = booked >= VISIT_CAPACITY;
@@ -242,11 +242,11 @@ function FileUpload({
 
 function FormSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="glass p-6 mb-5">
-      <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
+    <div className="glass p-4 sm:p-6 mb-4 sm:mb-5">
+      <h2 className="text-sm sm:text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-4 sm:mb-5">
         {title}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">{children}</div>
     </div>
   );
 }
@@ -463,19 +463,19 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
 
   return (
     <>
-    <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-xl mx-auto text-sm leading-relaxed text-center">
+    <p className="text-slate-500 dark:text-slate-400 mb-4 sm:mb-6 max-w-xl mx-auto text-sm leading-relaxed text-center">
       {t.pageSubtitle}
     </p>
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="enroll-form">
       {langBar}
 
       {/* Documents */}
-      <div className="glass p-6 mb-5">
-        <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-2">
+      <div className="glass p-4 sm:p-6 mb-4 sm:mb-5">
+        <h2 className="text-sm sm:text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-2">
           {t.documents}
         </h2>
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t.documentsHint}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <FileUpload
             label={t.studentIdLabel}
             required
@@ -515,7 +515,7 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
             control={control}
             render={({ field }) => (
               <Select value={field.value ?? ""} onValueChange={(v) => field.onChange(v ?? "")}>
-                <SelectTrigger><SelectValue placeholder={t.selectGender} /></SelectTrigger>
+                <SelectTrigger className="w-full"><SelectValue placeholder={t.selectGender} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="male">{t.male}</SelectItem>
                   <SelectItem value="female">{t.female}</SelectItem>
@@ -537,7 +537,7 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
             control={control}
             render={({ field }) => (
               <Select value={field.value ?? ""} onValueChange={(v) => field.onChange(v ?? "")}>
-                <SelectTrigger><SelectValue placeholder={t.selectGrade} /></SelectTrigger>
+                <SelectTrigger className="w-full"><SelectValue placeholder={t.selectGrade} /></SelectTrigger>
                 <SelectContent>
                   {GRADES.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}
                 </SelectContent>
@@ -580,7 +580,7 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
             control={control}
             render={({ field }) => (
               <Select value={field.value ?? ""} onValueChange={(v) => field.onChange(v ?? "")}>
-                <SelectTrigger><SelectValue placeholder={t.selectYear} /></SelectTrigger>
+                <SelectTrigger className="w-full"><SelectValue placeholder={t.selectYear} /></SelectTrigger>
                 <SelectContent>
                   {ACADEMIC_YEARS.map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}
                 </SelectContent>
@@ -654,13 +654,13 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
       </FormSection>
 
       {/* Authorized Pickup */}
-      <div className="glass p-6 mb-5">
-        <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
+      <div className="glass p-4 sm:p-6 mb-4 sm:mb-5">
+        <h2 className="text-sm sm:text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-4 sm:mb-5">
           {t.authorizedPickup}
         </h2>
         <div className="space-y-4">
           {pickupFields.map((field, index) => (
-            <div key={field.id} className="glass-sm p-4 relative">
+            <div key={field.id} className="glass-sm p-3 sm:p-4 relative">
               <p className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">{t.person} {index + 1}</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
@@ -777,8 +777,8 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
       </FormSection>
 
       {/* Consent */}
-      <div className="glass p-6 mb-5">
-        <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
+      <div className="glass p-4 sm:p-6 mb-4 sm:mb-5">
+        <h2 className="text-sm sm:text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-4 sm:mb-5">
           {t.photoConsent}
         </h2>
         <div className="space-y-5">
@@ -865,8 +865,8 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
       </div>
 
       {/* Book a Visit */}
-      <div className="glass p-6 mb-5">
-        <h2 className="text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-5">
+      <div className="glass p-4 sm:p-6 mb-4 sm:mb-5">
+        <h2 className="text-sm sm:text-base font-semibold text-slate-700 dark:text-white/90 border-b border-slate-200 dark:border-white/10 pb-3 mb-4 sm:mb-5">
           {t.bookVisit}
         </h2>
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t.visitHint}</p>
