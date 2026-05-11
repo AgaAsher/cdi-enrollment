@@ -117,52 +117,45 @@ export default function ParentDashboardContent({
     <div className="flex flex-col md:flex-row md:h-[calc(100vh-65px)] md:overflow-hidden">
 
       {/* ── Left sidebar ─────────────────────────────────────────────────────── */}
-      <div className="md:w-64 shrink-0 flex flex-col md:overflow-y-auto"
-        style={{ background: "linear-gradient(175deg, #1e47c0 0%, #0d1d6a 55%, #100c45 100%)" }}>
-
-        {/* Decorative blobs */}
-        <div className="absolute pointer-events-none overflow-hidden md:w-64 h-full hidden md:block">
-          <div className="absolute -top-20 -right-10 w-56 h-56 rounded-full opacity-40"
-            style={{ background: "radial-gradient(circle, rgba(99,179,237,0.5) 0%, transparent 65%)" }} />
-          <div className="absolute top-1/2 -left-16 w-48 h-48 rounded-full opacity-30"
-            style={{ background: "radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 65%)" }} />
-        </div>
+      <div className="md:w-64 shrink-0 flex flex-col md:overflow-y-auto
+                      bg-white dark:bg-[#1a2035]
+                      border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/8">
 
         {/* Parent info */}
-        <div className="relative px-5 pt-7 pb-5">
+        <div className="px-5 pt-6 pb-5">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border border-white/25"
-              style={{ background: "rgba(255,255,255,0.15)" }}>
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: "linear-gradient(135deg, #1a3fa8, #0f1f6b)" }}>
               <span className="text-base font-bold text-white">{activeInitials}</span>
             </div>
             <div className="min-w-0">
-              <p className="text-white/40 text-[10px] font-semibold tracking-widest uppercase leading-none mb-1">{t.welcome}</p>
-              <p className="text-white font-bold text-base leading-tight truncate">{firstName}</p>
-              <p className="text-white/30 text-[10px] mt-0.5">Parent Portal · CDA</p>
+              <p className="text-[10px] font-semibold tracking-widest uppercase leading-none mb-1 text-slate-400 dark:text-white/40">{t.welcome}</p>
+              <p className="font-bold text-base leading-tight truncate text-slate-800 dark:text-white">{firstName}</p>
+              <p className="text-[10px] mt-0.5 text-slate-400 dark:text-white/30">Parent Portal · CDA</p>
             </div>
           </div>
         </div>
 
-        <div className="mx-5 border-t border-white/10" />
+        <div className="mx-4 border-t border-slate-100 dark:border-white/8" />
 
         {/* Vertical nav */}
-        <nav className="relative flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-0.5 p-3 md:flex-1">
+        <nav className="flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-0.5 p-3 md:flex-1">
           {TABS.map(({ key, icon }) => {
             const isActive = tab === key;
             return (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left whitespace-nowrap md:whitespace-normal md:w-full shrink-0 ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all text-left whitespace-nowrap md:whitespace-normal md:w-full shrink-0 ${
                   isActive
-                    ? "bg-white/20 text-white font-semibold"
-                    : "text-white/50 hover:text-white/85 hover:bg-white/10"
+                    ? "bg-blue-50 dark:bg-white/10 text-blue-700 dark:text-white font-semibold"
+                    : "font-medium text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/8"
                 }`}
               >
-                <span className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-white/45"}`}>{icon}</span>
+                <span className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-600 dark:text-white" : "text-slate-400 dark:text-white/40"}`}>{icon}</span>
                 <span className="flex-1 truncate">{tabLabels[key]}</span>
                 {isActive && (
-                  <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/50 shrink-0" />
+                  <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-white/40 shrink-0" />
                 )}
               </button>
             );
@@ -171,7 +164,7 @@ export default function ParentDashboardContent({
       </div>
 
       {/* ── Right content ────────────────────────────────────────────────────── */}
-      <div className="flex-1 md:overflow-y-auto p-5 md:p-7 bg-slate-100 dark:bg-[#0b1120]">
+      <div className="flex-1 md:overflow-y-auto p-5 md:p-7 bg-slate-50 dark:bg-[#0d1117]">
 
         {tab === "child" && (
           <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
