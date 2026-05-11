@@ -137,7 +137,9 @@ create table if not exists parent_messages (
   enrollment_id text        not null,
   to_teacher    text        not null,
   body          text        not null,
-  read_at       timestamptz
+  read_at       timestamptz,
+  teacher_reply text,
+  replied_at    timestamptz
 );
 
 alter table parent_messages enable row level security;

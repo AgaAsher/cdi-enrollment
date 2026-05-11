@@ -5,6 +5,7 @@ import { Enrollment } from "@/lib/types";
 import ParentTimetable from "./ParentTimetable";
 import { useParentLang } from "@/components/ParentLangProvider";
 import ContactTeacherModal from "@/components/ContactTeacherModal";
+import ParentMessagesSection from "./ParentMessagesSection";
 
 type FeedbackEntry = {
   id: string;
@@ -182,6 +183,9 @@ export default function ParentChildrenTabs({
             </div>
           </div>
         )}
+
+        {/* Messages + replies */}
+        <ParentMessagesSection enrollmentId={child.id} />
 
         {/* Timetable */}
         <ParentTimetable

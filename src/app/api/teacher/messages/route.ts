@@ -25,13 +25,19 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await req.json();
+  const { id, reply } = await req.json();
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  const update: Record<string, string> = { read_at: new Date().toISOString() };
+  if (reply !== undefined) {
+    update.teacher_reply = reply.trim();
+    update.replied_at = new Date().toISOString();
+  }
 
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("parent_messages")
-    .update({ read_at: new Date().toISOString() })
+    .update(update)
     .eq("id", id)
     .eq("to_teacher", session.name);
 
