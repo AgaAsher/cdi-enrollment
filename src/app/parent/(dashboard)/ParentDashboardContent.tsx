@@ -114,67 +114,68 @@ export default function ParentDashboardContent({
     : "?";
 
   return (
-    <div className="min-h-[calc(100vh-65px)] flex flex-col">
+    <div className="min-h-[calc(100vh-65px)] flex flex-col md:flex-row">
 
-      {/* ── Hero — full bleed ────────────────────────────────────────────────── */}
-      <div className="relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #1e47c0 0%, #0f1f6b 55%, #160d55 100%)",
-          boxShadow: "0 4px 32px rgba(15,31,107,0.5)",
-        }}>
+      {/* ── Left sidebar ─────────────────────────────────────────────────────── */}
+      <div className="md:w-72 shrink-0 flex flex-col relative overflow-hidden"
+        style={{ background: "linear-gradient(160deg, #1e47c0 0%, #0f1f6b 50%, #130e50 100%)" }}>
 
         {/* Decorative blobs */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-16 right-1/4 w-96 h-96 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(99,179,237,0.18) 0%, transparent 65%)" }} />
-          <div className="absolute -bottom-20 left-1/3 w-80 h-80 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 65%)" }} />
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)" }} />
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(99,179,237,0.2) 0%, transparent 65%)" }} />
+          <div className="absolute bottom-0 -left-10 w-56 h-56 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 65%)" }} />
         </div>
 
-        {/* Inner content constrained */}
-        <div className="relative max-w-5xl mx-auto px-6 sm:px-10 pt-8 pb-0">
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border border-white/25"
-              style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)" }}>
-              <span className="text-2xl font-bold text-white tracking-tight">{activeInitials}</span>
+        {/* Parent info */}
+        <div className="relative px-6 pt-8 pb-6">
+          <div className="flex items-center gap-4 mb-1">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border border-white/20"
+              style={{ background: "rgba(255,255,255,0.13)", backdropFilter: "blur(8px)" }}>
+              <span className="text-xl font-bold text-white">{activeInitials}</span>
             </div>
             <div>
-              <p className="text-white/50 text-[11px] font-semibold tracking-widest uppercase mb-0.5">{t.welcome}</p>
-              <h1 className="text-3xl font-bold text-white tracking-tight leading-none">{firstName}</h1>
-              <p className="text-white/40 text-xs mt-1.5 font-medium">Parent Portal · CDA</p>
+              <p className="text-white/45 text-[10px] font-semibold tracking-widest uppercase mb-0.5">{t.welcome}</p>
+              <h1 className="text-xl font-bold text-white leading-tight">{firstName}</h1>
+              <p className="text-white/35 text-[11px] mt-0.5">Parent Portal · CDA</p>
             </div>
           </div>
         </div>
 
-        {/* Tab bar */}
-        <div className="relative max-w-5xl mx-auto px-6 sm:px-10 mt-6 flex gap-1">
+        {/* Divider */}
+        <div className="mx-6 border-t border-white/10 mb-4" />
+
+        {/* Vertical nav */}
+        <nav className="relative flex md:flex-col flex-row overflow-x-auto md:overflow-x-visible gap-1 px-3 pb-3 md:pb-8">
           {TABS.map(({ key, icon }) => {
             const isActive = tab === key;
             return (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-left whitespace-nowrap md:whitespace-normal md:w-full shrink-0 ${
                   isActive
-                    ? "text-white bg-white/10 border-white/70"
-                    : "text-white/40 hover:text-white/70 hover:bg-white/5 border-transparent"
+                    ? "bg-white/15 text-white shadow-sm"
+                    : "text-white/45 hover:text-white/80 hover:bg-white/8"
                 }`}
               >
-                {icon}
-                <span className="hidden sm:block">{tabLabels[key].split(" ")[0]}</span>
+                <span className={`shrink-0 ${isActive ? "text-white" : "text-white/40"}`}>{icon}</span>
+                <span>{tabLabels[key]}</span>
+                {isActive && (
+                  <span className="ml-auto hidden md:block w-1.5 h-1.5 rounded-full bg-white/70 shrink-0" />
+                )}
               </button>
             );
           })}
-        </div>
+        </nav>
       </div>
 
-      {/* ── Tab content ─────────────────────────────────────────────────────── */}
-      <div className="flex-1 px-6 sm:px-10 py-8 max-w-5xl mx-auto w-full">
+      {/* ── Right content ────────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto p-6 md:p-8 dark:bg-[#0d1117]">
 
         {tab === "child" && (
-          <div className="rounded-3xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-xl shadow-black/10 dark:shadow-black/30">
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
             <ParentChildrenTabs
               children={children}
               attendanceSummaries={attendanceSummaries}
@@ -187,14 +188,8 @@ export default function ParentDashboardContent({
         )}
 
         {tab === "menu" && (
-          <div className="rounded-3xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-xl shadow-black/10 dark:shadow-black/30">
-            <div className="px-6 pt-6 pb-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: "linear-gradient(135deg, #1a3fa8, #0f1f6b)" }}>
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
-              </div>
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
+            <div className="px-6 pt-6 pb-3 flex items-center gap-3 border-b border-slate-100 dark:border-white/8">
               <h2 className="text-base font-bold text-slate-800 dark:text-white">{t.weeklyMenu}</h2>
             </div>
             <ParentWeeklyMenu menuData={menuData} todayDayName={todayDayName} />
@@ -202,14 +197,8 @@ export default function ParentDashboardContent({
         )}
 
         {tab === "events" && (
-          <div className="rounded-3xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-xl shadow-black/10 dark:shadow-black/30">
-            <div className="px-6 pt-6 pb-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: "linear-gradient(135deg, #1a3fa8, #0f1f6b)" }}>
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
+            <div className="px-6 pt-6 pb-3 flex items-center gap-3 border-b border-slate-100 dark:border-white/8">
               <h2 className="text-base font-bold text-slate-800 dark:text-white">{t.upcomingEvents}</h2>
             </div>
             {upcomingEvents.length === 0 ? (
@@ -219,7 +208,7 @@ export default function ParentDashboardContent({
                 {upcomingEvents.map((ev, i) => {
                   const d = new Date(ev.date + "T00:00");
                   return (
-                    <div key={i} className="flex items-center gap-4 py-3.5">
+                    <div key={i} className="flex items-center gap-4 py-4">
                       <div className="w-12 h-12 rounded-2xl flex flex-col items-center justify-center shrink-0"
                         style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
                         <p className="text-[9px] font-bold text-blue-200 uppercase leading-none">
@@ -242,14 +231,8 @@ export default function ParentDashboardContent({
         )}
 
         {tab === "noticeboard" && (
-          <div className="rounded-3xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-xl shadow-black/10 dark:shadow-black/30">
-            <div className="px-6 pt-6 pb-3 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: "linear-gradient(135deg, #1a3fa8, #0f1f6b)" }}>
-                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-              </div>
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
+            <div className="px-6 pt-6 pb-3 flex items-center gap-3 border-b border-slate-100 dark:border-white/8">
               <h2 className="text-base font-bold text-slate-800 dark:text-white">{t.noticeboard}</h2>
             </div>
             <div className="divide-y divide-slate-100 dark:divide-white/6 px-4 pb-4">
