@@ -135,38 +135,26 @@ export default function ParentChildrenTabs({
           </div>
         </div>
 
-        {/* Attendance */}
+        {/* Attendance rate bar */}
         <div className="border-t border-slate-100 dark:border-white/8 pt-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-3">
-            {t.attendance}
-          </p>
-          {att.present === 0 && att.absent === 0 ? (
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+              {t.attendance}
+            </p>
+            {att.present + att.absent > 0 && (
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                {Math.round((att.present / (att.present + att.absent)) * 100)}%
+              </span>
+            )}
+          </div>
+          {att.present + att.absent === 0 ? (
             <p className="text-xs text-slate-400 dark:text-slate-500 italic">{t.noAttendance}</p>
           ) : (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0" />
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{att.present}</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500">{t.present}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0" />
-                <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">{att.absent}</span>
-                <span className="text-xs text-slate-400 dark:text-slate-500">{t.absent}</span>
-              </div>
-              <div className="flex-1 h-2 bg-slate-100 dark:bg-white/8 rounded-full overflow-hidden ml-2">
-                {att.present + att.absent > 0 && (
-                  <div
-                    className="h-full bg-emerald-500 rounded-full transition-all"
-                    style={{ width: `${Math.round((att.present / (att.present + att.absent)) * 100)}%` }}
-                  />
-                )}
-              </div>
-              {att.present + att.absent > 0 && (
-                <span className="text-xs text-slate-400 dark:text-slate-500 shrink-0">
-                  {Math.round((att.present / (att.present + att.absent)) * 100)}%
-                </span>
-              )}
+            <div className="h-2 bg-slate-100 dark:bg-white/8 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-emerald-500 rounded-full transition-all"
+                style={{ width: `${Math.round((att.present / (att.present + att.absent)) * 100)}%` }}
+              />
             </div>
           )}
         </div>

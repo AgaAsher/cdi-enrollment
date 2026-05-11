@@ -145,9 +145,9 @@ export default function ParentDashboardContent({
             {/* Stats row */}
             <div className="grid grid-cols-3 gap-3">
               {[
-                { value: children.length,    label: children.length === 1 ? "Child" : "Children", color: "text-blue-200" },
-                { value: activeAtt.present,  label: t.present,   color: "text-emerald-300" },
-                { value: activeAtt.absent,   label: t.absent,    color: "text-red-300" },
+                { value: children.length,   label: children.length === 1 ? "Child" : "Children", color: "text-blue-200" },
+                { value: activeAtt.present, label: t.present,  color: "text-emerald-300" },
+                { value: activeAtt.absent,  label: t.absent,   color: "text-red-300" },
               ].map(({ value, label, color }) => (
                 <div key={label} className="rounded-2xl px-4 py-3 text-center"
                   style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
