@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { Enrollment } from "@/lib/types";
 import { Suspense } from "react";
 import Sidebar from "./Sidebar";
+import AdminShell from "./AdminShell";
 import AdminHeader from "@/components/AdminHeader";
 import { AdminLangProvider } from "@/components/AdminLangProvider";
 
@@ -38,27 +39,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   };
   const visitCount = list.filter((e) => e.visit_date).length;
 
+  const sidebar = (
+    <Suspense>
+      <Sidebar counts={counts} visitCount={visitCount} permissions={session.permissions} />
+    </Suspense>
+  );
+
   return (
     <AdminLangProvider>
-      <div className="min-h-screen flex flex-col">
+      <div className="h-screen flex flex-col">
         <AdminHeader
           currentRole={session.role}
           availableRoles={session.roles ?? [session.role]}
         />
-
-        <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar — light glass */}
-          <aside className="glass-sidebar w-56 shrink-0 overflow-y-auto">
-            <Suspense>
-              <Sidebar counts={counts} visitCount={visitCount} permissions={session.permissions} />
-            </Suspense>
-          </aside>
-
-          {/* Main content */}
-          <main className="flex-1 overflow-y-auto p-6 dark:bg-[#0d1117]">
-            {children}
-          </main>
-        </div>
+        <AdminShell sidebar={sidebar}>
+          {children}
+        </AdminShell>
       </div>
     </AdminLangProvider>
   );
