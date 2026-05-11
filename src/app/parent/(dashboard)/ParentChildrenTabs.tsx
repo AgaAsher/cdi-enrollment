@@ -126,37 +126,24 @@ export default function ParentChildrenTabs({
             <p className="text-lg font-bold text-slate-800 dark:text-white">
               {child.child_first_name} {child.child_last_name}
             </p>
-            <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300">
                 {grade}
               </span>
               <span className="text-xs text-slate-400 dark:text-slate-500">{child.academic_year}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Attendance rate bar */}
-        <div className="border-t border-slate-100 dark:border-white/8 pt-4">
-          <div className="flex items-center justify-between mb-2">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
-              {t.attendance}
-            </p>
-            {att.present + att.absent > 0 && (
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-                {Math.round((att.present / (att.present + att.absent)) * 100)}%
+              <span className="text-slate-300 dark:text-white/15 text-xs">·</span>
+              <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+                <span className="font-semibold text-slate-700 dark:text-slate-200">{att.present}</span>
+                {t.present}
               </span>
-            )}
-          </div>
-          {att.present + att.absent === 0 ? (
-            <p className="text-xs text-slate-400 dark:text-slate-500 italic">{t.noAttendance}</p>
-          ) : (
-            <div className="h-2 bg-slate-100 dark:bg-white/8 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-emerald-500 rounded-full transition-all"
-                style={{ width: `${Math.round((att.present / (att.present + att.absent)) * 100)}%` }}
-              />
+              <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
+                <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
+                <span className="font-semibold text-slate-700 dark:text-slate-200">{att.absent}</span>
+                {t.absent}
+              </span>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Teacher feedback */}

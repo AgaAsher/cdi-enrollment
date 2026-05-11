@@ -107,9 +107,8 @@ export default function ParentDashboardContent({
     noticeboard: t.noticeboard,
   };
 
-  /* ── Hero summary numbers (per active child) ──────────────────────────── */
+  /* ── Hero active child info ───────────────────────────────────────────── */
   const activeChild = children[activeChildIdx];
-  const activeAtt   = attendanceSummaries[activeChildIdx] ?? { present: 0, absent: 0 };
   const activeInitials = activeChild
     ? (activeChild.child_first_name?.[0] ?? "").toUpperCase() + (activeChild.child_last_name?.[0] ?? "").toUpperCase()
     : "?";
@@ -127,7 +126,7 @@ export default function ParentDashboardContent({
           }}>
           <div className="px-6 pt-6 pb-5">
             {/* Greeting row */}
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/20">
                 <span className="text-xl font-bold text-white">{activeInitials}</span>
               </div>
@@ -142,20 +141,6 @@ export default function ParentDashboardContent({
               </div>
             </div>
 
-            {/* Stats row */}
-            <div className="grid grid-cols-3 gap-3">
-              {[
-                { value: children.length,   label: children.length === 1 ? "Child" : "Children", color: "text-blue-200" },
-                { value: activeAtt.present, label: t.present,  color: "text-emerald-300" },
-                { value: activeAtt.absent,  label: t.absent,   color: "text-red-300" },
-              ].map(({ value, label, color }) => (
-                <div key={label} className="rounded-2xl px-4 py-3 text-center"
-                  style={{ background: "rgba(255,255,255,0.08)", border: "1px solid rgba(255,255,255,0.12)" }}>
-                  <p className={`text-2xl font-bold ${color} leading-none`}>{value}</p>
-                  <p className="text-white/50 text-[10px] font-medium mt-1 uppercase tracking-wide">{label}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Tab bar — embedded in card */}
