@@ -94,14 +94,16 @@ export default async function ParentDashboardPage() {
   const today = new Date().toISOString().split("T")[0];
   const upcomingEvents = SCHOOL_EVENTS.filter((e) => e.date >= today).slice(0, 4);
 
-  const nowDate = new Date();
-  const dow = nowDate.getDay();
+  // Use Laos timezone (UTC+7) so weekStart matches what the admin browser saves
+  const laos = new Date(Date.now() + 7 * 60 * 60 * 1000);
+  const dow = laos.getUTCDay();
   const WEEK_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
   const todayDayName: string | null = dow >= 1 && dow <= 5 ? WEEK_DAYS[dow - 1] : null;
-  const mondayOffset = nowDate.getDate() - dow + (dow === 0 ? -6 : 1);
-  const mondayDate = new Date(nowDate);
-  mondayDate.setDate(mondayOffset);
-  const weekStart = mondayDate.toISOString().split("T")[0];
+  const mondayOffset = laos.getUTCDate() - dow + (dow === 0 ? -6 : 1);
+  const mondayDate = new Date(laos);
+  mondayDate.setUTCDate(mondayOffset);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const weekStart = `${mondayDate.getUTCFullYear()}-${pad(mondayDate.getUTCMonth() + 1)}-${pad(mondayDate.getUTCDate())}`;
 
   const { data: menuRow } = await supabase
     .from("weekly_menus").select("menu_data").eq("week_start", weekStart).maybeSingle();
