@@ -114,71 +114,64 @@ export default function ParentDashboardContent({
     : "?";
 
   return (
-    <div className="min-h-[calc(100vh-65px)] flex flex-col relative"
-      style={{
-        background: "radial-gradient(ellipse 70% 45% at 50% 0%, rgba(26,63,168,0.28) 0%, transparent 65%)",
-      }}>
+    <div className="min-h-[calc(100vh-65px)] flex flex-col">
 
-      {/* ── Hero card ───────────────────────────────────────────────────────── */}
-      <div className="px-4 sm:px-6 pt-8 pb-5 max-w-2xl mx-auto w-full">
-        <div className="relative rounded-3xl overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, #1e47c0 0%, #0f1f6b 55%, #160d55 100%)",
-            boxShadow: "0 20px 60px rgba(15,31,107,0.45), 0 4px 16px rgba(0,0,0,0.2)",
-          }}>
+      {/* ── Hero — full bleed ────────────────────────────────────────────────── */}
+      <div className="relative overflow-hidden"
+        style={{
+          background: "linear-gradient(135deg, #1e47c0 0%, #0f1f6b 55%, #160d55 100%)",
+          boxShadow: "0 4px 32px rgba(15,31,107,0.5)",
+        }}>
 
-          {/* Decorative blobs */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-52 h-52 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(99,179,237,0.22) 0%, transparent 70%)" }} />
-            <div className="absolute -bottom-14 -left-10 w-48 h-48 rounded-full"
-              style={{ background: "radial-gradient(circle, rgba(167,139,250,0.18) 0%, transparent 70%)" }} />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-24 opacity-20"
-              style={{ background: "radial-gradient(ellipse, rgba(255,255,255,0.25) 0%, transparent 70%)" }} />
-          </div>
+        {/* Decorative blobs */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-16 right-1/4 w-96 h-96 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(99,179,237,0.18) 0%, transparent 65%)" }} />
+          <div className="absolute -bottom-20 left-1/3 w-80 h-80 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(167,139,250,0.15) 0%, transparent 65%)" }} />
+          <div className="absolute top-0 right-0 w-64 h-64 rounded-full"
+            style={{ background: "radial-gradient(circle, rgba(59,130,246,0.12) 0%, transparent 70%)" }} />
+        </div>
 
-          <div className="relative px-6 pt-7 pb-6">
-            {/* Greeting row */}
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border border-white/25"
-                style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)" }}>
-                <span className="text-2xl font-bold text-white tracking-tight">{activeInitials}</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-white/55 text-[11px] font-semibold tracking-widest uppercase mb-1">{t.welcome}</p>
-                <h1 className="text-3xl font-bold text-white tracking-tight leading-none">{firstName}</h1>
-                <p className="text-white/45 text-xs mt-1.5 font-medium">Parent Portal · CDA</p>
-              </div>
+        {/* Inner content constrained */}
+        <div className="relative max-w-5xl mx-auto px-6 sm:px-10 pt-8 pb-0">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 border border-white/25"
+              style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)" }}>
+              <span className="text-2xl font-bold text-white tracking-tight">{activeInitials}</span>
+            </div>
+            <div>
+              <p className="text-white/50 text-[11px] font-semibold tracking-widest uppercase mb-0.5">{t.welcome}</p>
+              <h1 className="text-3xl font-bold text-white tracking-tight leading-none">{firstName}</h1>
+              <p className="text-white/40 text-xs mt-1.5 font-medium">Parent Portal · CDA</p>
             </div>
           </div>
+        </div>
 
-          {/* Tab bar — embedded in card */}
-          <div className="relative flex border-t border-white/10"
-            style={{ background: "rgba(0,0,0,0.15)" }}>
-            {TABS.map(({ key, icon }) => {
-              const isActive = tab === key;
-              return (
-                <button
-                  key={key}
-                  onClick={() => setTab(key)}
-                  className={`flex-1 flex flex-col items-center gap-1.5 py-3.5 text-[10px] font-bold uppercase tracking-wider transition-all ${
-                    isActive
-                      ? "text-white bg-white/10"
-                      : "text-white/35 hover:text-white/65 hover:bg-white/5"
-                  }`}
-                >
-                  <span className={`transition-transform ${isActive ? "scale-110" : ""}`}>{icon}</span>
-                  <span className="hidden sm:block truncate px-1">{tabLabels[key].split(" ")[0]}</span>
-                  {isActive && <span className="w-4 h-0.5 rounded-full bg-white/70" />}
-                </button>
-              );
-            })}
-          </div>
+        {/* Tab bar */}
+        <div className="relative max-w-5xl mx-auto px-6 sm:px-10 mt-6 flex gap-1">
+          {TABS.map(({ key, icon }) => {
+            const isActive = tab === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-t-xl transition-all border-b-2 ${
+                  isActive
+                    ? "text-white bg-white/10 border-white/70"
+                    : "text-white/40 hover:text-white/70 hover:bg-white/5 border-transparent"
+                }`}
+              >
+                {icon}
+                <span className="hidden sm:block">{tabLabels[key].split(" ")[0]}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* ── Tab content ─────────────────────────────────────────────────────── */}
-      <div className="flex-1 px-4 sm:px-6 pb-12 max-w-2xl mx-auto w-full">
+      <div className="flex-1 px-6 sm:px-10 py-8 max-w-5xl mx-auto w-full">
 
         {tab === "child" && (
           <div className="rounded-3xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-xl shadow-black/10 dark:shadow-black/30">
