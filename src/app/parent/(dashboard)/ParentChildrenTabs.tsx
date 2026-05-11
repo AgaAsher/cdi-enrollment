@@ -66,7 +66,7 @@ export default function ParentChildrenTabs({
 
   if (children.length === 0) {
     return (
-      <div className="p-8 text-center">
+      <div className="p-10 text-center">
         <p className="text-slate-400 dark:text-slate-500 text-sm">No enrolled children found.</p>
       </div>
     );
@@ -81,11 +81,10 @@ export default function ParentChildrenTabs({
   const childFeedback = allFeedback.filter(f => f.enrollment_id === child.id).slice(0, 5);
 
   return (
-    <div className="overflow-hidden">
-
-      {/* Tabs — only shown if more than one child */}
+    <div>
+      {/* Child switcher tabs — only when multiple children */}
       {children.length > 1 && (
-        <div className="flex border-b border-slate-100 dark:border-white/8 overflow-x-auto">
+        <div className="flex border-b border-slate-100 dark:border-white/8 overflow-x-auto bg-slate-50 dark:bg-white/3">
           {children.map((c, i) => {
             const ini =
               (c.child_first_name?.[0] ?? "").toUpperCase() +
@@ -95,16 +94,16 @@ export default function ParentChildrenTabs({
               <button
                 key={c.id}
                 onClick={() => setActiveIdx(i)}
-                className={`flex items-center gap-2 px-5 py-3.5 text-sm font-semibold whitespace-nowrap border-b-2 transition-all ${
+                className={`flex items-center gap-2 px-5 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-all ${
                   isActive
-                    ? "border-blue-600 text-blue-700 dark:text-blue-400 dark:border-blue-400 bg-blue-50/50 dark:bg-blue-500/8"
-                    : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
+                    ? "border-blue-600 text-blue-700 dark:text-blue-400 dark:border-blue-400 bg-white dark:bg-transparent"
+                    : "border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white"
                 }`}
               >
-                <span className={`w-6 h-6 rounded-full text-[11px] font-bold flex items-center justify-center shrink-0 ${
+                <span className={`w-6 h-6 rounded-full text-[10px] font-bold flex items-center justify-center shrink-0 ${
                   isActive
-                    ? "bg-blue-100 dark:bg-blue-500/25 text-blue-700 dark:text-blue-300"
-                    : "bg-slate-100 dark:bg-white/10 text-slate-500 dark:text-slate-400"
+                    ? "bg-blue-600 text-white dark:bg-blue-500"
+                    : "bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400"
                 }`}>
                   {ini}
                 </span>
@@ -117,28 +116,30 @@ export default function ParentChildrenTabs({
 
       {/* Child content */}
       <div className="p-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-5">
-          <div className="w-14 h-14 rounded-2xl bg-blue-100 dark:bg-blue-500/20 flex items-center justify-center shrink-0">
-            <span className="text-lg font-bold text-blue-700 dark:text-blue-300">{initials}</span>
+
+        {/* Child header */}
+        <div className="flex items-center gap-4 mb-6 pb-5 border-b border-slate-100 dark:border-white/8">
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
+            style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
+            <span className="text-xl font-bold text-white">{initials}</span>
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <p className="text-lg font-bold text-slate-800 dark:text-white">
               {child.child_first_name} {child.child_last_name}
             </p>
-            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 dark:bg-blue-500/15 text-blue-700 dark:text-blue-300">
                 {grade}
               </span>
               <span className="text-xs text-slate-400 dark:text-slate-500">{child.academic_year}</span>
-              <span className="text-slate-300 dark:text-white/15 text-xs">·</span>
-              <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block" />
+              <span className="text-slate-300 dark:text-white/15">·</span>
+              <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 inline-block shrink-0" />
                 <span className="font-semibold text-slate-700 dark:text-slate-200">{att.present}</span>
                 {t.present}
               </span>
-              <span className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400">
-                <span className="w-2 h-2 rounded-full bg-red-400 inline-block" />
+              <span className="flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
+                <span className="w-2 h-2 rounded-full bg-red-400 inline-block shrink-0" />
                 <span className="font-semibold text-slate-700 dark:text-slate-200">{att.absent}</span>
                 {t.absent}
               </span>
@@ -148,14 +149,15 @@ export default function ParentChildrenTabs({
 
         {/* Teacher feedback */}
         {childFeedback.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-slate-100 dark:border-white/8">
+          <div className="mb-6">
             <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-3">
               {t.teacherFeedback}
             </p>
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {childFeedback.map(entry => (
-                <div key={entry.id} className="bg-slate-50 dark:bg-white/4 rounded-xl p-3.5">
-                  <div className="flex items-center gap-2 mb-1.5">
+                <div key={entry.id}
+                  className="rounded-xl p-4 bg-slate-50 dark:bg-white/4 border border-slate-100 dark:border-white/6">
+                  <div className="flex items-center gap-2 mb-2">
                     <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${FEEDBACK_COLORS[entry.category] ?? FEEDBACK_COLORS.general}`}>
                       {FEEDBACK_LABELS[entry.category] ?? entry.category}
                     </span>
@@ -171,12 +173,10 @@ export default function ParentChildrenTabs({
         )}
 
         {/* Timetable */}
-        <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/8">
-          <ParentTimetable
-            gradeLabel={gradeShort(child.applying_for_grade)}
-            rows={timetableData ? (findClassRows(timetableData, child.applying_for_grade) ?? []) : null}
-          />
-        </div>
+        <ParentTimetable
+          gradeLabel={gradeShort(child.applying_for_grade)}
+          rows={timetableData ? (findClassRows(timetableData, child.applying_for_grade) ?? []) : null}
+        />
       </div>
     </div>
   );

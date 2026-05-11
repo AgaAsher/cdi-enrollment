@@ -114,56 +114,55 @@ export default function ParentDashboardContent({
     : "?";
 
   return (
-    <div className="min-h-[calc(100vh-65px)] flex flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row md:h-[calc(100vh-65px)] md:overflow-hidden">
 
       {/* ── Left sidebar ─────────────────────────────────────────────────────── */}
-      <div className="md:w-72 shrink-0 flex flex-col relative overflow-hidden"
-        style={{ background: "linear-gradient(160deg, #1e47c0 0%, #0f1f6b 50%, #130e50 100%)" }}>
+      <div className="md:w-64 shrink-0 flex flex-col md:overflow-y-auto"
+        style={{ background: "linear-gradient(175deg, #1e47c0 0%, #0d1d6a 55%, #100c45 100%)" }}>
 
         {/* Decorative blobs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(99,179,237,0.2) 0%, transparent 65%)" }} />
-          <div className="absolute bottom-0 -left-10 w-56 h-56 rounded-full"
-            style={{ background: "radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 65%)" }} />
+        <div className="absolute pointer-events-none overflow-hidden md:w-64 h-full hidden md:block">
+          <div className="absolute -top-20 -right-10 w-56 h-56 rounded-full opacity-40"
+            style={{ background: "radial-gradient(circle, rgba(99,179,237,0.5) 0%, transparent 65%)" }} />
+          <div className="absolute top-1/2 -left-16 w-48 h-48 rounded-full opacity-30"
+            style={{ background: "radial-gradient(circle, rgba(139,92,246,0.5) 0%, transparent 65%)" }} />
         </div>
 
         {/* Parent info */}
-        <div className="relative px-6 pt-8 pb-6">
-          <div className="flex items-center gap-4 mb-1">
-            <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border border-white/20"
-              style={{ background: "rgba(255,255,255,0.13)", backdropFilter: "blur(8px)" }}>
-              <span className="text-xl font-bold text-white">{activeInitials}</span>
+        <div className="relative px-5 pt-7 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border border-white/25"
+              style={{ background: "rgba(255,255,255,0.15)" }}>
+              <span className="text-base font-bold text-white">{activeInitials}</span>
             </div>
-            <div>
-              <p className="text-white/45 text-[10px] font-semibold tracking-widest uppercase mb-0.5">{t.welcome}</p>
-              <h1 className="text-xl font-bold text-white leading-tight">{firstName}</h1>
-              <p className="text-white/35 text-[11px] mt-0.5">Parent Portal · CDA</p>
+            <div className="min-w-0">
+              <p className="text-white/40 text-[10px] font-semibold tracking-widest uppercase leading-none mb-1">{t.welcome}</p>
+              <p className="text-white font-bold text-base leading-tight truncate">{firstName}</p>
+              <p className="text-white/30 text-[10px] mt-0.5">Parent Portal · CDA</p>
             </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div className="mx-6 border-t border-white/10 mb-4" />
+        <div className="mx-5 border-t border-white/10" />
 
         {/* Vertical nav */}
-        <nav className="relative flex md:flex-col flex-row overflow-x-auto md:overflow-x-visible gap-1 px-3 pb-3 md:pb-8">
+        <nav className="relative flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-0.5 p-3 md:flex-1">
           {TABS.map(({ key, icon }) => {
             const isActive = tab === key;
             return (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all text-left whitespace-nowrap md:whitespace-normal md:w-full shrink-0 ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all text-left whitespace-nowrap md:whitespace-normal md:w-full shrink-0 ${
                   isActive
-                    ? "bg-white/15 text-white shadow-sm"
-                    : "text-white/45 hover:text-white/80 hover:bg-white/8"
+                    ? "bg-white/20 text-white font-semibold"
+                    : "text-white/50 hover:text-white/85 hover:bg-white/10"
                 }`}
               >
-                <span className={`shrink-0 ${isActive ? "text-white" : "text-white/40"}`}>{icon}</span>
-                <span>{tabLabels[key]}</span>
+                <span className={`w-4 h-4 shrink-0 ${isActive ? "text-white" : "text-white/45"}`}>{icon}</span>
+                <span className="flex-1 truncate">{tabLabels[key]}</span>
                 {isActive && (
-                  <span className="ml-auto hidden md:block w-1.5 h-1.5 rounded-full bg-white/70 shrink-0" />
+                  <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-white/50 shrink-0" />
                 )}
               </button>
             );
@@ -172,10 +171,10 @@ export default function ParentDashboardContent({
       </div>
 
       {/* ── Right content ────────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-y-auto p-6 md:p-8 dark:bg-[#0d1117]">
+      <div className="flex-1 md:overflow-y-auto p-5 md:p-7 bg-slate-100 dark:bg-[#0b1120]">
 
         {tab === "child" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
             <ParentChildrenTabs
               children={children}
               attendanceSummaries={attendanceSummaries}
@@ -188,37 +187,35 @@ export default function ParentDashboardContent({
         )}
 
         {tab === "menu" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
-            <div className="px-6 pt-6 pb-3 flex items-center gap-3 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-base font-bold text-slate-800 dark:text-white">{t.weeklyMenu}</h2>
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
+              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.weeklyMenu}</h2>
             </div>
             <ParentWeeklyMenu menuData={menuData} todayDayName={todayDayName} />
           </div>
         )}
 
         {tab === "events" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
-            <div className="px-6 pt-6 pb-3 flex items-center gap-3 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-base font-bold text-slate-800 dark:text-white">{t.upcomingEvents}</h2>
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
+              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.upcomingEvents}</h2>
             </div>
             {upcomingEvents.length === 0 ? (
               <div className="py-16 text-center text-sm text-slate-400 dark:text-slate-500">{t.noEvents}</div>
             ) : (
-              <div className="divide-y divide-slate-100 dark:divide-white/6 px-4 pb-4">
+              <div className="divide-y divide-slate-100 dark:divide-white/6 px-5 pb-4">
                 {upcomingEvents.map((ev, i) => {
                   const d = new Date(ev.date + "T00:00");
                   return (
                     <div key={i} className="flex items-center gap-4 py-4">
-                      <div className="w-12 h-12 rounded-2xl flex flex-col items-center justify-center shrink-0"
+                      <div className="w-11 h-11 rounded-xl flex flex-col items-center justify-center shrink-0"
                         style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
-                        <p className="text-[9px] font-bold text-blue-200 uppercase leading-none">
+                        <p className="text-[8px] font-bold text-blue-200 uppercase leading-none">
                           {d.toLocaleDateString("en", { month: "short" })}
                         </p>
-                        <p className="text-lg font-bold text-white leading-none">{d.getDate()}</p>
+                        <p className="text-base font-bold text-white leading-none">{d.getDate()}</p>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-slate-800 dark:text-white">{ev.title}</p>
-                      </div>
+                      <p className="flex-1 text-sm font-semibold text-slate-800 dark:text-white">{ev.title}</p>
                       <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${EVENT_COLORS[ev.color] ?? EVENT_COLORS.blue}`}>
                         {ev.type}
                       </span>
@@ -231,14 +228,14 @@ export default function ParentDashboardContent({
         )}
 
         {tab === "noticeboard" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#141c2e] border border-slate-100 dark:border-white/8 shadow-lg dark:shadow-black/30">
-            <div className="px-6 pt-6 pb-3 flex items-center gap-3 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-base font-bold text-slate-800 dark:text-white">{t.noticeboard}</h2>
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
+              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.noticeboard}</h2>
             </div>
-            <div className="divide-y divide-slate-100 dark:divide-white/6 px-4 pb-4">
+            <div className="divide-y divide-slate-100 dark:divide-white/6 px-5 pb-4">
               {notices.map((n, i) => (
                 <div key={i} className="py-4">
-                  <div className="flex items-start justify-between gap-3 mb-1.5">
+                  <div className="flex items-start justify-between gap-3 mb-2">
                     <p className="text-sm font-semibold text-slate-800 dark:text-white leading-snug">{n.title}</p>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 ${NOTICE_COLORS[n.category] ?? NOTICE_COLORS.Admin}`}>
                       {n.category}

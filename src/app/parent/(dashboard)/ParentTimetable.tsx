@@ -26,7 +26,7 @@ export default function ParentTimetable({
   gradeLabel: string;
   rows: TimetableRow[] | null;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(true);
 
   if (rows === null) {
     return (
@@ -50,11 +50,20 @@ export default function ParentTimetable({
 
   return (
     <div>
+      {/* Section header / toggle */}
       <button
         onClick={() => setExpanded(v => !v)}
-        className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+        className="w-full flex items-center justify-between group"
       >
-        {expanded ? "Hide Timetable ▲" : "View Timetable ▼"}
+        <span className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
+          Timetable
+        </span>
+        <svg
+          className={`w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all ${expanded ? "" : "rotate-180"}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+        </svg>
       </button>
 
       {expanded && (
