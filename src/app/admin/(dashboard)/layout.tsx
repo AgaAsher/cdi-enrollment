@@ -41,7 +41,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AdminLangProvider>
       <div className="min-h-screen flex flex-col">
-        <AdminHeader />
+        <AdminHeader
+          currentRole={session.role}
+          availableRoles={session.roles ?? [session.role]}
+        />
 
         <div className="flex flex-1 overflow-hidden">
           {/* Sidebar — light glass */}

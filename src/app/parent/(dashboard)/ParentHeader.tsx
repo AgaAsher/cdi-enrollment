@@ -3,10 +3,17 @@
 import Image from "next/image";
 import { useState, useRef, useEffect } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
+import RoleToggle from "@/components/RoleToggle";
 import { useParentLang } from "@/components/ParentLangProvider";
 import { PARENT_LANG_META, type ParentLang } from "@/lib/i18n/parent";
 
-export default function ParentHeader() {
+export default function ParentHeader({
+  currentRole,
+  availableRoles,
+}: {
+  currentRole?: string;
+  availableRoles?: string[];
+}) {
   const { lang, t, setLang } = useParentLang();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -30,6 +37,9 @@ export default function ParentHeader() {
       </div>
 
       <div className="flex items-center gap-2">
+        {currentRole && availableRoles && (
+          <RoleToggle currentRole={currentRole} availableRoles={availableRoles} variant="light" />
+        )}
         {/* Language picker */}
         <div ref={ref} className="relative">
           <button

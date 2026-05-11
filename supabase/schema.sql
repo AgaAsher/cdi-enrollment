@@ -103,6 +103,10 @@ create policy "Service role full access on admin_users"
 -- Profile data for teachers (birthday, phone, nationality, job title)
 alter table admin_users add column if not exists profile jsonb not null default '{}';
 
+-- Multi-role support: list of all roles an account can switch between
+-- NULL means single-role (falls back to ARRAY[role] at runtime)
+alter table admin_users add column if not exists roles text[];
+
 -- ── Attendance records ────────────────────────────────────────────────────────
 
 create table if not exists attendance (

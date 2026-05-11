@@ -10,7 +10,10 @@ export default async function ParentDashboardLayout({ children }: { children: Re
   return (
     <ParentLangProvider>
       <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0d1117]">
-        <ParentHeader />
+        <ParentHeader
+          currentRole={session.role}
+          availableRoles={session.roles ?? [session.role]}
+        />
         <main className="max-w-4xl mx-auto p-6">{children}</main>
       </div>
     </ParentLangProvider>

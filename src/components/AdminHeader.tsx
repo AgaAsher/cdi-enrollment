@@ -2,10 +2,17 @@
 
 import Image from "next/image";
 import ThemeToggle from "@/components/ThemeToggle";
+import RoleToggle from "@/components/RoleToggle";
 import { useAdminLang } from "@/components/AdminLangProvider";
 import { ADMIN_LANG_META, type AdminLang } from "@/lib/i18n/admin";
 
-export default function AdminHeader() {
+export default function AdminHeader({
+  currentRole,
+  availableRoles,
+}: {
+  currentRole?: string;
+  availableRoles?: string[];
+}) {
   const { lang, t, setLang } = useAdminLang();
 
   return (
@@ -23,6 +30,9 @@ export default function AdminHeader() {
       </div>
 
       <div className="flex items-center gap-2">
+        {currentRole && availableRoles && (
+          <RoleToggle currentRole={currentRole} availableRoles={availableRoles} variant="dark" />
+        )}
         {/* Language toggle */}
         <div className="flex items-center gap-0.5 p-0.5 rounded-full border border-[#0f1f6b]/15 dark:border-white/15 bg-white/40 dark:bg-white/5">
           {(Object.keys(ADMIN_LANG_META) as AdminLang[]).map((l) => (

@@ -8,6 +8,7 @@ export type SessionPayload = {
   email: string;
   name: string;
   role: "super_admin" | "admin" | "staff" | "teacher" | "parent";
+  roles?: string[]; // all roles this account can switch between
   permissions: Record<string, boolean>;
   enrollment_ids?: string[];
 };
