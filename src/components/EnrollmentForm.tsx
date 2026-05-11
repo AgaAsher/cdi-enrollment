@@ -872,7 +872,12 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
         <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t.visitHint}</p>
         <div className="space-y-4">
           <Field label={t.preferredVisitDate}>
-            <Input type="date" {...register("visit_date")} min={new Date().toISOString().split("T")[0]} />
+            <Input type="date" {...register("visit_date")} min={(() => {
+              const now = new Date();
+              const june1 = new Date(now.getFullYear(), 5, 1);
+              const min = now < june1 ? june1 : new Date(now.getFullYear() + 1, 5, 1);
+              return min.toISOString().split("T")[0];
+            })()} />
           </Field>
           <div>
             <Label className="text-slate-700 dark:text-slate-300 font-medium mb-2 block">
