@@ -112,7 +112,6 @@ export default function ParentDashboardContent({
   const activeInitials = activeChild
     ? (activeChild.child_first_name?.[0] ?? "").toUpperCase() + (activeChild.child_last_name?.[0] ?? "").toUpperCase()
     : "?";
-  const activeGrade = activeChild ? gradeShort(activeChild.applying_for_grade) : "";
 
   return (
     <div className="min-h-[calc(100vh-65px)] flex flex-col">
@@ -133,11 +132,7 @@ export default function ParentDashboardContent({
               <div>
                 <p className="text-white/60 text-xs font-medium tracking-wide uppercase mb-0.5">{t.welcome}</p>
                 <h1 className="text-2xl font-bold text-white tracking-tight leading-none">{firstName}</h1>
-                {activeGrade && (
-                  <p className="text-white/55 text-xs mt-1">
-                    {activeGrade} · {activeChild?.academic_year}
-                  </p>
-                )}
+                <p className="text-white/55 text-xs mt-1">Parent Portal · CDA</p>
               </div>
             </div>
 
