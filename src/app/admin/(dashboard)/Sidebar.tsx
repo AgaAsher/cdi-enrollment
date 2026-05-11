@@ -149,6 +149,11 @@ export default function Sidebar({
     }] : []),
   ];
 
+  // ── group-level alert dots (shown when group is collapsed + has pending items)
+  const groupDots: Record<string, boolean> = {
+    admission: counts.pending > 0 || visitCount > 0,
+  };
+
   // ── helpers ────────────────────────────────────────────────────────────────
   function isLeafActive(href: string) {
     if (!href.includes("?")) {
@@ -236,6 +241,7 @@ export default function Sidebar({
   function renderGroup(item: NavItem & { type: "group" }) {
     const isActive = isGroupActiveCheck(item.key);
     const isOpen   = openGroups[item.key] ?? false;
+    const hasDot   = !isOpen && (groupDots[item.key] ?? false);
 
     return (
       <div key={item.key} className="flex flex-col gap-0.5">
@@ -253,6 +259,9 @@ export default function Sidebar({
             {item.icon}
           </span>
           <span className="flex-1 text-left">{item.label}</span>
+          {hasDot && (
+            <span className="w-2 h-2 rounded-full bg-red-500 shrink-0 animate-pulse" />
+          )}
           <svg
             className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""} ${isActive ? "text-[#1a3fa8] dark:text-blue-400" : "text-[#0f1f6b]/30 dark:text-white/30"}`}
             fill="none" viewBox="0 0 24 24" stroke="currentColor"
