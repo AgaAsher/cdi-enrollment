@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import TeacherFeedbackTab from "./TeacherFeedbackTab";
+import TeacherMessagesTab from "./TeacherMessagesTab";
 
 type TeacherLesson = {
   classLabel: string;
@@ -85,7 +86,7 @@ const STATUS_CONFIG = {
   absent:  { label: "Absent",  bg: "bg-red-100 border-red-300 text-red-700 dark:bg-red-500/15 dark:border-red-500/30 dark:text-red-300",                         dot: "bg-red-500"    },
 } as const;
 
-type ViewTab = "timetable" | "feedback";
+type ViewTab = "timetable" | "feedback" | "messages";
 
 export default function TeacherPage() {
   const [view, setView] = useState<ViewTab>("timetable");
@@ -228,7 +229,7 @@ export default function TeacherPage() {
 
       {/* Main view tabs */}
       <div className="flex items-center gap-1 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 w-fit">
-        {(["timetable", "feedback"] as ViewTab[]).map(tab => (
+        {(["timetable", "feedback", "messages"] as ViewTab[]).map(tab => (
           <button
             key={tab}
             onClick={() => setView(tab)}
@@ -238,12 +239,14 @@ export default function TeacherPage() {
                 : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
             }`}
           >
-            {tab === "timetable" ? "Timetable" : "Feedback"}
+            {tab === "timetable" ? "Timetable" : tab === "feedback" ? "Feedback" : "Messages"}
           </button>
         ))}
       </div>
 
-      {view === "feedback" ? (
+      {view === "messages" ? (
+        <TeacherMessagesTab />
+      ) : view === "feedback" ? (
         <TeacherFeedbackTab classes={uniqueClasses} />
       ) : loading ? (
         <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 flex items-center justify-center">

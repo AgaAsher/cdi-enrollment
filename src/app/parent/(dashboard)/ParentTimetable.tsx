@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type SlotCell = { subject: string; teacher: string; room: string; isFixed: boolean };
 type TimetableRow = { time: string; duration: string; color: string; cells: SlotCell[][] };
@@ -19,6 +19,42 @@ const CELL_COLORS: Record<string, string> = {
   slate:  "bg-slate-50 dark:bg-white/5 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10",
 };
 
+function parseMinutes(time: string): number {
+  const [h, m] = time.split(":").map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+function parseDurationMinutes(duration: string): number {
+  if (!duration) return 60;
+  const hrMatch = duration.match(/(\d+(?:\.\d+)?)\s*hr/);
+  const minMatch = duration.match(/(\d+)\s*min/);
+  let total = 0;
+  if (hrMatch) total += parseFloat(hrMatch[1]) * 60;
+  if (minMatch) total += parseInt(minMatch[1]);
+  return total || 60;
+}
+
+function useNowMinutes() {
+  const getNow = () => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  };
+  const [now, setNow] = useState(getNow);
+  useEffect(() => {
+    const id = setInterval(() => setNow(getNow()), 30_000);
+    return () => clearInterval(id);
+  }, []);
+  return now;
+}
+
+function formatTime(totalMinutes: number): string {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  const ampm = h < 12 ? "AM" : "PM";
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 export default function ParentTimetable({
   gradeLabel,
   rows,
@@ -27,6 +63,7 @@ export default function ParentTimetable({
   rows: TimetableRow[] | null;
 }) {
   const [expanded, setExpanded] = useState(true);
+  const nowMinutes = useNowMinutes();
 
   if (rows === null) {
     return (
@@ -48,6 +85,13 @@ export default function ParentTimetable({
     );
   }
 
+  // Find the active row index
+  const activeRowIdx = lessonRows.findIndex((row) => {
+    const start = parseMinutes(row.time);
+    const end = start + parseDurationMinutes(row.duration);
+    return nowMinutes >= start && nowMinutes < end;
+  });
+
   return (
     <div>
       {/* Section header / toggle */}
@@ -58,12 +102,24 @@ export default function ParentTimetable({
         <span className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
           Timetable
         </span>
-        <svg
-          className={`w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all ${expanded ? "" : "rotate-180"}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-        </svg>
+        <div className="flex items-center gap-2">
+          {/* Live clock */}
+          <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500 tabular-nums">
+            {formatTime(nowMinutes)}
+          </span>
+          {activeRowIdx >= 0 && (
+            <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+              Now
+            </span>
+          )}
+          <svg
+            className={`w-4 h-4 text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-all ${expanded ? "" : "rotate-180"}`}
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+          </svg>
+        </div>
       </button>
 
       {expanded && (
@@ -82,40 +138,55 @@ export default function ParentTimetable({
               </tr>
             </thead>
             <tbody>
-              {lessonRows.map((row, ri) => (
-                <tr key={ri} className="border-b border-slate-50 dark:border-white/5 last:border-0">
-                  <td className="px-3 py-1.5 align-top">
-                    <p className="font-bold text-slate-600 dark:text-slate-300 whitespace-nowrap">{row.time}</p>
-                    {row.duration && (
-                      <p className="text-[10px] text-slate-400">{row.duration}</p>
-                    )}
-                  </td>
-                  {[0, 1, 2, 3, 4].map(d => {
-                    const dayCells = row.cells[d] ?? [];
-                    const cell = dayCells.find(c => c.subject) ?? null;
-                    const colors = CELL_COLORS[row.color] ?? CELL_COLORS.slate;
-                    return (
-                      <td key={d} className="px-0.5 py-1 align-top">
-                        {cell ? (
-                          <div className={`rounded-lg px-1.5 py-1 border text-center ${colors}`}>
-                            <p className="font-semibold text-[11px] leading-tight">{cell.subject}</p>
-                            {cell.teacher && (
-                              <p className="text-[10px] opacity-70 mt-0.5 truncate">{cell.teacher}</p>
-                            )}
-                            {cell.room && (
-                              <p className="text-[10px] opacity-60">{cell.room}</p>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="min-h-[32px] flex items-center justify-center text-slate-200 dark:text-slate-700 text-xs">
-                            —
-                          </div>
+              {lessonRows.map((row, ri) => {
+                const isActive = ri === activeRowIdx;
+                return (
+                  <tr
+                    key={ri}
+                    className={`border-b border-slate-50 dark:border-white/5 last:border-0 transition-colors ${
+                      isActive ? "bg-emerald-50/60 dark:bg-emerald-500/8" : ""
+                    }`}
+                  >
+                    <td className="px-3 py-1.5 align-top">
+                      <div className="flex items-center gap-1">
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
                         )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
+                        <p className={`font-bold whitespace-nowrap ${isActive ? "text-emerald-700 dark:text-emerald-400" : "text-slate-600 dark:text-slate-300"}`}>
+                          {row.time}
+                        </p>
+                      </div>
+                      {row.duration && (
+                        <p className="text-[10px] text-slate-400">{row.duration}</p>
+                      )}
+                    </td>
+                    {[0, 1, 2, 3, 4].map(d => {
+                      const dayCells = row.cells[d] ?? [];
+                      const cell = dayCells.find(c => c.subject) ?? null;
+                      const colors = CELL_COLORS[row.color] ?? CELL_COLORS.slate;
+                      return (
+                        <td key={d} className="px-0.5 py-1 align-top">
+                          {cell ? (
+                            <div className={`rounded-lg px-1.5 py-1 border text-center ${colors} ${isActive ? "ring-1 ring-emerald-400/40 dark:ring-emerald-500/30" : ""}`}>
+                              <p className="font-semibold text-[11px] leading-tight">{cell.subject}</p>
+                              {cell.teacher && (
+                                <p className="text-[10px] opacity-70 mt-0.5 truncate">{cell.teacher}</p>
+                              )}
+                              {cell.room && (
+                                <p className="text-[10px] opacity-60">{cell.room}</p>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="min-h-[32px] flex items-center justify-center text-slate-200 dark:text-slate-700 text-xs">
+                              —
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

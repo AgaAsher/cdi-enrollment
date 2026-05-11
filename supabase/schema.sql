@@ -126,3 +126,20 @@ create table if not exists attendance (
 alter table attendance enable row level security;
 create policy "Service role full access on attendance"
   on attendance using (true) with check (true);
+
+-- ── Parent → Teacher messages ─────────────────────────────────────────────────
+
+create table if not exists parent_messages (
+  id            uuid        primary key default gen_random_uuid(),
+  created_at    timestamptz default now(),
+  parent_name   text        not null,
+  child_name    text        not null,
+  enrollment_id text        not null,
+  to_teacher    text        not null,
+  body          text        not null,
+  read_at       timestamptz
+);
+
+alter table parent_messages enable row level security;
+create policy "Service role full access on parent_messages"
+  on parent_messages using (true) with check (true);

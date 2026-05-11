@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Enrollment } from "@/lib/types";
 import ParentTimetable from "./ParentTimetable";
 import { useParentLang } from "@/components/ParentLangProvider";
+import ContactTeacherModal from "@/components/ContactTeacherModal";
 
 type FeedbackEntry = {
   id: string;
@@ -63,6 +64,7 @@ export default function ParentChildrenTabs({
   setActiveIdx: (i: number) => void;
 }) {
   const { t } = useParentLang();
+  const [contactOpen, setContactOpen] = useState(false);
 
   if (children.length === 0) {
     return (
@@ -145,6 +147,15 @@ export default function ParentChildrenTabs({
               </span>
             </div>
           </div>
+          <button
+            onClick={() => setContactOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition-colors shrink-0"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            Contact Teacher
+          </button>
         </div>
 
         {/* Teacher feedback */}
@@ -178,6 +189,14 @@ export default function ParentChildrenTabs({
           rows={timetableData ? (findClassRows(timetableData, child.applying_for_grade) ?? []) : null}
         />
       </div>
+
+      {contactOpen && (
+        <ContactTeacherModal
+          childName={`${child.child_first_name} ${child.child_last_name}`}
+          enrollmentId={child.id}
+          onClose={() => setContactOpen(false)}
+        />
+      )}
     </div>
   );
 }
