@@ -14,7 +14,7 @@ export default async function ParentDashboardLayout({ children }: { children: Re
           currentRole={session.role}
           availableRoles={session.roles ?? [session.role]}
         />
-        <main className="max-w-4xl mx-auto p-6">{children}</main>
+        <main>{children}</main>
       </div>
     </ParentLangProvider>
   );
