@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -40,14 +40,6 @@ type LessonCard = { cardId: string; subject: string; teacher: string; room: stri
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const TEACHERS_LIST = [
-  "Ms. Khamla Vongsay",
-  "Ms. Bouavanh Phomma",
-  "Mr. Somchai Rattana",
-  "Ms. Naly Sengphachan",
-  "Ms. Daovone Keodara",
-  "Ms. Phonesavanh Lao",
-];
 
 const GRADE_DEFS = [
   { key: "toddler",   label: "Toddler",   colorClass: "bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"             },
@@ -131,28 +123,28 @@ function subjectToCard(e: SubjectEntry, cls: ClassCfg, roomById: Record<string, 
 function defaultClasses(): ClassCfg[] {
   const subs: Record<string, Array<Omit<SubjectEntry, "id" | "blocked" | "group">>> = {
     toddler:   [
-      { name: "Learning Centers", teacher: TEACHERS_LIST[0], room: "", days: "3" },
-      { name: "Art & Crafts",     teacher: TEACHERS_LIST[5], room: "", days: "2" },
-      { name: "Music & Movement", teacher: TEACHERS_LIST[4], room: "", days: "2" },
-      { name: "Story Time",       teacher: TEACHERS_LIST[0], room: "", days: "3" },
+      { name: "Learning Centers", teacher: "", room: "", days: "3" },
+      { name: "Art & Crafts",     teacher: "", room: "", days: "2" },
+      { name: "Music & Movement", teacher: "", room: "", days: "2" },
+      { name: "Story Time",       teacher: "", room: "", days: "3" },
     ],
     nursery:   [
-      { name: "Language Arts",    teacher: TEACHERS_LIST[1], room: "", days: "3" },
-      { name: "Art & Crafts",     teacher: TEACHERS_LIST[5], room: "", days: "2" },
-      { name: "Music & Movement", teacher: TEACHERS_LIST[4], room: "", days: "2" },
-      { name: "Story Time",       teacher: TEACHERS_LIST[1], room: "", days: "3" },
+      { name: "Language Arts",    teacher: "", room: "", days: "3" },
+      { name: "Art & Crafts",     teacher: "", room: "", days: "2" },
+      { name: "Music & Movement", teacher: "", room: "", days: "2" },
+      { name: "Story Time",       teacher: "", room: "", days: "3" },
     ],
     reception: [
-      { name: "STEM Exploration", teacher: TEACHERS_LIST[2], room: "", days: "3" },
-      { name: "Drama Play",       teacher: TEACHERS_LIST[2], room: "", days: "2" },
-      { name: "Music & Dance",    teacher: TEACHERS_LIST[4], room: "", days: "2" },
-      { name: "Language Arts",    teacher: TEACHERS_LIST[1], room: "", days: "3" },
+      { name: "STEM Exploration", teacher: "", room: "", days: "3" },
+      { name: "Drama Play",       teacher: "", room: "", days: "2" },
+      { name: "Music & Dance",    teacher: "", room: "", days: "2" },
+      { name: "Language Arts",    teacher: "", room: "", days: "3" },
     ],
     pkg:       [
-      { name: "Pre-Primary",      teacher: TEACHERS_LIST[3], room: "", days: "3" },
-      { name: "Creative Play",    teacher: TEACHERS_LIST[5], room: "", days: "2" },
-      { name: "Week Celebration", teacher: TEACHERS_LIST[3], room: "", days: "1" },
-      { name: "Show & Tell",      teacher: TEACHERS_LIST[3], room: "", days: "3" },
+      { name: "Pre-Primary",      teacher: "", room: "", days: "3" },
+      { name: "Creative Play",    teacher: "", room: "", days: "2" },
+      { name: "Week Celebration", teacher: "", room: "", days: "1" },
+      { name: "Show & Tell",      teacher: "", room: "", days: "3" },
     ],
   };
   return GRADE_DEFS.map(g => ({
@@ -607,6 +599,21 @@ export default function TimetableGenerator({ onClose }: { onClose: (published?: 
   const [publishing, setPublishing]   = useState(false);
   const [pubError, setPubError]       = useState<string | null>(null);
   const [pubLinks, setPubLinks]       = useState<Array<{ label: string; url: string }> | null>(null);
+  const [teachersList, setTeachersList] = useState<string[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      fetch("/api/admin/users?role=teacher").then(r => r.json()),
+      fetch("/api/timetable/teachers").then(r => r.json()),
+    ]).then(([accountData, ttData]) => {
+      const fromAccounts: string[] = Array.isArray(accountData)
+        ? accountData.map((u: { name: string }) => u.name)
+        : [];
+      const fromTimetable: string[] = ttData.teachers ?? [];
+      const merged = [...new Set([...fromAccounts, ...fromTimetable])].sort();
+      setTeachersList(merged);
+    }).catch(() => {});
+  }, []);
   const [pool, setPool]             = useState<Record<string, LessonCard[]>>({});
   const [activeDrag, setActiveDrag] = useState<
     | { kind: "pool"; card: LessonCard }
@@ -623,7 +630,7 @@ export default function TimetableGenerator({ onClose }: { onClose: (published?: 
 
   // ── Subject handlers ─────────────────────────────────────────────────────
   const addSubject = (ck: string) => setClasses(p => p.map(c => c.key !== ck ? c : {
-    ...c, subjects: [...c.subjects, { id: uid(), name: "", teacher: TEACHERS_LIST[0], room: "", group: "all", days: "3" as const, blocked: [] }],
+    ...c, subjects: [...c.subjects, { id: uid(), name: "", teacher: teachersList[0] ?? "", room: "", group: "all", days: "3" as const, blocked: [] }],
   }));
   const updSubject = (ck: string, id: string, f: keyof SubjectEntry, v: string) =>
     setClasses(p => p.map(c => c.key !== ck ? c : {
@@ -868,7 +875,7 @@ export default function TimetableGenerator({ onClose }: { onClose: (published?: 
                   </button>
                   {openSections.teachers && (
                     <div className="px-4 pb-3 space-y-1.5">
-                      {TEACHERS_LIST.map(t => (
+                      {teachersList.map(t => (
                         <div
                           key={t}
                           onDoubleClick={() => setAvailModal({ kind: "teacher", name: t })}
@@ -1094,7 +1101,7 @@ export default function TimetableGenerator({ onClose }: { onClose: (published?: 
                                   className={inputCls}
                                 >
                                   <option value="">— Teacher —</option>
-                                  {TEACHERS_LIST.map(t => <option key={t} value={t}>{t}</option>)}
+                                  {teachersList.map(t => <option key={t} value={t}>{t}</option>)}
                                 </select>
                                 <select
                                   value={sub.room}
