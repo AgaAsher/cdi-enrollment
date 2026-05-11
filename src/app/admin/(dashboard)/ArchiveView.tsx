@@ -4,7 +4,9 @@ import { useAdminLang } from "@/components/AdminLangProvider";
 import { type Enrollment } from "@/lib/types";
 import ArchiveGrid from "./ArchiveGrid";
 
-export default function ArchiveView({ enrollments }: { enrollments: Enrollment[] }) {
+type EnrollmentWithPhoto = Enrollment & { photoUrl: string | null };
+
+export default function ArchiveView({ enrollments }: { enrollments: EnrollmentWithPhoto[] }) {
   const { t } = useAdminLang();
   const n = enrollments.length;
   return (

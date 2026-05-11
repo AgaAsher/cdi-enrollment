@@ -1,6 +1,7 @@
-import { createAdminClient } from "@/lib/supabase/admin";
 import { Enrollment, EnrollmentStatus } from "@/lib/types";
 import Link from "next/link";
+
+type EnrollmentWithPhoto = Enrollment & { photoUrl: string | null };
 
 const STATUS_COLORS: Record<EnrollmentStatus, string> = {
   pending:  "bg-amber-100 text-amber-800 dark:bg-amber-500/20 dark:text-amber-300",
@@ -13,19 +14,8 @@ function fmtDate(iso: string) {
   return new Date(iso).toLocaleDateString("en", { day: "numeric", month: "short", year: "numeric" });
 }
 
-export default async function ArchiveGrid({ enrollments }: { enrollments: Enrollment[] }) {
-  const supabase = createAdminClient();
-
-  const withPhotos = await Promise.all(
-    enrollments.map(async (e) => {
-      const photoUrl = e.student_3x4_path
-        ? (await supabase.storage.from("enrollment-docs").createSignedUrl(e.student_3x4_path, 3600)).data?.signedUrl ?? null
-        : null;
-      return { ...e, photoUrl };
-    })
-  );
-
-  if (withPhotos.length === 0) {
+export default function ArchiveGrid({ enrollments }: { enrollments: EnrollmentWithPhoto[] }) {
+  if (enrollments.length === 0) {
     return (
       <div className="glass-card p-16 text-center">
         <div className="w-12 h-12 bg-slate-100 dark:bg-white/8 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -40,7 +30,7 @@ export default async function ArchiveGrid({ enrollments }: { enrollments: Enroll
 
   return (
     <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-2">
-      {withPhotos.map((e) => (
+      {enrollments.map((e) => (
         <div key={e.id} className="bg-white dark:bg-white/5 rounded-lg border border-red-200 dark:border-red-500/20 shadow-sm overflow-hidden">
           {/* Photo */}
           <div className="relative w-full aspect-square bg-slate-100 dark:bg-white/8 opacity-60 grayscale">

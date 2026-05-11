@@ -49,6 +49,17 @@ export default async function AdminPage({
   const list = (activeData ?? []) as Enrollment[];
   const deletedEnrollments = (deletedData ?? []) as Enrollment[];
 
+  const deletedWithPhotos = section === "archive"
+    ? await Promise.all(
+        deletedEnrollments.map(async (e) => {
+          const photoUrl = e.student_3x4_path
+            ? (await supabase.storage.from("enrollment-docs").createSignedUrl(e.student_3x4_path, 3600)).data?.signedUrl ?? null
+            : null;
+          return { ...e, photoUrl };
+        })
+      )
+    : [];
+
   const counts = {
     all:      list.length,
     pending:  list.filter((e) => e.status === "pending").length,
@@ -151,7 +162,7 @@ export default async function AdminPage({
 
   // ── ARCHIVE ──
   if (section === "archive") {
-    return <ArchiveView enrollments={deletedEnrollments} />;
+    return <ArchiveView enrollments={deletedWithPhotos} />;
   }
 
   // ── REPORTS ──
