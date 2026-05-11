@@ -172,7 +172,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden" style={{ backgroundColor: "#0b1118" }}>
 
       {/* ── Background image – blurred at source ───────────────────────────── */}
       <div className="absolute inset-0 scale-110">

@@ -30,6 +30,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Preload sign-in background so it's ready before React paints */}
+        <link rel="preload" as="image" href="/bg.jpg" fetchPriority="high" />
+      </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>{children}</ThemeProvider>
         <Analytics />
