@@ -74,7 +74,7 @@ function getDateForDayIndex(dayIndex: number): string {
   return monday.toISOString().split("T")[0];
 }
 
-function formatDate(iso: string): string {
+function formatDateShort(iso: string): string {
   return new Date(iso + "T00:00:00").toLocaleDateString("en", {
     weekday: "long", day: "numeric", month: "long",
   });
@@ -88,6 +88,36 @@ const STATUS_CONFIG = {
 
 type ViewTab = "timetable" | "feedback" | "messages";
 
+const NAV_ITEMS: { key: ViewTab; label: string; icon: React.ReactNode }[] = [
+  {
+    key: "timetable",
+    label: "Timetable",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    ),
+  },
+  {
+    key: "feedback",
+    label: "Feedback",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+      </svg>
+    ),
+  },
+  {
+    key: "messages",
+    label: "Messages",
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+      </svg>
+    ),
+  },
+];
+
 export default function TeacherPage() {
   const [view, setView] = useState<ViewTab>("timetable");
   const [teacherName, setTeacherName] = useState("");
@@ -95,7 +125,6 @@ export default function TeacherPage() {
   const [loading, setLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState(getTodayIndex());
 
-  // Attendance modal
   const [modal, setModal] = useState<ModalState | null>(null);
   const [students, setStudents] = useState<AttendanceStudent[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
@@ -111,33 +140,25 @@ export default function TeacherPage() {
 
   const loadAttendance = useCallback(async (lesson: TeacherLesson, date: string) => {
     setModalLoading(true);
-
     const [studentsRes, attendanceRes] = await Promise.all([
       fetch(`/api/teacher/students?class=${encodeURIComponent(lesson.classLabel)}`),
       fetch(`/api/teacher/attendance?date=${date}&class=${encodeURIComponent(lesson.classLabel)}&subject=${encodeURIComponent(lesson.subject)}&time=${encodeURIComponent(lesson.time)}`),
     ]);
-
     const { students: list = [] } = await studentsRes.json();
     const { records } = await attendanceRes.json();
-
     const base: AttendanceStudent[] = (list as { id: string; name: string }[]).map(s => ({
-      student_id: s.id,
-      student_name: s.name,
-      status: "present" as const,
+      student_id: s.id, student_name: s.name, status: "present" as const,
     }));
-
     if (records && Array.isArray(records)) {
       const statusMap = new Map<string, AttendanceStudent["status"]>(
         records.map((r: AttendanceStudent) => [r.student_id, r.status])
       );
       setStudents(base.map(s => ({ ...s, status: statusMap.get(s.student_id) ?? "present" })));
-      // Mark as saved if records exist
       const key = `${date}-${lesson.classLabel}-${lesson.subject}-${lesson.time}`;
       setSavedKeys(prev => new Set([...prev, key]));
     } else {
       setStudents(base);
     }
-
     setModalLoading(false);
   }, []);
 
@@ -187,238 +208,339 @@ export default function TeacherPage() {
   const todayLessons = rows
     .map(r => r.cells[selectedDay])
     .filter((l): l is TeacherLesson => l !== null);
-
-  const totalLessons = rows.reduce(
-    (sum, r) => sum + r.cells.filter(c => c !== null).length, 0
-  );
-
+  const totalLessons = rows.reduce((sum, r) => sum + r.cells.filter(c => c !== null).length, 0);
   const uniqueClasses = Array.from(
-    new Set(
-      rows.flatMap(r => r.cells.filter((c): c is TeacherLesson => c !== null).map(c => c.classLabel))
-    )
+    new Set(rows.flatMap(r => r.cells.filter((c): c is TeacherLesson => c !== null).map(c => c.classLabel)))
   ).sort();
 
+  const initials = teacherName
+    ? teacherName.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()
+    : "T";
+  const firstName = teacherName.split(" ")[0] || "Teacher";
+
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col md:flex-row h-full overflow-hidden">
 
-      {/* Greeting + view tabs */}
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">
-            {teacherName ? `Welcome, ${teacherName.split(" ")[0]}` : "Teacher Dashboard"}
-          </h1>
-          <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
-            {new Date().toLocaleDateString("en", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
-          </p>
-        </div>
-        {!loading && (
-          <div className="flex gap-3">
-            <div className="bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-2.5 text-center">
-              <p className="text-lg font-bold text-[#0f1f6b] dark:text-white">{totalLessons}</p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500">lessons/week</p>
+      {/* ── Left sidebar (desktop only) ─────────────────────────────────── */}
+      <aside className="hidden md:flex md:flex-col w-56 shrink-0 bg-white dark:bg-[#1a2035] border-r border-slate-200 dark:border-white/10 overflow-y-auto">
+
+        {/* Teacher info */}
+        <div className="px-4 pt-5 pb-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
+              <span className="text-sm font-bold text-white">{initials}</span>
             </div>
-            <div className="bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl px-4 py-2.5 text-center">
-              <p className="text-lg font-bold text-[#0f1f6b] dark:text-white">{todayLessons.length}</p>
-              <p className="text-[11px] text-slate-400 dark:text-slate-500">
-                {selectedDay === todayIndex ? "today" : DAY_SHORT[selectedDay]}
-              </p>
+            <div className="min-w-0">
+              <p className="text-[10px] font-semibold tracking-widest uppercase text-slate-400 dark:text-white/40 leading-none mb-0.5">Welcome</p>
+              <p className="text-sm font-bold text-slate-800 dark:text-white truncate">{firstName}</p>
+              <p className="text-[10px] text-slate-400 dark:text-white/30">Teacher · CDA</p>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Main view tabs */}
-      <div className="flex items-center gap-1 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 w-fit">
-        {(["timetable", "feedback", "messages"] as ViewTab[]).map(tab => (
-          <button
-            key={tab}
-            onClick={() => setView(tab)}
-            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-colors capitalize ${
-              view === tab
-                ? "bg-[#0f1f6b] dark:bg-blue-600 text-white shadow-sm"
-                : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
-            }`}
-          >
-            {tab === "timetable" ? "Timetable" : tab === "feedback" ? "Feedback" : "Messages"}
-          </button>
-        ))}
-      </div>
-
-      {view === "messages" ? (
-        <TeacherMessagesTab />
-      ) : view === "feedback" ? (
-        <TeacherFeedbackTab classes={uniqueClasses} />
-      ) : loading ? (
-        <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-[#0f1f6b] dark:border-white border-t-transparent rounded-full animate-spin" />
-        </div>
-      ) : rows.length === 0 ? (
-        <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 text-center">
-          <div className="w-14 h-14 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg className="w-7 h-7 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">No timetable found</p>
-          <p className="text-xs text-slate-400 dark:text-slate-500">
-            Your name has not been assigned to any lessons in the current timetable.<br />
-            Please contact the admin.
-          </p>
-        </div>
-      ) : (
-        <>
-          {/* Day tabs */}
-          <div className="flex items-center gap-1 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 w-fit">
-            {DAY_SHORT.map((d, i) => (
-              <button
-                key={i}
-                onClick={() => setSelectedDay(i)}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors relative ${
-                  selectedDay === i
-                    ? "bg-[#0f1f6b] dark:bg-blue-600 text-white shadow-sm"
-                    : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
-                }`}
-              >
-                {d}
-                {i === todayIndex && (
-                  <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
-                    selectedDay === i ? "bg-blue-300" : "bg-blue-500"
-                  }`} />
-                )}
-              </button>
-            ))}
-          </div>
-
-          {/* Day label */}
-          <div className="flex items-center gap-2">
-            <h2 className="text-base font-semibold text-slate-700 dark:text-white">{DAYS[selectedDay]}</h2>
-            <span className="text-xs text-slate-400 dark:text-slate-500">{formatDate(getDateForDayIndex(selectedDay))}</span>
-            {selectedDay === todayIndex && (
-              <span className="text-[11px] font-bold bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">Today</span>
-            )}
-          </div>
-
-          {/* Lesson cards for selected day */}
-          {todayLessons.length === 0 ? (
-            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-10 text-center">
-              <p className="text-sm text-slate-400 dark:text-slate-500">No lessons on {DAYS[selectedDay]}.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {todayLessons.map((lesson, i) => {
-                const key = `${getDateForDayIndex(lesson.dayIndex)}-${lesson.classLabel}-${lesson.subject}-${lesson.time}`;
-                const done = savedKeys.has(key);
-                return (
-                  <button
-                    key={i}
-                    onClick={() => openModal(lesson)}
-                    className={`text-left rounded-2xl border-2 p-4 transition-all hover:shadow-md hover:-translate-y-0.5 group ${BG[lesson.color] ?? BG.slate}`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
-                          {lesson.time}{lesson.duration ? ` · ${lesson.duration}` : ""}
-                        </p>
-                        <p className={`text-base font-bold mt-0.5 ${TX[lesson.color] ?? TX.slate}`}>
-                          {lesson.subject}
-                        </p>
-                      </div>
-                      {done ? (
-                        <span className="flex items-center gap-1 text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-full shrink-0">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                          Done
-                        </span>
-                      ) : (
-                        <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:text-[#0f1f6b] dark:group-hover:text-white transition-colors">
-                          Attendance →
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
-                      <span className="font-semibold text-slate-700 dark:text-slate-200">{lesson.classLabel}</span>
-                      {lesson.groupLabel && <span className="text-slate-400 dark:text-slate-500">({lesson.groupLabel})</span>}
-                      {lesson.room && (
-                        <span className="flex items-center gap-1">
-                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          {lesson.room}
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
+          {/* Stats */}
+          {!loading && (
+            <div className="grid grid-cols-2 gap-2">
+              <div className="bg-slate-50 dark:bg-white/5 rounded-xl px-2 py-2 text-center border border-slate-100 dark:border-white/8">
+                <p className="text-lg font-bold text-[#0f1f6b] dark:text-white leading-none">{totalLessons}</p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">lessons/wk</p>
+              </div>
+              <div className="bg-slate-50 dark:bg-white/5 rounded-xl px-2 py-2 text-center border border-slate-100 dark:border-white/8">
+                <p className="text-lg font-bold text-[#0f1f6b] dark:text-white leading-none">{todayLessons.length}</p>
+                <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">today</p>
+              </div>
             </div>
           )}
+        </div>
 
-          {/* Weekly overview grid */}
-          <div>
-            <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">Weekly Overview</h2>
-            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 overflow-x-auto">
-              <table className="w-full text-sm min-w-[600px]">
-                <thead>
-                  <tr className="border-b border-slate-100 dark:border-white/10">
-                    <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide w-20">Time</th>
-                    {DAY_SHORT.map((d, i) => (
-                      <th key={i} className={`px-3 py-3 text-xs uppercase tracking-wide font-semibold text-center ${
-                        i === todayIndex ? "text-[#0f1f6b] dark:text-white" : "text-slate-400 dark:text-slate-500"
-                      }`}>
-                        {d}
-                        {i === todayIndex && <span className="ml-1 w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, ri) => (
-                    <tr key={ri} className="border-b border-slate-50 dark:border-white/5 last:border-0">
-                      <td className="px-4 py-2 align-middle">
-                        <p className="font-bold text-slate-700 dark:text-slate-200 text-xs">{row.time}</p>
-                        {row.duration && <p className="text-[10px] text-slate-400 dark:text-slate-500">{row.duration}</p>}
-                      </td>
-                      {row.cells.map((lesson, di) => (
-                        <td key={di} className="px-1.5 py-1.5">
-                          {lesson ? (
-                            <button
-                              onClick={() => openModal(lesson)}
-                              className={`w-full rounded-xl px-2 py-2 text-center min-h-[48px] flex flex-col items-center justify-center gap-0.5 border transition-all hover:shadow-sm hover:-translate-y-px ${BG[lesson.color] ?? BG.slate}`}
-                            >
-                              <span className={`font-semibold text-xs leading-tight ${TX[lesson.color] ?? TX.slate}`}>
-                                {lesson.subject}
-                              </span>
-                              <span className="text-[10px] text-slate-500 dark:text-slate-400">{lesson.classLabel}</span>
-                            </button>
-                          ) : (
-                            <div className="min-h-[48px] rounded-xl flex items-center justify-center text-slate-200 dark:text-slate-700">
-                              <span className="text-xs">—</span>
-                            </div>
-                          )}
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+        <div className="mx-4 border-t border-slate-100 dark:border-white/8" />
+
+        {/* Nav */}
+        <nav className="flex flex-col gap-0.5 p-3 flex-1">
+          {NAV_ITEMS.map(({ key, label, icon }) => {
+            const active = view === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setView(key)}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all text-left ${
+                  active
+                    ? "bg-blue-50 dark:bg-white/10 text-blue-700 dark:text-white font-semibold"
+                    : "font-medium text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/8"
+                }`}
+              >
+                <span className={`shrink-0 ${active ? "text-blue-600 dark:text-white" : "text-slate-400 dark:text-white/40"}`}>
+                  {icon}
+                </span>
+                <span className="flex-1">{label}</span>
+                {active && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-white/40 shrink-0" />}
+              </button>
+            );
+          })}
+        </nav>
+      </aside>
+
+      {/* ── Main content ────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-[#0d1117] pb-20 md:pb-0">
+
+        {/* Mobile top bar (teacher name + date + stats) */}
+        <div className="md:hidden px-4 pt-4 pb-3 bg-white dark:bg-[#1a2035] border-b border-slate-200 dark:border-white/10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
+                <span className="text-xs font-bold text-white">{initials}</span>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-800 dark:text-white leading-none">{firstName}</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">
+                  {new Date().toLocaleDateString("en", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+                </p>
+              </div>
             </div>
+            {!loading && (
+              <div className="flex gap-2">
+                <div className="bg-slate-50 dark:bg-white/5 rounded-xl px-3 py-1.5 text-center border border-slate-100 dark:border-white/8">
+                  <p className="text-sm font-bold text-[#0f1f6b] dark:text-white leading-none">{totalLessons}</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500">lessons/wk</p>
+                </div>
+                <div className="bg-slate-50 dark:bg-white/5 rounded-xl px-3 py-1.5 text-center border border-slate-100 dark:border-white/8">
+                  <p className="text-sm font-bold text-[#0f1f6b] dark:text-white leading-none">{todayLessons.length}</p>
+                  <p className="text-[10px] text-slate-400 dark:text-slate-500">today</p>
+                </div>
+              </div>
+            )}
           </div>
-        </>
-      )}
+        </div>
 
-      {/* Attendance Modal */}
+        {/* Tab content */}
+        <div className="p-4 md:p-6 space-y-5">
+
+          {view === "messages" ? (
+            <TeacherMessagesTab />
+          ) : view === "feedback" ? (
+            <TeacherFeedbackTab classes={uniqueClasses} />
+          ) : loading ? (
+            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-[#0f1f6b] dark:border-white border-t-transparent rounded-full animate-spin" />
+            </div>
+          ) : rows.length === 0 ? (
+            <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-16 text-center">
+              <div className="w-14 h-14 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg className="w-7 h-7 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">No timetable found</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
+                Your name has not been assigned to any lessons.<br />Please contact the admin.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Day picker */}
+              <div className="flex items-center gap-1 bg-white dark:bg-[#1a2035] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5 overflow-x-auto">
+                {DAY_SHORT.map((d, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSelectedDay(i)}
+                    className={`flex-1 min-w-[52px] px-3 py-2 rounded-xl text-sm font-semibold transition-colors relative whitespace-nowrap ${
+                      selectedDay === i
+                        ? "bg-[#0f1f6b] dark:bg-blue-600 text-white shadow-sm"
+                        : "text-slate-500 dark:text-slate-400 hover:text-[#0f1f6b] dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/5"
+                    }`}
+                  >
+                    {d}
+                    {i === todayIndex && (
+                      <span className={`absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full ${
+                        selectedDay === i ? "bg-blue-300" : "bg-blue-500"
+                      }`} />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Day heading */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-base font-bold text-slate-700 dark:text-white">{DAYS[selectedDay]}</h2>
+                <span className="text-xs text-slate-400 dark:text-slate-500">{formatDateShort(getDateForDayIndex(selectedDay))}</span>
+                {selectedDay === todayIndex && (
+                  <span className="text-[11px] font-bold bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">Today</span>
+                )}
+              </div>
+
+              {/* Lesson cards */}
+              {todayLessons.length === 0 ? (
+                <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 p-10 text-center">
+                  <p className="text-sm text-slate-400 dark:text-slate-500">No lessons on {DAYS[selectedDay]}.</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {todayLessons.map((lesson, i) => {
+                    const key = `${getDateForDayIndex(lesson.dayIndex)}-${lesson.classLabel}-${lesson.subject}-${lesson.time}`;
+                    const done = savedKeys.has(key);
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => openModal(lesson)}
+                        className={`text-left rounded-2xl border-2 p-4 transition-all hover:shadow-md hover:-translate-y-0.5 group ${BG[lesson.color] ?? BG.slate}`}
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">
+                              {lesson.time}{lesson.duration ? ` · ${lesson.duration}` : ""}
+                            </p>
+                            <p className={`text-base font-bold mt-0.5 ${TX[lesson.color] ?? TX.slate}`}>
+                              {lesson.subject}
+                            </p>
+                          </div>
+                          {done ? (
+                            <span className="flex items-center gap-1 text-[11px] font-semibold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-full shrink-0">
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                              Done
+                            </span>
+                          ) : (
+                            <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 group-hover:text-[#0f1f6b] dark:group-hover:text-white transition-colors">
+                              Attendance →
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+                          <span className="font-semibold text-slate-700 dark:text-slate-200">{lesson.classLabel}</span>
+                          {lesson.groupLabel && <span className="text-slate-400 dark:text-slate-500">({lesson.groupLabel})</span>}
+                          {lesson.room && (
+                            <span className="flex items-center gap-1">
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                              </svg>
+                              {lesson.room}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Weekly overview — desktop only */}
+              <div className="hidden md:block">
+                <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-3">Weekly Overview</h3>
+                <div className="bg-white dark:bg-[#1a2035] rounded-2xl border border-slate-200 dark:border-white/10 overflow-x-auto">
+                  <table className="w-full text-sm min-w-[600px]">
+                    <thead>
+                      <tr className="border-b border-slate-100 dark:border-white/10">
+                        <th className="text-left px-4 py-3 text-slate-400 dark:text-slate-500 font-semibold text-xs uppercase tracking-wide w-20">Time</th>
+                        {DAY_SHORT.map((d, i) => (
+                          <th key={i} className={`px-3 py-3 text-xs uppercase tracking-wide font-semibold text-center ${
+                            i === todayIndex ? "text-[#0f1f6b] dark:text-white" : "text-slate-400 dark:text-slate-500"
+                          }`}>
+                            {d}{i === todayIndex && <span className="ml-1 w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((row, ri) => (
+                        <tr key={ri} className="border-b border-slate-50 dark:border-white/5 last:border-0">
+                          <td className="px-4 py-2 align-middle">
+                            <p className="font-bold text-slate-700 dark:text-slate-200 text-xs">{row.time}</p>
+                            {row.duration && <p className="text-[10px] text-slate-400 dark:text-slate-500">{row.duration}</p>}
+                          </td>
+                          {row.cells.map((lesson, di) => (
+                            <td key={di} className="px-1.5 py-1.5">
+                              {lesson ? (
+                                <button
+                                  onClick={() => openModal(lesson)}
+                                  className={`w-full rounded-xl px-2 py-2 text-center min-h-[48px] flex flex-col items-center justify-center gap-0.5 border transition-all hover:shadow-sm hover:-translate-y-px ${BG[lesson.color] ?? BG.slate}`}
+                                >
+                                  <span className={`font-semibold text-xs leading-tight ${TX[lesson.color] ?? TX.slate}`}>{lesson.subject}</span>
+                                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{lesson.classLabel}</span>
+                                </button>
+                              ) : (
+                                <div className="min-h-[48px] rounded-xl flex items-center justify-center text-slate-200 dark:text-slate-700">
+                                  <span className="text-xs">—</span>
+                                </div>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Weekly overview — mobile compact list */}
+              <div className="md:hidden">
+                <h3 className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide mb-3">This Week</h3>
+                <div className="space-y-2">
+                  {DAY_SHORT.map((d, di) => {
+                    const dayLessons = rows.map(r => r.cells[di]).filter((l): l is TeacherLesson => l !== null);
+                    if (dayLessons.length === 0) return null;
+                    return (
+                      <div key={di} className="bg-white dark:bg-[#1a2035] rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
+                        <div className="flex items-center gap-2 px-4 py-2 border-b border-slate-100 dark:border-white/8">
+                          <span className={`text-xs font-bold ${di === todayIndex ? "text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400"}`}>{DAYS[di]}</span>
+                          {di === todayIndex && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 inline-block" />}
+                          <span className="ml-auto text-[11px] text-slate-400 dark:text-slate-500">{dayLessons.length} lesson{dayLessons.length > 1 ? "s" : ""}</span>
+                        </div>
+                        <div className="divide-y divide-slate-50 dark:divide-white/5">
+                          {dayLessons.map((lesson, li) => (
+                            <button
+                              key={li}
+                              onClick={() => openModal(lesson)}
+                              className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-white/3 transition-colors"
+                            >
+                              <span className={`w-2 h-2 rounded-full shrink-0 ${TX[lesson.color]?.replace("text-", "bg-").replace(" dark:text-", " dark:bg-") ?? "bg-slate-400"}`} />
+                              <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 flex-1">{lesson.subject}</span>
+                              <span className="text-[11px] text-slate-400 dark:text-slate-500">{lesson.time}</span>
+                              <span className="text-[11px] text-slate-400 dark:text-slate-500">{lesson.classLabel}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
+        </div>
+      </div>
+
+      {/* ── Bottom navigation (mobile only) ────────────────────────────── */}
+      <nav className="fixed bottom-0 left-0 right-0 md:hidden bg-white/95 dark:bg-[#1a2035]/95 backdrop-blur-md border-t border-slate-200 dark:border-white/10 flex z-20">
+        {NAV_ITEMS.map(({ key, label, icon }) => {
+          const active = view === key;
+          return (
+            <button
+              key={key}
+              onClick={() => setView(key)}
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 px-2 transition-colors ${
+                active
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-slate-400 dark:text-slate-500"
+              }`}
+            >
+              <span className={active ? "opacity-100" : "opacity-60"}>{icon}</span>
+              <span className={`text-[10px] font-semibold ${active ? "" : "opacity-70"}`}>{label}</span>
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* ── Attendance Modal ─────────────────────────────────────────────── */}
       {modal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
-            onClick={() => setModal(null)}
-          />
-          <div className="relative bg-white dark:bg-[#1a2035] rounded-3xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setModal(null)} />
+          <div className="relative bg-white dark:bg-[#1a2035] rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md flex flex-col max-h-[92vh] sm:max-h-[90vh]">
 
-            {/* Modal header */}
-            <div className={`rounded-t-3xl px-6 py-5 border-b border-slate-100 dark:border-white/10`}>
+            <div className="px-5 py-4 border-b border-slate-100 dark:border-white/10">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
@@ -444,42 +566,30 @@ export default function TeacherPage() {
                   </svg>
                 </button>
               </div>
-
-              {/* Date selector */}
-              <div className="flex items-center gap-3 mt-4">
+              <div className="flex items-center gap-3 mt-3">
                 <label className="text-xs font-semibold text-slate-500 dark:text-slate-400 shrink-0">Date</label>
                 <input
                   type="date"
                   value={modal.date}
                   onChange={e => handleDateChange(e.target.value)}
-                  className="flex-1 text-sm font-medium text-slate-700 dark:text-white bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-1.5 outline-none focus:border-blue-400 transition-colors"
+                  className="flex-1 text-sm font-medium text-slate-700 dark:text-white bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl px-3 py-2 outline-none focus:border-blue-400 transition-colors"
                 />
               </div>
             </div>
 
-            {/* Student list */}
-            <div className="flex-1 overflow-y-auto px-6 py-4 space-y-2">
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-2">
               {modalLoading ? (
                 <div className="flex items-center justify-center py-12">
                   <div className="w-5 h-5 border-2 border-[#0f1f6b] border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : students.length === 0 ? (
                 <div className="text-center py-10">
-                  <div className="w-12 h-12 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <svg className="w-6 h-6 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                  </div>
                   <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-1">No students found</p>
-                  <p className="text-xs text-slate-400 dark:text-slate-500">
-                    No accepted students match &quot;{modal.lesson.classLabel}&quot;.
-                    <br />Ask admin to update student grade assignments.
-                  </p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">Ask admin to update student grade assignments.</p>
                 </div>
               ) : (
                 <>
-                  {/* Summary counts */}
-                  <div className="flex items-center gap-2 pb-2">
+                  <div className="flex items-center gap-2 pb-2 flex-wrap">
                     {(["present", "late", "absent"] as const).map(s => {
                       const count = students.filter(st => st.status === s).length;
                       return (
@@ -491,12 +601,11 @@ export default function TeacherPage() {
                     <div className="flex-1" />
                     <button
                       onClick={() => markAll("present")}
-                      className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 dark:hover:text-emerald-300 px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
+                      className="text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 hover:text-emerald-900 px-2 py-1 rounded-lg hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
                     >
                       All Present
                     </button>
                   </div>
-
                   {students.map(student => (
                     <div key={student.student_id} className="flex items-center justify-between gap-3 py-2.5 border-b border-slate-50 dark:border-white/5 last:border-0">
                       <div className="flex items-center gap-2.5">
@@ -528,8 +637,7 @@ export default function TeacherPage() {
               )}
             </div>
 
-            {/* Modal footer */}
-            <div className="px-6 py-4 border-t border-slate-100 dark:border-white/10 flex items-center gap-3">
+            <div className="px-5 py-4 border-t border-slate-100 dark:border-white/10 flex items-center gap-3">
               <button
                 onClick={() => setModal(null)}
                 className="px-4 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors"
