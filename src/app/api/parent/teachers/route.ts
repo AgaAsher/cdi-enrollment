@@ -9,20 +9,46 @@ export async function GET() {
   }
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
+
+  // Extract teacher names from the active published timetable
+  const { data: ttData } = await supabase
+    .from("published_timetables")
+    .select("timetable_data")
+    .eq("is_active", true)
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const teacherNames = new Set<string>();
+  if (ttData) {
+    const timetable = ttData.timetable_data as Record<string, { rows: { cells: { teacher: string }[][] }[] }>;
+    for (const cls of Object.values(timetable)) {
+      for (const row of cls.rows) {
+        for (const dayCells of row.cells) {
+          for (const cell of dayCells ?? []) {
+            if (cell.teacher) teacherNames.add(cell.teacher);
+          }
+        }
+      }
+    }
+  }
+
+  // Get admins/principals separately so they always appear
+  const { data: adminData } = await supabase
     .from("admin_users")
     .select("name, role")
-    .in("role", ["teacher", "admin", "super_admin"])
+    .in("role", ["admin", "super_admin"])
     .eq("active", true)
-    .order("role")
     .order("name");
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const admins = (adminData ?? []).map(u => ({ name: u.name, title: "Principal / Admin" }));
+  const adminNameSet = new Set(admins.map(a => a.name));
 
-  const teachers = (data ?? []).map((u) => ({
-    name: u.name,
-    title: u.role === "super_admin" || u.role === "admin" ? "Principal / Admin" : "Teacher",
-  }));
+  // Teachers from timetable that aren't already listed as admin
+  const teachers = [...teacherNames]
+    .filter(n => !adminNameSet.has(n))
+    .sort()
+    .map(name => ({ name, title: "Teacher" }));
 
-  return NextResponse.json({ teachers });
+  return NextResponse.json({ teachers: [...admins, ...teachers] });
 }
