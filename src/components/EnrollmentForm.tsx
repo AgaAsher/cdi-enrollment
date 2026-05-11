@@ -276,7 +276,7 @@ function Field({
   );
 }
 
-export default function EnrollmentForm() {
+export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEndpoint?: string } = {}) {
   const [lang, setLang] = useState<Lang>("en");
   const t = translations[lang];
 
@@ -388,7 +388,7 @@ export default function EnrollmentForm() {
         if (photoId) fd.append(`pickup_id_photo_${i}`, photoId);
       });
 
-      const res = await fetch("/api/enroll", { method: "POST", body: fd });
+      const res = await fetch(apiEndpoint, { method: "POST", body: fd });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error || `Server error ${res.status}`);

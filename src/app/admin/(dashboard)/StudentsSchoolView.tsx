@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Enrollment } from "@/lib/types";
 
 const GRADES = [
@@ -135,7 +136,18 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">Students</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-[#0f1f6b] dark:text-white">Students</h1>
+        <Link
+          href="/admin/add-student"
+          className="flex items-center gap-1.5 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm font-semibold rounded-xl transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Student
+        </Link>
+      </div>
 
       {/* Grade cards — double-click to filter */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
