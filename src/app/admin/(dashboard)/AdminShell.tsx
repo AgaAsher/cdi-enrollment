@@ -47,8 +47,10 @@ export default function AdminShell({
           </button>
         </div>
 
-        {/* Clicking any nav link closes the drawer on mobile */}
-        <div onClick={() => setOpen(false)}>
+        {/* Close drawer only when a nav link is clicked, not group toggles */}
+        <div onClick={(e) => {
+          if ((e.target as HTMLElement).closest("a")) setOpen(false);
+        }}>
           {sidebar}
         </div>
       </aside>
