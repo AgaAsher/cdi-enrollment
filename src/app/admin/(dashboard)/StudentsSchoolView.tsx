@@ -249,6 +249,30 @@ export default function StudentsSchoolView({ enrollments }: { enrollments: Enrol
                     <p className="text-[11px] text-slate-500 dark:text-slate-400">{s.parent1_phone}</p>
                   </div>
 
+                  {/* Authorized pickup persons */}
+                  {s.pickup_persons?.length > 0 && (
+                    <div className="pt-2 border-t border-slate-100 dark:border-white/8">
+                      <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-1.5">
+                        Authorized Pickup
+                      </p>
+                      <div className="space-y-1.5">
+                        {s.pickup_persons.map((p, i) => (
+                          <div key={i} className="flex items-start gap-1.5">
+                            <div className="w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <svg className="w-2.5 h-2.5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                              </svg>
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-[11px] font-medium text-slate-700 dark:text-slate-300 truncate">{p.name}</p>
+                              <p className="text-[10px] text-slate-400 dark:text-slate-500">{p.relationship} · {p.phone}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* Feedback toggle */}
                   <button
                     onClick={() => setExpandedId(isExpanded ? null : s.id)}

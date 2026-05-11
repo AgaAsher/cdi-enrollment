@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParentLang } from "@/components/ParentLangProvider";
 import ParentChildrenTabs from "./ParentChildrenTabs";
 import ParentWeeklyMenu from "./ParentWeeklyMenu";
+import ParentMessagesTab from "./ParentMessagesTab";
 import { Enrollment } from "@/lib/types";
 
 type FeedbackEntry = {
@@ -36,7 +37,7 @@ function gradeShort(gradeKey: string): string {
   return gradeKey;
 }
 
-type Tab = "child" | "menu" | "events" | "noticeboard";
+type Tab = "child" | "menu" | "events" | "noticeboard" | "messages";
 
 const TABS: { key: Tab; icon: React.ReactNode }[] = [
   {
@@ -68,6 +69,14 @@ const TABS: { key: Tab; icon: React.ReactNode }[] = [
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    ),
+  },
+  {
+    key: "messages",
+    icon: (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
     ),
   },
@@ -105,6 +114,7 @@ export default function ParentDashboardContent({
     menu:        t.weeklyMenu,
     events:      t.upcomingEvents,
     noticeboard: t.noticeboard,
+    messages:    "Messages",
   };
 
   /* ── Hero active child info ───────────────────────────────────────────── */
@@ -239,6 +249,15 @@ export default function ParentDashboardContent({
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {tab === "messages" && (
+          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
+              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">Messages</h2>
+            </div>
+            <ParentMessagesTab />
           </div>
         )}
 
