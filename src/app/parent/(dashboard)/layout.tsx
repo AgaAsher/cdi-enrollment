@@ -9,12 +9,12 @@ export default async function ParentDashboardLayout({ children }: { children: Re
 
   return (
     <ParentLangProvider>
-      <div className="min-h-screen bg-[#f8fafc] dark:bg-[#0d1117]">
+      <div className="h-screen flex flex-col bg-[#f8fafc] dark:bg-[#0d1117]">
         <ParentHeader
           currentRole={session.role}
           availableRoles={session.roles ?? [session.role]}
         />
-        <main>{children}</main>
+        <main className="flex-1 overflow-hidden">{children}</main>
       </div>
     </ParentLangProvider>
   );

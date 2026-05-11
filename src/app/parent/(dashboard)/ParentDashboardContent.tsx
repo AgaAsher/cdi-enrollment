@@ -29,53 +29,50 @@ const NOTICE_COLORS: Record<string, string> = {
   Health: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300",
 };
 
-function gradeShort(gradeKey: string): string {
-  if (gradeKey.startsWith("Toddler"))   return "Toddler";
-  if (gradeKey.startsWith("Nursery"))   return "Nursery";
-  if (gradeKey.startsWith("Reception")) return "Reception";
-  if (gradeKey.startsWith("Pre-KG"))    return "Pre-KG";
-  return gradeKey;
-}
-
 type Tab = "child" | "menu" | "events" | "noticeboard" | "messages";
 
-const TABS: { key: Tab; icon: React.ReactNode }[] = [
+const TABS: { key: Tab; shortLabel: string; icon: React.ReactNode }[] = [
   {
     key: "child",
+    shortLabel: "Child",
     icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
     ),
   },
   {
     key: "menu",
+    shortLabel: "Menu",
     icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
       </svg>
     ),
   },
   {
     key: "events",
+    shortLabel: "Events",
     icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
   },
   {
     key: "noticeboard",
+    shortLabel: "Board",
     icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
       </svg>
     ),
   },
   {
     key: "messages",
+    shortLabel: "Messages",
     icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
     ),
@@ -107,6 +104,11 @@ export default function ParentDashboardContent({
   const [tab, setTab] = useState<Tab>("child");
   const [activeChildIdx, setActiveChildIdx] = useState(0);
 
+  const activeChild = children[activeChildIdx];
+  const activeInitials = activeChild
+    ? (activeChild.child_first_name?.[0] ?? "").toUpperCase() + (activeChild.child_last_name?.[0] ?? "").toUpperCase()
+    : "?";
+
   const tabLabels: Record<Tab, string> = {
     child:       children.length === 1
                    ? `${children[0]?.child_first_name ?? ""} ${children[0]?.child_last_name ?? ""}`.trim()
@@ -117,19 +119,19 @@ export default function ParentDashboardContent({
     messages:    "Messages",
   };
 
-  /* ── Hero active child info ───────────────────────────────────────────── */
-  const activeChild = children[activeChildIdx];
-  const activeInitials = activeChild
-    ? (activeChild.child_first_name?.[0] ?? "").toUpperCase() + (activeChild.child_last_name?.[0] ?? "").toUpperCase()
-    : "?";
+  const contentTitle: Record<Tab, string> = {
+    child:       tabLabels.child,
+    menu:        t.weeklyMenu,
+    events:      t.upcomingEvents,
+    noticeboard: t.noticeboard,
+    messages:    "Messages",
+  };
 
   return (
-    <div className="flex flex-col md:flex-row md:h-[calc(100vh-65px)] md:overflow-hidden">
+    <div className="flex flex-col md:flex-row h-full overflow-hidden">
 
-      {/* ── Left sidebar ─────────────────────────────────────────────────────── */}
-      <div className="md:w-64 shrink-0 flex flex-col md:overflow-y-auto
-                      bg-white dark:bg-[#1a2035]
-                      border-b md:border-b-0 md:border-r border-slate-200 dark:border-white/8">
+      {/* ── Left sidebar (desktop only) ──────────────────────────────────── */}
+      <aside className="hidden md:flex md:flex-col w-64 shrink-0 bg-white dark:bg-[#1a2035] border-r border-slate-200 dark:border-white/8 overflow-y-auto">
 
         {/* Parent info */}
         <div className="px-5 pt-6 pb-5">
@@ -140,7 +142,7 @@ export default function ParentDashboardContent({
             </div>
             <div className="min-w-0">
               <p className="text-[10px] font-semibold tracking-widest uppercase leading-none mb-1 text-slate-400 dark:text-white/40">{t.welcome}</p>
-              <p className="font-bold text-base leading-tight truncate text-slate-800 dark:text-white">{firstName}</p>
+              <p className="font-bold text-sm leading-tight truncate text-slate-800 dark:text-white">{firstName}</p>
               <p className="text-[10px] mt-0.5 text-slate-400 dark:text-white/30">Parent Portal · CDA</p>
             </div>
           </div>
@@ -149,119 +151,163 @@ export default function ParentDashboardContent({
         <div className="mx-4 border-t border-slate-100 dark:border-white/8" />
 
         {/* Vertical nav */}
-        <nav className="flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-0.5 p-3 md:flex-1">
+        <nav className="flex flex-col gap-0.5 p-3 flex-1">
           {TABS.map(({ key, icon }) => {
             const isActive = tab === key;
             return (
               <button
                 key={key}
                 onClick={() => setTab(key)}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all text-left whitespace-nowrap md:whitespace-normal md:w-full shrink-0 ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all text-left w-full ${
                   isActive
                     ? "bg-blue-50 dark:bg-white/10 text-blue-700 dark:text-white font-semibold"
                     : "font-medium text-slate-500 dark:text-white/50 hover:text-slate-800 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-white/8"
                 }`}
               >
-                <span className={`w-4 h-4 shrink-0 ${isActive ? "text-blue-600 dark:text-white" : "text-slate-400 dark:text-white/40"}`}>{icon}</span>
+                <span className={`shrink-0 ${isActive ? "text-blue-600 dark:text-white" : "text-slate-400 dark:text-white/40"}`}>
+                  {icon}
+                </span>
                 <span className="flex-1 truncate">{tabLabels[key]}</span>
-                {isActive && (
-                  <span className="hidden md:block w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-white/40 shrink-0" />
-                )}
+                {isActive && <span className="w-1.5 h-1.5 rounded-full bg-blue-500 dark:bg-white/40 shrink-0" />}
               </button>
             );
           })}
         </nav>
-      </div>
+      </aside>
 
-      {/* ── Right content ────────────────────────────────────────────────────── */}
-      <div className="flex-1 md:overflow-y-auto p-5 md:p-7 bg-slate-50 dark:bg-[#0d1117]">
+      {/* ── Main content ─────────────────────────────────────────────────── */}
+      <div className="flex-1 overflow-y-auto bg-slate-50 dark:bg-[#0d1117] pb-20 md:pb-0">
 
-        {tab === "child" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
-            <ParentChildrenTabs
-              children={children}
-              attendanceSummaries={attendanceSummaries}
-              allFeedback={allFeedback}
-              timetableData={timetableData}
-              activeIdx={activeChildIdx}
-              setActiveIdx={setActiveChildIdx}
-            />
-          </div>
-        )}
-
-        {tab === "menu" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
-            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.weeklyMenu}</h2>
+        {/* Mobile top bar */}
+        <div className="md:hidden px-4 pt-4 pb-3 bg-white dark:bg-[#1a2035] border-b border-slate-200 dark:border-white/10">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: "linear-gradient(135deg, #1a3fa8, #0f1f6b)" }}>
+              <span className="text-xs font-bold text-white">{activeInitials}</span>
             </div>
-            <ParentWeeklyMenu menuData={menuData} todayDayName={todayDayName} />
-          </div>
-        )}
-
-        {tab === "events" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
-            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.upcomingEvents}</h2>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-slate-800 dark:text-white leading-none truncate">{firstName}</p>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-0.5">Parent Portal · CDA</p>
             </div>
-            {upcomingEvents.length === 0 ? (
-              <div className="py-16 text-center text-sm text-slate-400 dark:text-slate-500">{t.noEvents}</div>
-            ) : (
-              <div className="divide-y divide-slate-100 dark:divide-white/6 px-5 pb-4">
-                {upcomingEvents.map((ev, i) => {
-                  const d = new Date(ev.date + "T00:00");
-                  return (
-                    <div key={i} className="flex items-center gap-4 py-4">
-                      <div className="w-11 h-11 rounded-xl flex flex-col items-center justify-center shrink-0"
-                        style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
-                        <p className="text-[8px] font-bold text-blue-200 uppercase leading-none">
-                          {d.toLocaleDateString("en", { month: "short" })}
-                        </p>
-                        <p className="text-base font-bold text-white leading-none">{d.getDate()}</p>
+            <span className="ml-auto text-xs font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+              {contentTitle[tab]}
+            </span>
+          </div>
+        </div>
+
+        {/* Tab content */}
+        <div className="p-4 md:p-7">
+
+          {tab === "child" && (
+            <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+              <ParentChildrenTabs
+                children={children}
+                attendanceSummaries={attendanceSummaries}
+                allFeedback={allFeedback}
+                timetableData={timetableData}
+                activeIdx={activeChildIdx}
+                setActiveIdx={setActiveChildIdx}
+              />
+            </div>
+          )}
+
+          {tab === "menu" && (
+            <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+              <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/8">
+                <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.weeklyMenu}</h2>
+              </div>
+              <ParentWeeklyMenu menuData={menuData} todayDayName={todayDayName} />
+            </div>
+          )}
+
+          {tab === "events" && (
+            <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+              <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/8">
+                <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.upcomingEvents}</h2>
+              </div>
+              {upcomingEvents.length === 0 ? (
+                <div className="py-16 text-center text-sm text-slate-400 dark:text-slate-500">{t.noEvents}</div>
+              ) : (
+                <div className="divide-y divide-slate-100 dark:divide-white/6 px-4 sm:px-5 pb-4">
+                  {upcomingEvents.map((ev, i) => {
+                    const d = new Date(ev.date + "T00:00");
+                    return (
+                      <div key={i} className="flex items-center gap-3 sm:gap-4 py-4">
+                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex flex-col items-center justify-center shrink-0"
+                          style={{ background: "linear-gradient(135deg, #1a3fa8 0%, #0f1f6b 100%)" }}>
+                          <p className="text-[8px] font-bold text-blue-200 uppercase leading-none">
+                            {d.toLocaleDateString("en", { month: "short" })}
+                          </p>
+                          <p className="text-base font-bold text-white leading-none">{d.getDate()}</p>
+                        </div>
+                        <p className="flex-1 text-sm font-semibold text-slate-800 dark:text-white leading-snug">{ev.title}</p>
+                        <span className={`text-[10px] font-bold px-2 py-1 rounded-full shrink-0 ${EVENT_COLORS[ev.color] ?? EVENT_COLORS.blue}`}>
+                          {ev.type}
+                        </span>
                       </div>
-                      <p className="flex-1 text-sm font-semibold text-slate-800 dark:text-white">{ev.title}</p>
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full shrink-0 ${EVENT_COLORS[ev.color] ?? EVENT_COLORS.blue}`}>
-                        {ev.type}
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {tab === "noticeboard" && (
+            <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+              <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/8">
+                <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.noticeboard}</h2>
+              </div>
+              <div className="divide-y divide-slate-100 dark:divide-white/6 px-4 sm:px-5 pb-4">
+                {notices.map((n, i) => (
+                  <div key={i} className="py-4">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <p className="text-sm font-semibold text-slate-800 dark:text-white leading-snug">{n.title}</p>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 ${NOTICE_COLORS[n.category] ?? NOTICE_COLORS.Admin}`}>
+                        {n.category}
                       </span>
                     </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        )}
-
-        {tab === "noticeboard" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
-            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">{t.noticeboard}</h2>
-            </div>
-            <div className="divide-y divide-slate-100 dark:divide-white/6 px-5 pb-4">
-              {notices.map((n, i) => (
-                <div key={i} className="py-4">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <p className="text-sm font-semibold text-slate-800 dark:text-white leading-snug">{n.title}</p>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 mt-0.5 ${NOTICE_COLORS[n.category] ?? NOTICE_COLORS.Admin}`}>
-                      {n.category}
-                    </span>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{n.body}</p>
+                    <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-2">{n.date}</p>
                   </div>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">{n.body}</p>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-2">{n.date}</p>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {tab === "messages" && (
-          <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
-            <div className="px-6 pt-5 pb-4 border-b border-slate-100 dark:border-white/8">
-              <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">Messages</h2>
+          {tab === "messages" && (
+            <div className="rounded-2xl overflow-hidden bg-white dark:bg-[#131d30] border border-slate-200 dark:border-white/8 shadow-sm">
+              <div className="px-5 pt-4 pb-3 border-b border-slate-100 dark:border-white/8">
+                <h2 className="text-sm font-bold text-slate-700 dark:text-white uppercase tracking-wide">Messages</h2>
+              </div>
+              <ParentMessagesTab />
             </div>
-            <ParentMessagesTab />
-          </div>
-        )}
+          )}
 
+        </div>
       </div>
+
+      {/* ── Bottom navigation (mobile only) ──────────────────────────────── */}
+      <nav className="fixed bottom-0 left-0 right-0 md:hidden bg-white/95 dark:bg-[#1a2035]/95 backdrop-blur-md border-t border-slate-200 dark:border-white/10 flex z-20">
+        {TABS.map(({ key, icon, shortLabel }) => {
+          const isActive = tab === key;
+          return (
+            <button
+              key={key}
+              onClick={() => setTab(key)}
+              className={`flex-1 flex flex-col items-center gap-1 py-2.5 px-1 transition-colors min-w-0 ${
+                isActive
+                  ? "text-blue-600 dark:text-blue-400"
+                  : "text-slate-400 dark:text-slate-500"
+              }`}
+            >
+              <span className={isActive ? "opacity-100" : "opacity-60"}>{icon}</span>
+              <span className={`text-[10px] font-semibold truncate w-full text-center ${isActive ? "" : "opacity-70"}`}>
+                {shortLabel}
+              </span>
+            </button>
+          );
+        })}
+      </nav>
     </div>
   );
 }
