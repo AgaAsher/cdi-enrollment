@@ -280,6 +280,11 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
   const [lang, setLang] = useState<Lang>("en");
   const t = translations[lang];
 
+  useEffect(() => {
+    const saved = localStorage.getItem("cda_lang") as Lang | null;
+    if (saved && saved in translations) setLang(saved);
+  }, []);
+
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState("");
   const [studentPhoto, setStudentPhoto] = useState<File | null>(null);
@@ -420,7 +425,7 @@ export default function EnrollmentForm({ apiEndpoint = "/api/enroll" }: { apiEnd
         <button
           key={code}
           type="button"
-          onClick={() => setLang(code)}
+          onClick={() => { setLang(code); localStorage.setItem("cda_lang", code); }}
           className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg text-sm font-medium transition-all ${
             lang === code
               ? "bg-white dark:bg-white/15 text-slate-900 dark:text-white shadow-sm"

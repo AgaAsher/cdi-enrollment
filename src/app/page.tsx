@@ -120,6 +120,16 @@ const glass = {
 export default function Home() {
   const router = useRouter();
   const [lang, setLang]         = useState<LangKey>("en");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("cda_lang") as LangKey | null;
+    if (saved && saved in LANGS) setLang(saved);
+  }, []);
+
+  function changeLang(l: LangKey) {
+    setLang(l);
+    localStorage.setItem("cda_lang", l);
+  }
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
@@ -214,7 +224,7 @@ export default function Home() {
               {(Object.keys(LANGS) as LangKey[]).map(key => (
                 <button
                   key={key}
-                  onClick={() => { setLang(key); setLangOpen(false); }}
+                  onClick={() => { changeLang(key); setLangOpen(false); }}
                   className="w-full flex items-center gap-2.5 px-4 py-2.5 text-xs font-medium text-white transition-colors"
                   style={lang === key ? { background: "rgba(255,255,255,0.18)" } : undefined}
                   onMouseEnter={e => { if (lang !== key) e.currentTarget.style.background = "rgba(255,255,255,0.10)"; }}
