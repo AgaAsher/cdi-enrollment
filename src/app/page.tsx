@@ -172,7 +172,7 @@ export default function Home() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden" style={{ backgroundColor: "#0b1118" }}>
+    <div className="relative min-h-[100dvh] flex items-center justify-center px-4 py-16 overflow-x-hidden" style={{ backgroundColor: "#0b1118" }}>
 
       {/* ── Background image – blurred at source ───────────────────────────── */}
       <div className="absolute inset-0 scale-110">
@@ -237,8 +237,8 @@ export default function Home() {
       </div>
 
       {/* ── Glass card ──────────────────────────────────────────────────────── */}
-      <div className="relative z-10 w-full max-w-[360px]">
-        <div className="rounded-3xl p-8" style={cardStyle}>
+      <div className="relative z-10 w-full max-w-[380px]">
+        <div className="rounded-3xl p-6 sm:p-8" style={cardStyle}>
 
           {/* Logo */}
           <div className="text-center mb-7">
@@ -273,8 +273,8 @@ export default function Home() {
                 onBlur={() => setEmailFocus(false)}
                 placeholder={t.placeholder}
                 required
-                className="w-full px-4 py-2.5 text-sm text-white rounded-xl outline-none transition-all placeholder:text-white/35"
-                style={emailFocus ? glass.inputFocus : glass.input}
+                className="w-full px-4 py-3 text-white rounded-xl outline-none transition-all placeholder:text-white/35"
+                style={{ fontSize: "1rem", ...(emailFocus ? glass.inputFocus : glass.input) }}
               />
             </div>
 
@@ -290,8 +290,8 @@ export default function Home() {
                 onBlur={() => setPasswordFocus(false)}
                 placeholder="••••••••"
                 required
-                className="w-full px-4 py-2.5 text-sm text-white rounded-xl outline-none transition-all placeholder:text-white/35"
-                style={passwordFocus ? glass.inputFocus : glass.input}
+                className="w-full px-4 py-3 text-white rounded-xl outline-none transition-all placeholder:text-white/35"
+                style={{ fontSize: "1rem", ...(passwordFocus ? glass.inputFocus : glass.input) }}
               />
             </div>
 
@@ -307,8 +307,8 @@ export default function Home() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 mt-1 text-sm font-bold text-white rounded-xl transition-opacity disabled:opacity-60"
-              style={glass.btnBlue}
+              className="w-full py-3 mt-1 font-bold text-white rounded-xl transition-opacity disabled:opacity-60"
+              style={{ fontSize: "1rem", ...glass.btnBlue }}
             >
               {loading ? t.signingIn : t.signIn}
             </button>
@@ -319,8 +319,8 @@ export default function Home() {
             <p className="text-center text-xs text-blue-100/55 mb-3">{t.newToCda}</p>
             <Link
               href="/enroll"
-              className="flex items-center justify-center gap-2 w-full py-2.5 text-sm font-bold text-white rounded-xl transition-opacity"
-              style={glass.btnGreen}
+              className="flex items-center justify-center gap-2 w-full py-3 font-bold text-white rounded-xl transition-opacity"
+              style={{ fontSize: "1rem", ...glass.btnGreen }}
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
