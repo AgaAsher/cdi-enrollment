@@ -15,11 +15,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const supabase = createAdminClient();
 
-  // Fetch branches for super_admin
-  const branches = session.role === "super_admin"
-    ? ((await supabase.from("branches").select("id, name, code").eq("active", true).order("name")).data ?? [])
-    : [];
-
   // Branch filter: super_admin scoped only when active_branch_id is set; others always scoped
   const branchFilter = session.role === "super_admin"
     ? (session.active_branch_id ?? null)
@@ -69,7 +64,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <AdminHeader
           currentRole={session.role}
           availableRoles={session.roles ?? [session.role]}
-          branches={session.role === "super_admin" ? branches : undefined}
+          isSuperAdmin={session.role === "super_admin"}
           activeBranchId={session.active_branch_id ?? null}
         />
         <AdminShell sidebar={sidebar}>

@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 export type BranchOption = { id: string; name: string; code: string };
 
 export default function BranchToggle({
-  branches,
-  activeBranchId,
+  activeBranchId: initialActiveBranchId,
 }: {
-  branches: BranchOption[];
+  branches?: BranchOption[];   // kept for API compat but unused — we fetch live
   activeBranchId: string | null;
 }) {
   const [open, setOpen] = useState(false);
+  const [branches, setBranches] = useState<BranchOption[]>([]);
+  const [activeBranchId, setActiveBranchId] = useState<string | null>(initialActiveBranchId);
   const [isPending, startTransition] = useTransition();
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -25,11 +26,20 @@ export default function BranchToggle({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Fetch branches fresh each time the dropdown opens
+  useEffect(() => {
+    if (!open) return;
+    fetch("/api/admin/branches")
+      .then((r) => r.json())
+      .then((j) => setBranches((j.branches ?? []).filter((b: BranchOption & { active: boolean }) => b.active)));
+  }, [open]);
+
   const active = branches.find((b) => b.id === activeBranchId) ?? null;
 
   async function switchBranch(id: string | null) {
     setOpen(false);
     if (id === activeBranchId) return;
+    setActiveBranchId(id);
     await fetch("/api/auth/switch-branch", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
