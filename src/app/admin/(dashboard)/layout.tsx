@@ -15,29 +15,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const supabase = createAdminClient();
 
-  // Fetch branches for super_admin
-  const branches = session.role === "super_admin"
-    ? ((await supabase.from("branches").select("id, name, code").eq("active", true).order("name")).data ?? [])
-    : [];
-
-  // Branch filter: super_admin scoped only when active_branch_id is set; others always scoped
-  const branchFilter = session.role === "super_admin"
-    ? (session.active_branch_id ?? null)
-    : (session.branch_id ?? null);
-
   // Try with deleted_at filter; fall back if the column doesn't exist yet
-  let enrollQuery = supabase
+  let { data: enrollments, error: enrollError } = await supabase
     .from("enrollments")
     .select("status, visit_date, deleted_at")
     .is("deleted_at", null);
-  if (branchFilter) enrollQuery = enrollQuery.eq("branch_id", branchFilter);
-
-  let { data: enrollments, error: enrollError } = await enrollQuery;
 
   if (enrollError) {
-    let fallbackQ = supabase.from("enrollments").select("status, visit_date");
-    if (branchFilter) fallbackQ = fallbackQ.eq("branch_id", branchFilter);
-    const { data: fallback } = await fallbackQ;
+    const { data: fallback } = await supabase
+      .from("enrollments")
+      .select("status, visit_date");
     enrollments = fallback as typeof enrollments;
   }
 
@@ -54,12 +41,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   const sidebar = (
     <Suspense>
-      <Sidebar
-        counts={counts}
-        visitCount={visitCount}
-        permissions={session.permissions}
-        isSuperAdmin={session.role === "super_admin"}
-      />
+      <Sidebar counts={counts} visitCount={visitCount} permissions={session.permissions} />
     </Suspense>
   );
 
@@ -69,8 +51,6 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <AdminHeader
           currentRole={session.role}
           availableRoles={session.roles ?? [session.role]}
-          branches={session.role === "super_admin" ? branches : undefined}
-          activeBranchId={session.active_branch_id ?? null}
         />
         <AdminShell sidebar={sidebar}>
           {children}

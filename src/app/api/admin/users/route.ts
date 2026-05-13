@@ -12,8 +12,8 @@ export async function GET(req: NextRequest) {
 
   const buildQuery = (withProfile: boolean) => {
     const cols = withProfile
-      ? "id, name, email, role, permissions, active, created_at, profile, branch_id"
-      : "id, name, email, role, permissions, active, created_at, branch_id";
+      ? "id, name, email, role, permissions, active, created_at, profile"
+      : "id, name, email, role, permissions, active, created_at";
     let q = supabase.from("admin_users").select(cols).order("created_at", { ascending: true });
     if (role) q = q.eq("role", role);
     return q;
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
   const name: string = body.name?.trim() ?? "";
   const email: string = (body.email ?? "").trim().toLowerCase();
   const password: string = body.password ?? "";
-  const { role, permissions, active, profile, branch_id } = body;
+  const { role, permissions, active, profile } = body;
   if (!name || !email || !password) {
     return NextResponse.json({ error: "Name, email and password are required" }, { status: 400 });
   }
@@ -61,7 +61,6 @@ export async function POST(req: NextRequest) {
     },
     active: active ?? true,
     profile: profile ?? {},
-    branch_id: branch_id ?? null,
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
