@@ -3,19 +3,19 @@
 import Image from "next/image";
 import ThemeToggle from "@/components/ThemeToggle";
 import RoleToggle from "@/components/RoleToggle";
-import BranchToggle from "@/components/BranchToggle";
+import BranchToggle, { type BranchOption } from "@/components/BranchToggle";
 import { useAdminLang } from "@/components/AdminLangProvider";
 import { ADMIN_LANG_META, type AdminLang } from "@/lib/i18n/admin";
 
 export default function AdminHeader({
   currentRole,
   availableRoles,
-  isSuperAdmin,
+  branches,
   activeBranchId,
 }: {
   currentRole?: string;
   availableRoles?: string[];
-  isSuperAdmin?: boolean;
+  branches?: BranchOption[];
   activeBranchId?: string | null;
 }) {
   const { lang, t, setLang } = useAdminLang();
@@ -39,8 +39,8 @@ export default function AdminHeader({
         {currentRole && availableRoles && (
           <RoleToggle currentRole={currentRole} availableRoles={availableRoles} variant="dark" />
         )}
-        {isSuperAdmin && (
-          <BranchToggle activeBranchId={activeBranchId ?? null} />
+        {branches && currentRole === "super_admin" && (
+          <BranchToggle branches={branches} activeBranchId={activeBranchId ?? null} />
         )}
         {/* Language toggle — flags only on mobile */}
         <div className="flex items-center gap-0.5 p-0.5 rounded-full border border-[#0f1f6b]/15 dark:border-white/15 bg-white/40 dark:bg-white/5">
