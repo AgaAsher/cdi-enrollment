@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSession } from "@/lib/session";
 import { Enrollment, EnrollmentStatus } from "@/lib/types";
@@ -11,6 +12,7 @@ import DashboardView from "./DashboardView";
 import VisitsView from "./VisitsView";
 import ReportsView from "./ReportsView";
 import ArchiveView from "./ArchiveView";
+import BranchesManager from "./BranchesManager";
 
 export default async function AdminPage({
   searchParams,
@@ -24,26 +26,28 @@ export default async function AdminPage({
   const canEdit = p.students_edit ?? false;
   const supabase = createAdminClient();
 
-  let { data: activeData, error: activeErr } = await supabase
-    .from("enrollments")
-    .select("*")
-    .is("deleted_at", null)
-    .order("created_at", { ascending: false });
+  // Branch isolation: super_admin filtered only when they've selected a branch
+  const branchFilter = session?.role === "super_admin"
+    ? (session.active_branch_id ?? null)
+    : (session?.branch_id ?? null);
+
+  let activeQ = supabase.from("enrollments").select("*").is("deleted_at", null).order("created_at", { ascending: false });
+  if (branchFilter) activeQ = activeQ.eq("branch_id", branchFilter);
+
+  let { data: activeData, error: activeErr } = await activeQ;
 
   if (activeErr) {
-    const { data: fallback } = await supabase
-      .from("enrollments")
-      .select("*")
-      .order("created_at", { ascending: false });
+    let fallbackQ = supabase.from("enrollments").select("*").order("created_at", { ascending: false });
+    if (branchFilter) fallbackQ = fallbackQ.eq("branch_id", branchFilter);
+    const { data: fallback } = await fallbackQ;
     activeData = fallback;
   }
 
+  let deletedQ = supabase.from("enrollments").select("*").not("deleted_at", "is", null).order("deleted_at", { ascending: false });
+  if (branchFilter) deletedQ = deletedQ.eq("branch_id", branchFilter);
+
   const { data: deletedData } = section === "archive" && !activeErr
-    ? await supabase
-        .from("enrollments")
-        .select("*")
-        .not("deleted_at", "is", null)
-        .order("deleted_at", { ascending: false })
+    ? await deletedQ
     : { data: [] as Enrollment[] };
 
   const list = (activeData ?? []) as Enrollment[];
@@ -158,6 +162,12 @@ export default async function AdminPage({
   // ── USERS ──
   if (section === "users") {
     return <UsersManager />;
+  }
+
+  // ── BRANCHES (super_admin only) ──
+  if (section === "branches") {
+    if (session?.role !== "super_admin") redirect("/admin");
+    return <BranchesManager />;
   }
 
   // ── ARCHIVE ──

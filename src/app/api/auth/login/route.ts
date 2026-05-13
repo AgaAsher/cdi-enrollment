@@ -72,6 +72,7 @@ export async function POST(req: NextRequest) {
     roles: user.roles ?? [user.role],
     permissions: user.permissions ?? {},
     enrollment_ids: user.enrollment_ids ?? [],
+    branch_id: user.branch_id ?? null,
   });
 
   const redirectTo = user.role === "teacher" ? "/teacher" : user.role === "parent" ? "/parent" : "/admin";

@@ -11,6 +11,8 @@ export type SessionPayload = {
   roles?: string[]; // all roles this account can switch between
   permissions: Record<string, boolean>;
   enrollment_ids?: string[];
+  branch_id?: string | null;        // user's own branch (null for super_admin)
+  active_branch_id?: string | null; // super_admin's current branch filter (null = all)
 };
 
 function sign(payload: SessionPayload): string {
