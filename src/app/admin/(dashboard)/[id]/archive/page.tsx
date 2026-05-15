@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { notFound } from "next/navigation";
 import { Enrollment } from "@/lib/types";
-import PrintButton from "../print/PrintButton";
+import PrintButton from "@/app/admin/(print)/[id]/print/PrintButton";
 
 const STATUS_LABELS: Record<string, string> = {
   pending: "Pending Review",
