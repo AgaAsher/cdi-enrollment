@@ -103,6 +103,9 @@ export const translations = {
     full: "Full",
     free: "Free",
     left: "left",
+    noSlotsTitle: "No Available Slots",
+    noSlotsMessage: "All time slots for this date are fully booked. Please contact our admission team to schedule your visit.",
+    contactWhatsApp: "Chat on WhatsApp",
 
     // Grade info box
     monthsOld: "months old",
@@ -211,6 +214,9 @@ export const translations = {
     full: "已满",
     free: "空闲",
     left: "剩余",
+    noSlotsTitle: "暂无可用时间段",
+    noSlotsMessage: "所选日期的所有时间段均已约满。请通过 WhatsApp 联系我们的招生团队安排参观。",
+    contactWhatsApp: "WhatsApp 联系",
 
     monthsOld: "个月大",
     autoPlaced: "已自动分配到",
@@ -315,6 +321,9 @@ export const translations = {
     full: "마감",
     free: "여유",
     left: "남음",
+    noSlotsTitle: "예약 가능한 시간 없음",
+    noSlotsMessage: "해당 날짜의 모든 시간대가 예약되었습니다. WhatsApp으로 입학처 팀에 연락하여 방문 일정을 잡아 주세요.",
+    contactWhatsApp: "WhatsApp으로 연락",
 
     monthsOld: "개월",
     autoPlaced: "자동 배정:",
@@ -419,6 +428,9 @@ export const translations = {
     full: "เต็ม",
     free: "ว่าง",
     left: "เหลือ",
+    noSlotsTitle: "ไม่มีช่วงเวลาว่าง",
+    noSlotsMessage: "ช่วงเวลาทั้งหมดของวันที่เลือกเต็มแล้ว กรุณาติดต่อทีมรับสมัครของเราทาง WhatsApp เพื่อนัดหมายการเยี่ยมชม",
+    contactWhatsApp: "ติดต่อทาง WhatsApp",
 
     monthsOld: "เดือน",
     autoPlaced: "ถูกจัดไว้ในชั้น",
@@ -523,6 +535,9 @@ export const translations = {
     full: "ເຕັມ",
     free: "ວ່າງ",
     left: "ເຫຼືອ",
+    noSlotsTitle: "ບໍ່ມີຊ່ວງເວລາວ່າງ",
+    noSlotsMessage: "ຊ່ວງເວລາທັງໝົດຂອງວັນທີທີ່ເລືອກເຕັມໝົດ. ກະລຸນາຕິດຕໍ່ທີມຮັບສະໝັກຂອງພວກເຮົາທາງ WhatsApp ເພື່ອນັດໝາຍ.",
+    contactWhatsApp: "ຕິດຕໍ່ທາງ WhatsApp",
 
     monthsOld: "ເດືອນ",
     autoPlaced: "ໄດ້ຖືກຈັດໃສ່ຊັ້ນ",
