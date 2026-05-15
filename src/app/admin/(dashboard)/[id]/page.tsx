@@ -4,6 +4,32 @@ import { Enrollment, EnrollmentStatus } from "@/lib/types";
 import Link from "next/link";
 import StatusUpdater from "@/components/StatusUpdater";
 
+function DocDisplay({ url, path, alt, label }: { url: string; path: string | null; alt: string; label: string }) {
+  const isPdf = path?.toLowerCase().endsWith(".pdf");
+  return (
+    <div>
+      <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">{label}</p>
+      {isPdf ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-red-700 dark:text-red-400 text-sm font-medium hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
+          </svg>
+          View PDF
+        </a>
+      ) : (
+        <a href={url} target="_blank" rel="noopener noreferrer">
+          <img src={url} alt={alt} className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
+        </a>
+      )}
+    </div>
+  );
+}
+
 function Row({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="grid grid-cols-3 gap-2 py-3 border-b border-slate-100 dark:border-white/10 last:border-0">
@@ -120,28 +146,13 @@ export default async function EnrollmentDetailPage({
           <h2 className="font-semibold text-blue-900 dark:text-white mb-4 pb-2 border-b border-slate-100 dark:border-white/10">Documents</h2>
           <div className="grid grid-cols-2 gap-4">
             {student3x4Url && (
-              <div>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">Student 3×4 Photo</p>
-                <a href={student3x4Url} target="_blank" rel="noopener noreferrer">
-                  <img src={student3x4Url} alt="Student 3x4" className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
-                </a>
-              </div>
+              <DocDisplay url={student3x4Url} path={e.student_3x4_path} alt="Student 3x4" label="Student 3×4 Photo" />
             )}
             {studentPhotoUrl && (
-              <div>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">Student ID / Passport</p>
-                <a href={studentPhotoUrl} target="_blank" rel="noopener noreferrer">
-                  <img src={studentPhotoUrl} alt="Student document" className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
-                </a>
-              </div>
+              <DocDisplay url={studentPhotoUrl} path={e.student_photo_path} alt="Student document" label="Student ID / Passport" />
             )}
             {parentPhotoUrl && (
-              <div>
-                <p className="text-slate-500 dark:text-slate-400 text-xs mb-2">Parent / Guardian ID / Passport</p>
-                <a href={parentPhotoUrl} target="_blank" rel="noopener noreferrer">
-                  <img src={parentPhotoUrl} alt="Parent document" className="w-full rounded-lg border border-slate-200 hover:opacity-90 transition-opacity" />
-                </a>
-              </div>
+              <DocDisplay url={parentPhotoUrl} path={e.parent_photo_path} alt="Parent document" label="Parent / Guardian ID / Passport" />
             )}
           </div>
         </div>
@@ -217,12 +228,22 @@ export default async function EnrollmentDetailPage({
                       </div>
                     )}
                     {photoIdUrl && (
-                      <div>
-                        <p className="text-slate-400 dark:text-slate-500 text-xs mb-1">ID / Passport</p>
-                        <a href={photoIdUrl} target="_blank" rel="noopener noreferrer">
-                          <img src={photoIdUrl} alt="ID" className="w-20 h-20 object-cover rounded-lg border border-slate-200 hover:opacity-90" />
-                        </a>
-                      </div>
+                      p.photo_id_path?.toLowerCase().endsWith(".pdf") ? (
+                        <div>
+                          <p className="text-slate-400 dark:text-slate-500 text-xs mb-1">ID / Passport</p>
+                          <a href={photoIdUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-lg text-red-700 dark:text-red-400 text-xs font-medium hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors">
+                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg>
+                            View PDF
+                          </a>
+                        </div>
+                      ) : (
+                        <div>
+                          <p className="text-slate-400 dark:text-slate-500 text-xs mb-1">ID / Passport</p>
+                          <a href={photoIdUrl} target="_blank" rel="noopener noreferrer">
+                            <img src={photoIdUrl} alt="ID" className="w-20 h-20 object-cover rounded-lg border border-slate-200 hover:opacity-90" />
+                          </a>
+                        </div>
+                      )
                     )}
                   </div>
                   <dl>
