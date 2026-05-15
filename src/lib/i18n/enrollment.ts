@@ -106,6 +106,8 @@ export const translations = {
     noSlotsTitle: "No Available Slots",
     noSlotsMessage: "All time slots for this date are fully booked. Please contact our admission team to schedule your visit.",
     contactWhatsApp: "Chat on WhatsApp",
+    classFullTitle: "Class is Full",
+    classFullMessage: "This class has reached its maximum capacity of 15 students. Please contact our admission team via WhatsApp for assistance.",
 
     // Grade info box
     monthsOld: "months old",
@@ -217,6 +219,8 @@ export const translations = {
     noSlotsTitle: "暂无可用时间段",
     noSlotsMessage: "所选日期的所有时间段均已约满。请通过 WhatsApp 联系我们的招生团队安排参观。",
     contactWhatsApp: "WhatsApp 联系",
+    classFullTitle: "班级已满",
+    classFullMessage: "该班级已达到最大容量（15名学生）。请通过 WhatsApp 联系我们的招生团队寻求帮助。",
 
     monthsOld: "个月大",
     autoPlaced: "已自动分配到",
@@ -324,6 +328,8 @@ export const translations = {
     noSlotsTitle: "예약 가능한 시간 없음",
     noSlotsMessage: "해당 날짜의 모든 시간대가 예약되었습니다. WhatsApp으로 입학처 팀에 연락하여 방문 일정을 잡아 주세요.",
     contactWhatsApp: "WhatsApp으로 연락",
+    classFullTitle: "정원이 가득 찼습니다",
+    classFullMessage: "이 반의 최대 정원(15명)이 초과되었습니다. WhatsApp으로 입학처 팀에 연락해 주세요.",
 
     monthsOld: "개월",
     autoPlaced: "자동 배정:",
@@ -431,6 +437,8 @@ export const translations = {
     noSlotsTitle: "ไม่มีช่วงเวลาว่าง",
     noSlotsMessage: "ช่วงเวลาทั้งหมดของวันที่เลือกเต็มแล้ว กรุณาติดต่อทีมรับสมัครของเราทาง WhatsApp เพื่อนัดหมายการเยี่ยมชม",
     contactWhatsApp: "ติดต่อทาง WhatsApp",
+    classFullTitle: "ห้องเรียนเต็มแล้ว",
+    classFullMessage: "ห้องเรียนนี้มีนักเรียนครบ 15 คนแล้ว กรุณาติดต่อทีมรับสมัครของเราทาง WhatsApp เพื่อขอความช่วยเหลือ",
 
     monthsOld: "เดือน",
     autoPlaced: "ถูกจัดไว้ในชั้น",
@@ -538,6 +546,8 @@ export const translations = {
     noSlotsTitle: "ບໍ່ມີຊ່ວງເວລາວ່າງ",
     noSlotsMessage: "ຊ່ວງເວລາທັງໝົດຂອງວັນທີທີ່ເລືອກເຕັມໝົດ. ກະລຸນາຕິດຕໍ່ທີມຮັບສະໝັກຂອງພວກເຮົາທາງ WhatsApp ເພື່ອນັດໝາຍ.",
     contactWhatsApp: "ຕິດຕໍ່ທາງ WhatsApp",
+    classFullTitle: "ຫ້ອງຮຽນເຕັມ",
+    classFullMessage: "ຫ້ອງຮຽນນີ້ມີນັກຮຽນຄົບ 15 ຄົນແລ້ວ. ກະລຸນາຕິດຕໍ່ທີມຮັບສະໝັກຂອງພວກເຮົາທາງ WhatsApp ສຳລັບຄວາມຊ່ວຍເຫຼືອ",
 
     monthsOld: "ເດືອນ",
     autoPlaced: "ໄດ້ຖືກຈັດໃສ່ຊັ້ນ",
