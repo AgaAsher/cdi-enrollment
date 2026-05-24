@@ -31,6 +31,7 @@ const en = {
   events: "Events",
   noticeboard: "Noticeboard",
   weeklyMenu: "Weekly Menu",
+  transcript: "Transcript",
   users: "Users",
   settings: "Settings",
 
@@ -121,6 +122,7 @@ const lo: typeof en = {
   events: "ກິດຈະກຳ",
   noticeboard: "ກະດານຂ່າວ",
   weeklyMenu: "ເມນູປະຈຳອາທິດ",
+  transcript: "ໃບຄະແນນ",
   users: "ຜູ້ໃຊ້",
   settings: "ການຕັ້ງຄ່າ",
 

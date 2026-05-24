@@ -11,6 +11,7 @@ import DashboardView from "./DashboardView";
 import VisitsView from "./VisitsView";
 import ReportsView from "./ReportsView";
 import ArchiveView from "./ArchiveView";
+import TranscriptSection from "./TranscriptSection";
 
 export default async function AdminPage({
   searchParams,
@@ -153,6 +154,11 @@ export default async function AdminPage({
     const tab = params.tab ?? "timetable";
     const canMenuEdit = !!(p.menu_edit || session?.role === "admin" || session?.role === "super_admin");
     return <SchoolSection tab={tab} enrollments={list} canMenuEdit={canMenuEdit} />;
+  }
+
+  // ── TRANSCRIPT ──
+  if (section === "transcript") {
+    return <TranscriptSection />;
   }
 
   // ── USERS ──

@@ -1,5 +1,24 @@
 export type EnrollmentStatus = "pending" | "reviewed" | "accepted" | "rejected";
 
+export type TranscriptStudent = {
+  id: string;
+  name: string;
+  student_no: string;
+  year_group: string;
+  academic_year: string;
+  created_at: string;
+};
+
+export type TranscriptCourse = {
+  id: string;
+  student_id: string;
+  name: string;
+  half_year_avg: number | null;
+  teaching_hours: number;
+  final_avg: number | null;
+  sort_order: number;
+};
+
 export interface Enrollment {
   id: string;
   created_at: string;
